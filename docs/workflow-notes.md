@@ -23,7 +23,7 @@
 | **容易遗漏** | 文档里全是**不可验证的部分列举**，读者无从知道有没有漏 |
 | **流程过重** | OpenSpec 三件套太重，轻量任务用不上 |
 
-> 前两条不是猜的，是一次跑完五代的实测结论：[`codeview-experiment.md`](codeview-experiment.md)。
+> 前两条不是猜的，是一次跑完五代的实测结论：[`01-codeview.md`](attempts/01-codeview.md)。
 > 该实验还给出了更根本的判据——**一个技能要成立须同时满足「① 意图由人给定 ② 输出可被打脸 ③ 范围有界」**，
 > 理解型文档三条全不满足，故不成立。**② 是判断一个技能是否只是空操作的唯一方式**：
 > 没有它，你分不清「技能起作用了」和「技能什么都没做」（见 `writing-for-agents` 的空操作判据）。
@@ -109,13 +109,13 @@
 **方向已改**：不再从"理解代码库技能"起步（那是死路，见 §5）。
 
 **第一步**：拿一个**真实的失控库**跑 `improve-codebase-architecture`，找它的摩擦点。
-它已在 EqZero 上验证能筛出真问题（`codeview-experiment.md` §1.4），可行性来自 **YAGNI 划范围 + 两次筛选 + 只出候选不改代码**。
+它已在 EqZero 上验证能筛出真问题（`attempts/01-codeview.md` §1.4），可行性来自 **YAGNI 划范围 + 两次筛选 + 只出候选不改代码**。
 
 还没定的：
 
 - **第一个真实验跑在哪** —— 需要一个自己真有痛点、但还能改的库。这是唯一没法靠讨论解决的输入
 - **② 的第二种用法** —— `tdd` + **变异杀伤率**：给明确的不变量生成测试，用变异杀伤率打分。判据是数字不是评价，
-  比 code review 更硬，且判据 ①②③ 全满足（见 `codeview-experiment.md` §3.2）。**还没试过**
+  比 code review 更硬，且判据 ①②③ 全满足（见 `attempts/01-codeview.md` §3.2）。**还没试过**
 - **挂载策略** —— 已查明：`~/.claude/skills`、`~/.agents/skills`、`~/.dsh/skills`、`.agents/skills` **全是真实目录、无联接**，
   且 `lodestar/skills` 未挂到任何地方 → **「改了立刻生效」这条回路现在不存在**。另：「环境里技能太多」的真正来源是
   `~/.dsh/skills`（29 个旧副本），与本仓库无关
@@ -124,9 +124,9 @@
 
 ## 5. 已否决的（省得重复讨论）
 
-- **不做「理解型文档」技能**（尝试 01） —— 这是最初的需求，但已实测判否：五代产物、133 个测试、353 行机械关卡全做完后，
+- **不做「理解型文档」技能**（尝试 01）—— 这是最初的需求，但已实测判否：五代产物、133 个测试、353 行机械关卡全做完后，
   判定**不成立**。三条判据（意图由人给定 / 输出可被打脸 / 范围有界）它全不满足。完整实验与可用件见
-  [`codeview-experiment.md`](codeview-experiment.md)。**下次要提这个方向前，先读那份记录。**
+  [`01-codeview.md`](attempts/01-codeview.md)。**下次要提这个方向前，先读那份记录。**
 - **不用 ADR** —— `ADR-FORMAT.md` 要求「难逆转」才写，而这里的决策明确预期会被推翻；且读 `docs/adr/` 的那 5 个技能是**别人的仓库在代码库上跑的**，本仓库没有代码，写了不会被读。互操作性的理由不成立。
 - **不用 superpowers 的措辞纪律** —— 见 1 与 3.1。
 - **不把这次的讨论记成 OpenSpec change** —— 设计还在迷雾里，围着移动靶画靶纸。等第 1 轮试跑后再说。
@@ -134,7 +134,7 @@
 
 ## 6. 指向别处（不复制）
 
-- **已判否的实验记录**：[`docs/codeview-experiment.md`](codeview-experiment.md)（含实测数据与 7 个可用件）
+- **已判否的实验记录**：[`docs/attempts/01-codeview.md`](attempts/01-codeview.md)（含实测数据与 7 个可用件）
 - 上游素材：`reference/`（三套存档，无 `.git`，版本 pin 记在 `reference/README.md`）
 - 上游阅读路线与译文：`docs/learn-mattpocock/` · `docs/learn-superpowers/` · `docs/learn-openspec/`
 - DSH 挂载规则、11 个技能的减法判据：`docs/upstream-mirror.md`
