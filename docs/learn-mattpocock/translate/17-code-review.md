@@ -14,7 +14,7 @@
 
 两条轴都作为**并行子智能体（parallel sub-agents）**运行，这样它们不会互相污染上下文，然后由本技能汇总它们的发现。
 
-issue tracker 应该已经提供给你了。如果缺少 `docs/agents/issue-tracker.md`，告诉用户运行 `/setup-matt-pocock-skills`。
+issue tracker 应该已经提供给你了。如果没有，告诉用户运行 `/setup-matt-pocock-skills`。
 
 ### 17.1 流程（Process）
 
@@ -30,14 +30,14 @@ issue tracker 应该已经提供给你了。如果缺少 `docs/agents/issue-trac
 
 按这个顺序寻找起源 spec：
 
-1. 提交信息里的 issue 引用（`#123`、`Closes #45`、GitLab `!67` 等），通过 `docs/agents/issue-tracker.md` 里的工作流获取。
+1. 提交信息里的 issue 引用（`#123`、`Closes #45`、GitLab `!67` 等），通过 tracker 文档里的工作流获取。
 2. 用户作为参数传入的一个路径。
 3. `docs/`、`specs/` 或 `.scratch/` 下匹配分支名或功能的 spec 文件。
 4. 如果什么都没找到，问用户 spec 在哪里。如果他们说没有 spec，**规范**子智能体将跳过并报告 "no spec available"。
 
 #### 17.1.3 确定标准来源（Identify the standards sources）
 
-仓库里任何记录代码应该怎么写的东西，例如 `CODING_STANDARDS.md` 或 `CONTRIBUTING.md`。
+搜遍仓库里每一份记录代码该怎么写的文件。当 `CODING_STANDARDS.md` 或 `CONTRIBUTING.md` 存在时，它必须在这份清单上。
 
 在仓库所记录的内容之上，标准这条轴始终携带下面的**气味基线（smell baseline）**：一组固定的 Fowler 代码坏味道（_Refactoring_，第 3 章），即使仓库什么都没记录也适用。有两条规则约束它：
 
@@ -60,6 +60,8 @@ issue tracker 应该已经提供给你了。如果缺少 `docs/agents/issue-trac
 - **被拒绝的馈赠（Refused Bequest）**：一个子类或实现者忽略或覆盖了它继承来的大部分东西。→ 放弃继承，改用组合。
 
 #### 17.1.4 并行派出两个子智能体（Spawn both sub-agents in parallel）
+
+同时发出两个子智能体调用，放在前台，并汇总它们返回的报告。
 
 **标准子智能体的提示词**应包含：
 

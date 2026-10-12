@@ -27,4 +27,4 @@ Skill 工具每次调用只接一个技能。一个需要两个技能的步骤�
 
 ### 3.2 被动的与主动的领域工作（Passive vs active domain work）
 
-仅仅为了词汇去_读_ `CONTEXT.md`，是一句散文式的指引，不是 `domain-modeling` 技能。只有主动的构建/磨利功课（挑战术语、边界情形场景、写 ADR、就地更新 `CONTEXT.md`）才是 `domain-modeling`。
+仅仅为了词汇去_读_ `GLOSSARY.md`，是一句散文式的指引，不是 `domain-modeling` 技能。只有主动的构建/磨利功课（挑战术语、边界情形场景、写 ADR、就地更新 `GLOSSARY.md`）才是 `domain-modeling`。

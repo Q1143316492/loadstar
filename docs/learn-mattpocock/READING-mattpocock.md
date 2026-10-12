@@ -2,7 +2,9 @@
 
 范围：`reference/mattpocock-skills/`。**只读，不改**（这里只是取材）。
 路径均相对 `reference/mattpocock-skills/`。编号 = 读序，按编号读；想按文件夹翻，见文末「按目录速查」。
-译文落在 `docs/learn-superpowers/mattpocock/`，编号与此处一致；目录里那篇 `README.md` 记了翻译约定（代码块与标识符按英文原样保留、术语首次出现附英文原词、原文的兄弟文档链接改指本仓库英文原文）。
+译文落在 `docs/learn-mattpocock/translate/`，编号与此处一致；目录里那篇 `README.md` 记了翻译约定（代码块与标识符按英文原样保留、术语首次出现附英文原词、原文的兄弟文档链接改指本仓库英文原文）与**与上游的同步记录**。
+
+> **快照状态**：`reference/` 已于 2026-10-13 从 `c55ee46`（09-18）整体更新到 `49dd158`（10-09），并已移出 `.gitignore`、纳入版本管理。影响本路线的三处变化：① `resolving-merge-conflicts`（第 18 篇）被上游删除；② `domain-modeling/CONTEXT-FORMAT.md` 改名 `GLOSSARY-FORMAT.md`，全文的 `CONTEXT.md` 一律改叫 `GLOSSARY.md`；③ 上游把 `retro` / `pr` / `implement-spec` 提升进 `engineering/`，本路线相应增补第 37–39 篇。
 
 **这份路线的筛选原则**（与 Superpowers 那份不同，这里不是全套通读）：
 
@@ -40,7 +42,7 @@
 - [ ] **15** `skills/engineering/tdd/tests.md` — 好测试 vs 坏测试的代码对照，短。
 - [ ] **16** `skills/engineering/tdd/mocking.md` — 什么时候才 mock（只在系统边界），以及为了可 mock 该怎么设计接口。
 - [ ] **17** `skills/engineering/code-review/SKILL.md` — **两轴评审**：Standards（是否符合本仓规范）+ Spec（是否忠实实现了来源 issue）。两轴各派一个 subagent 并行跑、**刻意不合并不重排**，因为「一轴会掩盖另一轴」。附 12 条 Fowler 坏味道基线（都标注为 judgement call，且仓库规范永远优先）。
-- [ ] **18** `skills/engineering/resolving-merge-conflicts/SKILL.md` — 14 行。用 **intent**（回溯到每一侧的 primary source）逐 hunk 解冲突，绝不 `--abort`。
+- [ ] **18** ~~`skills/engineering/resolving-merge-conflicts/SKILL.md`~~ — **已废弃**：上游在本次同步前已删除该技能，目录不复存在。原内容是「用 **intent**（回溯到每一侧的 primary source）逐 hunk 解冲突，绝不 `--abort`」，译文（第 18 篇）保留作历史参考。
 
 ## 4. 支撑纪律（横向能力，可独立取用）
 
@@ -63,6 +65,14 @@
 - [ ] **35** `skills/productivity/to-questionnaire/SKILL.md` — 「要问的人不在场」时的产物：把阻塞点变成给**别人**填的问卷。定义性约束：**grill 的是这次「投递」（给谁、要拿回什么），不是题目本身**。
 - [ ] **36** `skills/engineering/wizard/SKILL.md` — 只有人类能做的步骤，生成一个交互式 bash 向导去带他做。看它的分工哲学：库部分每个向导都一模一样、不许手改；你的活只有划定阶段和写阶段内容。
 
+## 4b. 同步增补（37–39，2026-10-13 加）
+
+编号接在原 36 篇之后，不重排——它们不是原读序的一部分，而是上游把三个原本在 `in-progress/` 的技能提升进 `engineering/` 后补进来的。三篇都属「执行主链路」那一侧。
+
+- [ ] **37** `skills/engineering/retro/SKILL.md` — 44 行，会话复盘。分类别去找改进候选（导航 / 自动化检查 / 编码标准 / 全局 AGENTS.md / 工具经济 / 空操作 / 信息获取），并给出两条判据：**机械性违规配确定性检查，判断题才写进 `CODING_STANDARDS.md`**；以及「**编码标准应由评审 agent 施加，而不是实现 agent**」（因为实现的上下文压力最大）。这是 Lodestar「缺 delta 记录」那一环的现成答案。
+- [ ] **38** `skills/engineering/pr/SKILL.md` — 170 行，PR 正文的模板与写法。三节：**Summary**（挑能把关键点讲清楚的最小视图：伪代码 / 调用树 / 组件树 / 文件树 / Mermaid / diff）、**Evidence**（变更前后的具体证据，截图 S 级、执行输出 A 级）、**Merge Danger**（单行道还是双行道 + 爆炸半径）。注意它的出处：正文标明取自 Dex Horthy 的 `show-me` 技能。
+- [ ] **39** `skills/engineering/implement-spec/SKILL.md` — 40 行，一次跑完整份 spec。把 ticket 读成**任务图**，在**前沿**上并行跑 implementer subagent（各在自己的 worktree），用 **merger subagent** 合并，最后在集成分支上跑一次 `code-review`。关键一句：subagent 之间**主要靠上下文指针通信，不重复指针已能拿到的信息**。
+
 ## 5. 现在不读（工具性 / 适配层 / 非核心桶）
 
 | 类别 | 位置 | 为什么不读 |
@@ -71,9 +81,9 @@
 | Codex 适配 | 每个技能旁的 `agents/openai.yaml`、`.agents/adr/0002-ship-as-a-claude-code-plugin.md` | 平台 UI 元数据与「为什么先只做 Claude 插件」的决策 |
 | 配置类技能 | `skills/engineering/setup-matt-pocock-skills/`（含 `issue-tracker-*.md`、`triage-labels.md`、`domain.md`） | 「每个仓跑一次」的落地配置；`domain.md` 里有价值的只有「缺文件就静默继续，不要报缺失、不要提前创建」这一条，已在 21 里覆盖 |
 | 面向人的文档页 | `docs/engineering/*.md`、`docs/productivity/*.md`、`.agents/writing-docs.md` | 发布站点的页面规范（四个小节、绝对链接、不许署名作者），技巧含量低于 SKILL.md 本体 |
-| 非核心桶 | `skills/misc/`（shoehorn、scaffold-exercises、setup-pre-commit、git-guardrails）、`skills/in-progress/` 全部 | 前两个是特定技术栈的迁移脚本；后四个是 TS 深度模块、PR 模板、retro（还是 stub）、写作三件套 |
+| 非核心桶 | `skills/misc/`（shoehorn、scaffold-exercises、setup-pre-commit、git-guardrails）、`skills/in-progress/` 的 `claude-handoff`、`loop-me`、`chief-of-staff` | 前两个是特定技术栈的迁移脚本；后三个尚未提升进 `engineering/`（`retro`、`pr`、`implement-spec` 已于本次同步提升，见 37–39） |
 | 写作教学线 | `skills/productivity/teach/` 及四个 FORMAT 文件 | 「多会话教一个人」的完整体系，与 agent 流程设计无关 |
-| 仓库自述 | `README.md` 的 Why These Skills Exist 四节、`AGENTS.md`、`CLAUDE.md`、`CHANGELOG.md`、`CONTEXT.md` | 值得在「想知道作者为什么这样分工」时反查：四个失败模式（没对齐 / 太啰嗦 / 代码不 work / 泥球）正是 01–03 那条主链的动机来源 |
+| 仓库自述 | `README.md` 的 Why These Skills Exist 四节、`AGENTS.md`、`CLAUDE.md`、`CHANGELOG.md`、`GLOSSARY.md` | 值得在「想知道作者为什么这样分工」时反查：四个失败模式（没对齐 / 太啰嗦 / 代码不 work / 泥球）正是 01–03 那条主链的动机来源 |
 
 ## 按目录速查
 
@@ -90,7 +100,7 @@ skills/engineering/triage/                          → 10 11 12
 skills/engineering/implement/                       → 13
 skills/engineering/tdd/                             → 14 15 16
 skills/engineering/code-review/                     → 17
-skills/engineering/resolving-merge-conflicts/       → 18
+skills/engineering/resolving-merge-conflicts/       → 18（已废弃）
 skills/productivity/writing-for-agents/             → 19 20
 skills/engineering/domain-modeling/                 → 21 22 23
 skills/engineering/codebase-design/                 → 24 25 26
@@ -102,6 +112,11 @@ skills/productivity/handoff/                        → 33
 skills/productivity/wait-what/                      → 34
 skills/productivity/to-questionnaire/               → 35
 skills/engineering/wizard/                          → 36
+
+同步增补：
+skills/engineering/retro/                           → 37
+skills/engineering/pr/                              → 38
+skills/engineering/implement-spec/                  → 39
 ```
 
 ## 读的时候盯住这五个问题（为 Lodestar 取材）

@@ -31,7 +31,7 @@
 - Agent 3：「为最常见的调用方优化：让默认情形变得轻而易举。」
 - Agent 4（如适用）：「围绕端口与适配器设计跨接缝依赖。」
 
-在简报里同时包含 [SKILL.md](../../../reference/mattpocock-skills/skills/engineering/codebase-design/SKILL.md) 的词汇和 CONTEXT.md 的词汇，让每个 sub-agent 的命名都与架构语言和项目的领域语言保持一致。
+在简报里同时包含 [SKILL.md](../../../reference/mattpocock-skills/skills/engineering/codebase-design/SKILL.md) 的词汇和 GLOSSARY.md 的词汇，让每个 sub-agent 的命名都与架构语言和项目的领域语言保持一致。
 
 每个 sub-agent 输出：
 

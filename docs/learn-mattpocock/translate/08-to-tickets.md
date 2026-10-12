@@ -64,7 +64,7 @@ issue tracker 与 triage 标签词汇表应该已经提供给你了。如果没�
 发布已批准的 ticket。**如何**发布取决于 `/setup-matt-pocock-skills` 配置的 tracker；两种情况下 ticket 本身都一样，只是阻塞边的形态变了：
 
 - **本地文件** → 在 `.scratch/<feature-slug>/issues/<NN>-<slug>.md` 下每个 ticket 写一个文件，从 `01` 开始按依赖顺序编号（阻塞者在前）。每个文件的 "Blocked by" 列出它所依赖的编号/标题。使用下面的单 ticket 文件模板：每个文件一个 ticket，绝不合并成一个文件。
-- **真实 issue tracker（GitHub、Linear 等）** → 按依赖顺序（阻塞者在前）每个 ticket 发布一个 issue，这样每个 ticket 的阻塞边才能引用真实标识符。平台如果有原生的阻塞 / 子 issue 关系就用它；否则把每个 ticket 的 "Blocked by" 设为阻塞它的那些 issue。除非另有指示，打上 `ready-for-agent` triage 标签；这些 ticket 按构造就是 agent 可抓取的。
+- **真实 issue tracker（GitHub、Linear 等）** → 按依赖顺序（阻塞者在前）每个 ticket 发布一个 issue，这样每个 ticket 的阻塞边才能引用真实标识符。平台如果有原生的阻塞关系就用它；否则把每个 ticket 的 "Blocked by" 设为阻塞它的那些 issue。如果来源是一份已存在的 issue，就让每个 ticket 成为它的子 issue（tracker 文档里的操作）。除非另有指示，打上 `ready-for-agent` triage 标签；这些 ticket 按构造就是 agent 可抓取的。
 
 按**前沿（frontier）**推进：任何阻塞者都已完成的 ticket。对于一条纯线性的链条，那就是从上到下。
 
@@ -102,7 +102,7 @@ tracker 上父 issue 的引用（如果来源是一个已有 issue，否则省�
 
 ### Blocked by
 
-- 对每个阻塞 ticket 的引用，或者 "None (can start immediately)"。
+- 对每个阻塞 ticket 的引用，或者 "None (can start immediately)"。当阻塞边是以原生边（native edges）设置的时，省略本节。
 
 </issue-template>
 

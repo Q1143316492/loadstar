@@ -9,7 +9,7 @@
 - `argument-hint`: `"What will the next session be used for?"`
 - `disable-model-invocation`: `true`
 
-写一份交接文档，总结当前对话，让一个全新的 agent 能继续这项工作。保存到用户操作系统的临时目录，而不是当前工作区。
+写一份交接文档，总结当前对话，让一个全新的 agent 能继续这项工作。保存到用户操作系统的临时目录（`$TMPDIR`，否则 `/tmp`；Windows 上是 `%TEMP%`），而不是当前工作区。
 
 在文档里包含一节「suggested skills」，点名下一个 agent 应当为哪些技能调用 Skill 工具。
 

@@ -15,7 +15,7 @@
 这个命令 _受_ 项目领域模型的启发，并建立在共享的设计词汇之上：
 
 - 用 "codebase-design" 调用 Skill 工具，取得架构词汇（**模块**、**接口**、**深度**、**接缝**、**适配器**、**杠杆**、**局部性**）及其原则（删除测试、「接口就是测试面」、「一个适配器 = 假想的接缝，两个 = 真实的」）。在每一条建议里精确使用这些术语，不要漂移到「component」「service」「API」或「boundary」。
-- `CONTEXT.md` 里的领域语言为好接缝提供名字；`docs/adr/` 里的 ADR 记录了本命令不应重新争讼的决策。
+- `GLOSSARY.md` 里的领域语言为好接缝提供名字；`docs/adr/` 里的 ADR 记录了本命令不应重新争讼的决策。
 
 #### 28.1.1 流程（Process）
 
@@ -26,7 +26,7 @@
 - 如果用户点明了方向（一个模块、一个子系统、一个痛点），就采纳它，跳过下面的推断。
 - 否则，往回走相当一段提交历史（`git log --oneline`）来找出代码库的热点，那些反复出现的文件和区域，让这些路径先把你的注意力拉过去。如果改动是散乱分布、没有明显热点，就把网撒得更宽。
 
-先读项目的领域词汇表（`CONTEXT.md`）和你正在触碰区域的所有 ADR。
+先读项目的领域词汇表（`GLOSSARY.md`）和你正在触碰区域的所有 ADR。
 
 然后拉起一个 sub-agent 走查代码库。不要遵循死板的启发式；有机地探索，并记下你在哪里感受到摩擦：
 
@@ -55,7 +55,7 @@
 
 用一节 **Top recommendation** 结束报告：你会先做哪个候选，以及为什么。
 
-**领域用 CONTEXT.md 的词汇，架构用 `/codebase-design` 的词汇。** 如果 `CONTEXT.md` 定义了「Order」，就说「the Order intake module」，不要说「the FooBarHandler」，也不要说「the Order service」。
+**领域用 GLOSSARY.md 的词汇，架构用 `/codebase-design` 的词汇。** 如果 `GLOSSARY.md` 定义了「Order」，就说「the Order intake module」，不要说「the FooBarHandler」，也不要说「the Order service」。
 
 **ADR 冲突**：如果一个候选与现有 ADR 矛盾，只有当摩擦真实到值得重新审视该 ADR 时才把它摆出来。在卡片里清楚标出（例如一个警告提示：_"contradicts ADR-0007, but worth reopening because…"_）。不要把 ADR 禁止的每一种理论上的重构都列出来。
 
@@ -69,7 +69,7 @@
 
 随着决策定型，副作用就地发生；用 "domain-modeling" 调用 Skill 工具，在过程中保持领域模型最新：
 
-- **用一个不在 `CONTEXT.md` 里的概念给加深后的模块命名？** 把该术语加到 `CONTEXT.md`。如果文件不存在就惰性创建它。
-- **在对话中打磨了一个模糊术语？** 就地更新 `CONTEXT.md`。
+- **用一个不在 `GLOSSARY.md` 里的概念给加深后的模块命名？** 把该术语加到 `GLOSSARY.md`。如果文件不存在就惰性创建它。
+- **在对话中打磨了一个模糊术语？** 就地更新 `GLOSSARY.md`。
 - **用户以一个承重的理由拒绝了这个候选？** 提议一篇 ADR，这样表述：_"Want me to record this as an ADR so future architecture reviews don't re-suggest it?"_ 只有当未来的探索者为了避免再次提出同一件事而确实需要这个理由时才提议；跳过短命的理由（「现在不值得」）和不言自明的理由。
 - **想为加深后的模块探索备选接口？** 用 "codebase-design" 调用 Skill 工具，并使用它的 design-it-twice 并行 sub-agent 模式。

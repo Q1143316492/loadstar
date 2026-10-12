@@ -1,6 +1,8 @@
 ## 18 resolving-merge-conflicts
 
-> 译自 `reference/mattpocock-skills/skills/engineering/resolving-merge-conflicts/SKILL.md`（原文 14 行）。frontmatter 按原样保留。
+> **已废弃（2026-10-13）**：上游已在 `49dd158` 之前删除了 `resolving-merge-conflicts` 技能，`reference/mattpocock-skills/skills/engineering/resolving-merge-conflicts/` 目录已不存在，本文对应的原文已无法在 reference 里找到。保留译文仅作历史参考；`ask-matt` 里的入口也已同步移除（见第 1 篇）。
+
+> 译自 `reference/mattpocock-skills/skills/engineering/resolving-merge-conflicts/SKILL.md`（原文 14 行，**已废弃**）。frontmatter 按原样保留。
 
 **frontmatter**
 

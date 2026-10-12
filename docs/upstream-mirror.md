@@ -1,17 +1,17 @@
 # skills —— Lodestar 的技能库
 
-> **状态（2026-10-13）**：本文原为 `skills/README.md`，那个目录（上游技能镜像）已删除——它与 `reference/mattpocock-skills/` 构成两份同源副本，分不清谁是权威；删除后 `reference/` 成为 matt 技能库的唯一来源（它同时是 `docs/learn-mattpocock/translate/` 里 30 多处链接的锚点）。镜像可随时用文末「重新拉取」一条命令重建。
+> **状态（2026-10-13）**：本文原为 `skills/README.md`，那个目录（上游技能镜像）已删除——它与 `reference/mattpocock-skills/` 构成两份同源副本，分不清谁是权威。删除后 **`reference/mattpocock-skills/` 成为 matt 技能库的唯一权威副本**：它既被 `docs/learn-mattpocock/translate/` 里 30 多处链接锚定，也已在同日**从 `c55ee46` 整体更新到 `49dd158`（2026-10-09）并移出 `.gitignore`、纳入版本管理**。因此本文下面「旧快照、不更新」的说法已作废，只保留它的历史语境。
 >
-> 保留本文是因为它记着两件不可再生的东西：**第一批减法删掉哪 11 个技能及其判据**，以及 **DSH 的技能发现规则与挂载命令**。下面提到 `skills/` 的地方，读作「重建出来的镜像目录」。
+> 保留本文是因为它记着两件不可再生的东西：**第一批减法删掉哪 11 个技能及其判据**，以及 **DSH 的技能发现规则与挂载命令**。下面提到 `skills/` 的地方，读作「如果你重建一份可改的工作副本」。
 
-**可改的工作副本**：外部拉进来的技能平铺成 `skills/<名字>/SKILL.md`，改这里不影响上游。
+**可改的工作副本**（当前不存在）：外部拉进来的技能平铺成 `skills/<名字>/SKILL.md`，改这里不影响上游。
 
-`reference/mattpocock-skills/` 是**故意冻结的旧快照**（`c55ee46`，2026-09-18），只当 `docs/learn-mattpocock/` 那 36 篇译文的锚点用，不更新、不改动。要最新版就看本目录（`49dd158`，2026-10-09）。两者实测差异：
+`reference/mattpocock-skills/` 现在是**与上游同步的唯一副本**。它此前是冻结在 `c55ee46`（2026-09-18）的旧快照；2026-10-13 更新到 `49dd158`（2026-10-09）时，实测的差异是：
 
-- 上游**淘汰**了 `resolving-merge-conflicts`（旧快照里还有，译文第 18 篇讲的就是它）；
-- 上游**新增** `chief-of-staff`；
-- `domain-modeling/CONTEXT-FORMAT.md` **改名**为 `GLOSSARY-FORMAT.md`，正文里的 `CONTEXT.md` 一律改叫 `GLOSSARY.md`（译文第 21–23 篇的术语已过时）；
-- 另有 **19 个文件内容变了**：`ask-matt`、`claude-handoff`、`code-review`、`diagnosing-bugs`、`domain-modeling`、`grilling`、`handoff`、`implement`、`implement-spec`(×2)、`improve-codebase-architecture`、`pr`(×2)、`tdd`、`to-tickets`、`wait-what`、`wayfinder` 的 `SKILL.md`，以及 `codebase-design/DESIGN-IT-TWICE.md`、`wizard/template.sh`。
+- 上游**淘汰**了 `resolving-merge-conflicts`（译文第 18 篇讲的就是它，已标注废弃）；
+- 上游把 `retro` / `pr` / `implement-spec` **提升**进 `skills/engineering/`（原在 `in-progress/`），译文相应增补第 37–39 篇；
+- `domain-modeling/CONTEXT-FORMAT.md` **改名**为 `GLOSSARY-FORMAT.md`，正文里的 `CONTEXT.md` 一律改叫 `GLOSSARY.md`（译文已同步改名）；
+- 另有约 15 个技能文件内容更新，`ask-matt` 改动最大（新增 `/implement-spec`、`/pr`、`/retro` 三条路径）。
 
 > ⚠️ **DSH 不扫这个目录。** 要能被 agent 调用，得在 `.dsh/skills/` 里建一层目录联接（junction），见文末「怎么让 DSH 调到」。
 

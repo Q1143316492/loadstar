@@ -77,7 +77,7 @@ triage 期间发布到 issue tracker 的每条评论或 issue，都**必须**以
 
 3. **验证主张。**在任何拷问之前，先检查该主张站得住脚。对 bug，按报告者的步骤复现它。对 PR，确认 diff 做了它所声称的事：检出它，运行相关测试或命令。报告发生了什么：已确认（附带代码路径）、失败，还是细节不足（一个强烈的 `needs-info` 信号）。一次已确认的验证会造就强得多的 agent brief。
 
-4. **拷问（如果需要）。**如果请求需要充实，调用 Skill 工具两次，参数分别是 "grilling" 和 "domain-modeling"，一轮问题一轮问题地把它拷问成形，磨锐领域术语，并在决策落定时就地更新 `CONTEXT.md`/ADR。
+4. **拷问（如果需要）。**如果请求需要充实，调用 Skill 工具两次，参数分别是 "grilling" 和 "domain-modeling"，一轮问题一轮问题地把它拷问成形，磨锐领域术语，并在决策落定时就地更新 `GLOSSARY.md`/ADR。
 
 5. **应用结果：**
    - `ready-for-agent`：发一条 agent brief 评论（[AGENT-BRIEF.md](../../../reference/mattpocock-skills/skills/engineering/triage/AGENT-BRIEF.md)）。
