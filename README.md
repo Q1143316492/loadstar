@@ -5,7 +5,17 @@
 **入口**：
 
 - [`docs/workflow-notes.md`](docs/workflow-notes.md) — 设计笔记：四层模型 · 依赖顺序 · 存储分工 · 未定项 · 已否决项
-- [`docs/codeview-experiment.md`](docs/codeview-experiment.md) — 一次已判定**不成立**的尝试（**别重复**）
+- [`docs/codeview-experiment.md`](docs/codeview-experiment.md) — 尝试 01 的完整记录（**已判定不成立，别重复**）
+
+## 尝试记录
+
+同一个需求试过几次、每次的结论。**失败的要留在最前面**——否则下一个会话（或 agent）会把死路再走一遍。
+
+| # | 目标 | 结论 | 记录 |
+|---|---|---|---|
+| **01** | 产出「理解代码库」的文档 | **不成立** | [`codeview-experiment.md`](docs/codeview-experiment.md) |
+| 02 | 待补 | — | 待补 |
+| 03 | 待补 | — | 待补 |
 
 ## 需求，与已经踩到的坑
 
@@ -29,7 +39,7 @@
 
 | 语句 | 出处 | 对本仓的作用 |
 |---|---|---|
-| **空操作判据**：一条模型默认已经遵守的指令，花掉负载却什么也没说。测试是「它相对默认是否改变了行为？」 | `writing-for-agents` | 解释 codeview 为什么失败——模型的默认就是「总结代码库」，而默认是差的 |
+| **空操作判据**：模型默认就会照做的指令，等于白花上下文。测法：**把它删掉，行为会不会变？** 不会变就别写 | `writing-for-agents` | 解释 codeview 为什么失败——技能的核心动作正是模型的默认动作；改外壳（地图/索引/文档集/路线）改变不了默认，所以产出约等于直接聊 |
 | **刻意偏离**：刻意偏离显而易见路径的做法要记下来，否则下一个人会来「修正」某个本来就是刻意的东西 | `ADR-FORMAT.md` | 本仓为什么保留「已否决的」清单 |
 | **建检查 > 写规则**：机械性违规配确定性检查，`CODING_STANDARDS.md` 只留给真正的判断题 | `retro` | 四层模型的来源：能用检查兜住的，不要写成措辞 |
 | **先读再断言**：在说某个技能做什么、或建议跳过某一步之前，先读那个技能的 `SKILL.md`；摘要只用于定位方向 | `ask-matt` | 本 README 把「已失败的东西」放在最前面的原因 |
@@ -41,7 +51,7 @@
 |---|---|
 | `workflow/` | 自己的技能（交付层，目前只有 `doc-quality`） |
 | `docs/workflow-notes.md` | 设计笔记：四层模型 · 依赖顺序 · 存储分工 · 未定项 · 已否决项 |
-| `docs/codeview-experiment.md` | 一次已判定不成立的尝试（理解型文档，含实测数据与可用件） |
+| `docs/codeview-experiment.md` | 尝试 01 的完整记录（理解型文档，含实测数据与可用件） |
 | `docs/upstream-mirror.md` | 上游技能库的存档说明：DSH 挂载规则、11 个技能的减法判据 |
 | `docs/learn-*/` | 上游阅读路线与译文（mattpocock / superpowers / openspec） |
 | `reference/` | 三套上游参考的存档（只读，无 `.git`，版本 pin 见其 `README.md`） |

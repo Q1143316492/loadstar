@@ -1,7 +1,7 @@
 # 让 AI 生成"理解代码库"的文档：做了什么、为什么失败、结论是什么
 实验周期：一天。实验对象：**EqZero**（UE C++ 项目，623 个文本文件 / 72,645 行 / 172 目录，55 个目录区域）、  
 **pi-mono**（TS monorepo，1,927 文件，14 个包）。两份源码仅用于测试，不入归档。
-> 本仓背景记录：对应 [`README.md`](../README.md) 的「需求，与已经踩到的坑」一节，结论已摘进 [`docs/workflow-notes.md`](workflow-notes.md)。
+> 本仓背景记录：**尝试 01**，见 [`README.md`](../README.md) 的「尝试记录」表；结论已摘进 [`workflow-notes.md`](workflow-notes.md)。
 ---
 
 ## 读前须知
