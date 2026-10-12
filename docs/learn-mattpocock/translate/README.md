@@ -1,6 +1,6 @@
 # mattpocock-skills 译文
 
-本目录是 `reference/mattpocock-skills/` 的逐篇中译，编号与 [`reference/READING-mattpocock.md`](../../../reference/READING-mattpocock.md) 的读序一一对应。
+本目录是 `reference/mattpocock-skills/` 的逐篇中译，编号与 [`READING-mattpocock.md`](../READING-mattpocock.md) 的读序一一对应。
 
 ## 翻译约定
 
@@ -12,7 +12,7 @@
 
 ## 未收录的部分
 
-`reference/mattpocock-skills/` 里另有一批内容按 [`READING-mattpocock.md`](../../../reference/READING-mattpocock.md) 第 5 节的判断未纳入，主要是：Claude Code / Codex 的安装与插件适配层（`.claude-plugin/`、各技能的 `agents/openai.yaml`、`scripts/`）、面向人类的文档页（`docs/engineering/`、`docs/productivity/`、`.agents/writing-docs.md`）、配置类技能（`setup-matt-pocock-skills/` 及其 `issue-tracker-*.md`）、非核心桶（`skills/misc/`、`skills/in-progress/`）、以及写作教学线（`skills/productivity/teach/`）。
+`reference/mattpocock-skills/` 里另有一批内容按 [`READING-mattpocock.md`](../READING-mattpocock.md) 第 5 节的判断未纳入，主要是：Claude Code / Codex 的安装与插件适配层（`.claude-plugin/`、各技能的 `agents/openai.yaml`、`scripts/`）、面向人类的文档页（`docs/engineering/`、`docs/productivity/`、`.agents/writing-docs.md`）、配置类技能（`setup-matt-pocock-skills/` 及其 `issue-tracker-*.md`）、非核心桶（`skills/misc/`、`skills/in-progress/`）、以及写作教学线（`skills/productivity/teach/`）。
 
 另外两篇虽是原文引用但未翻译，需要时可自行查阅：
 
