@@ -179,15 +179,18 @@ v4 把结构做到了极致：七节骨架、索引双向一致、锚点逐条�
 
 ---
 
-## 附录：本次实验的产物与去向（删库前备忘）
+## 附录：产物去向
 
-> **2026-10-13 更正**：下表「随库删除」一列与现状不符——`D:\Workspace\CodeView` 项目仍然存在，技能本体与产物都还在（含 `skills/codeview-v1..v4`、中文全译与注解、`test-repos/EqZero/.codeview-v4/` 实测产物）。**是留是删尚未决定**，决定后再回填本表。
+> 本次实验在**外部仓库** `D:\Workspace\CodeView`（独立 git 仓库，不属 lodestar）里进行。
+> lodestar 只取了这份结论文档（`CODEVIEW-结论与教训.md` → 本文）；其余产物留在那边，**不在本仓的管辖范围内**。
+> 下表是那批产物的清单，供以后想回看实现细节时按图索骥。
 
-| 产物 | 位置 | 状态 |
-| --- | --- | --- |
-| 归档结论（本文） | `CODEVIEW-结论与教训.md` | 保留，存笔记 |
-| 技能 v1–v4（含 133 测试、渲染器、关卡） | `skills/codeview-v1/`、`codeview-v2/`、`codeview-v3/`、`codeview-v4/` | 原记「随库删除」，**实际仍在** |
-| 第三方技能中文全译 + 21 条注解 | `skills/improve-codebase-architecture/*.zh.md` | 原记「随库删除」，**实际仍在**（内容本身在原始仓库） |
-| 两份架构评审报告（本仓库 C1–C5；EqZero 6 个候选） | `docs/architecture-review-*.md` | **工作区已被删除，**`git restore docs`** 可恢复**；关键结论已摘进 §1.4 |
+| 产物 | 位置（在外部仓库里） |
+| --- | --- |
+| 归档结论（本文） | `CODEVIEW-结论与教训.md` —— **已取进本仓** |
+| 技能 v1–v4（含 133 测试、渲染器、关卡） | `skills/codeview-v1..v4/` |
+| 第三方技能中文全译 + 21 条注解 | `skills/improve-codebase-architecture/*.zh.md` |
+| 两份架构评审报告（仓库自评 C1–C5；EqZero 6 个候选） | `docs/architecture-review-*.md`（工作区已删，`git restore docs` 可恢复；关键结论已摘进 §1.4） |
+| 实测对象 | `test-repos/EqZero/`、`test-repos/pi-mono/`（都是公开仓库的 clone） |
 
 
