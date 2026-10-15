@@ -1,64 +1,40 @@
 # lodestar
 
-自己的 AI 工作流技能库。上游三套库（`reference/`）是**取材对象**，不是复刻对象；产物长在 `workflow/`。
+自己的 AI 编码工作流技能库。技能为中文（`show-me` 除外）；取材上游、不逐字复刻。
 
-**入口**：
+## 来自哪里
 
-- [`docs/workflow-notes.md`](docs/workflow-notes.md) — 当前的设计与进度（四层模型 · 依赖顺序 · 存储分工 · 未定项 · 已否决项）
-- [`docs/attempts/`](docs/attempts/) — 尝试记录，一次一条
+- **技能**：主体来自 [mattpocock/skills](https://github.com/mattpocock/skills)（`@ 49dd158`，原样导入基线见提交 `010369f`），之后做了中译与本地化——去掉 tracker 依赖，规划产物写本地 `docs/specs/`。`show-me` 来自 [humanlayer/skills](https://github.com/humanlayer/skills)（原文照搬，未译）；`doc-quality` 自写。
+- **参考存档**：[`reference/`](reference/) 存着三套上游库的纯文件快照（mattpocock / openspec / superpowers，只读；版本 pin 见其 [`README.md`](reference/README.md)），供取材用。
 
-## 尝试记录
+## 安装
 
-同一个大需求试过几次、每次的结论。**失败的要留在最前面**——否则下一个会话（或 agent）会把死路再走一遍。
+把 `workflow/` 里的技能目录**平铺**（只一层）放进所用 agent 的技能目录即可。
 
-| # | 目标 | 结论 | 记录 |
-|---|---|---|---|
-| **01** | 产出「理解代码库」的文档 | **不成立** | [`attempts/01-codeview.md`](docs/attempts/01-codeview.md) |
-| 02 | 改善代码库（失控库排查 / 重构 review） | 未开始 | — |
-| 03 | 待定 | 未开始 | — |
+## 技能
 
-> 每次尝试独立成文，放在 `docs/attempts/<NN>-<名字>.md`。README 只保留这张表和下面的通用结论；
-> 「这次想做什么、做了什么、踩了什么坑、留下什么」全部写进各自的文件，不往上堆。
+平铺清单。技能之间的关系（主干 / 匝道 / 保养 / 底层）以及暂缓与不做的项，见 [`docs/workflow-map.md`](docs/workflow-map.md)。
 
-## 什么算「一个技能成立」（来自尝试 01）
-
-三条**同时**满足才成立：
-
-| 判据 | 含义 | 尝试 01 的反证 |
+| 技能 | 是什么 | 怎么调 |
 |---|---|---|
-| **① 意图由人给定** | 需求 / issue / 不变量 / 规范 | 代码里读不出「什么重要」：EqZero 的 GAS 流程写到第 8 步就断在蓝图里 |
-| **② 输出可被打脸** | 跑测试 / 复现 / 对照代码 | v4 的关卡只能查结构，内容写错了也无法判定 |
-| **③ 范围有界** | 一个 diff / 一个模块 | 全库无法定义「做完了」与「漏了什么」 |
+| `grill-with-docs` | 盘问澄清想法；边盘边产出词汇表与 ADR | 手打 |
+| `to-plan` | 把对话综合成 spec + 曳光弹 ticket，写入 `docs/specs/<slug>/` | 手打 |
+| `implement` | 按 ticket/spec 实现（调 `tdd`）；收尾调 `code-review`；不自动提交 | 手打 |
+| `code-review` | 对固定点起的 diff 做两轴评审（标准 / Spec），只读只报告 | 模型可触发 |
+| `retro` | 复盘会话，给环境改进建议 | 手打 |
+| `wayfinder` | 大块迷雾努力：把决策 ticket 画成地图逐张解决，出口并入 `to-plan` | 手打 |
+| `diagnosing-bugs` | 疑难 bug 的诊断回路：先建能打红的反馈回路，再谈原因 | 手打 |
+| `research` | 后台查一手来源（文档、源码），写一份带引用的 Markdown 笔记 | 模型可触发 |
+| `improve-codebase-architecture` | 扫描「加深机会」→ 生成 HTML 报告 → 选中后进盘问回路 | 手打 |
+| `prototype` | 一次性原型回答设计问题（逻辑 / 状态模型，或 UI 该长什么样） | 模型可触发 |
+| `handoff` | 把会话压成交接文档（写系统临时目录），供下个会话拾起 | 手打 |
+| `grilling` | 设计树盘问（被 `grill-with-docs` 等调用） | 模型可触发 |
+| `domain-modeling` | 建立、打磨领域词汇表（`GLOSSARY.md`）与 ADR | 模型可触发 |
+| `tdd` | 红 → 绿循环的参照：好测试、接缝、反模式 | 模型可触发 |
+| `codebase-design` | 深模块词汇：模块 / 接口 / 深度 / 接缝 / 适配器 / 杠杆 / 局部性 | 模型可触发 |
+| `writing-for-agents` | 给 agent 写文档（技能、`AGENTS.md`）的参考 | 模型可触发 |
+| `doc-quality` | 审阅文档「列举了却不展开」的毛病 | 模型可触发 |
+| `show-me` | 用图与代码形状草图把当前话题画出来 | 手打 |
 
-**② 尤其重要**：它是判断一个技能是否只是空操作的唯一方式。没有它，你分不清「技能起作用了」和「技能什么都没做」——尝试 01 做了五代都没发现产出等于直接聊，原因就在这里。
-
-三条判据的推理、失败的四层原因、以及从中提炼出的**五条可复用判断**，都在 [`attempts/01-codeview.md`](docs/attempts/01-codeview.md)。
-
-## 目录
-
-| 路径 | 是什么 |
-|---|---|
-| `workflow/` | 自己的技能（交付层）：12 个，见下节 |
-| `docs/workflow-notes.md` | 当前的设计与进度 |
-| `docs/attempts/` | 尝试记录，一次一条 |
-| `docs/upstream-mirror.md` | 上游技能库的存档说明：DSH 挂载规则、11 个技能的减法判据 |
-| `docs/learn-*/` | 上游阅读路线与译文（mattpocock / superpowers / openspec） |
-| `reference/` | 三套上游参考的存档（只读，无 `.git`，版本 pin 见其 `README.md`） |
-| `openspec/` | OpenSpec 工作区（已初始化，尚无 change） |
-
-## workflow 技能
-
-主线（已全部中文化、本地化：产物写 `docs/specs/`，不依赖任何 tracker）：
-
-```
-/grill-with-docs → /to-plan → /implement → /code-review → /retro
-```
-
-| 角色 | 技能 |
-|---|---|
-| 主流程 | `grill-with-docs` · `to-plan` · `implement` · `code-review` · `retro` |
-| 支撑（被主线调用） | `grilling` · `domain-modeling` · `tdd` · `codebase-design` · `writing-for-agents` |
-| 自写 | `doc-quality`（中文）· `show-me`（上游原文照搬，英文） |
-
-来源 `reference/mattpocock-skills @ 49dd158`；原样导入基线见提交 `010369f`，其后的中译与本地化改动均在此之上。技能尚未挂载（挂载方式见 `docs/upstream-mirror.md` 的发现规则）。
+维护者材料（设计笔记、尝试记录、上游译文）都在 [`docs/`](docs/)。
 
