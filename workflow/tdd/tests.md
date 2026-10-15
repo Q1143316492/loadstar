@@ -1,8 +1,8 @@
-# Good and Bad Tests
+# 好测试与坏测试
 
-## Good Tests
+## 好测试
 
-**Integration-style**: Test through real interfaces, not mocks of internal parts.
+**集成风格**：通过真实接口测试，而不是对内部部件做 mock。
 
 ```typescript
 // GOOD: Tests observable behavior
@@ -14,17 +14,17 @@ test("user can checkout with valid cart", async () => {
 });
 ```
 
-Characteristics:
+特征：
 
-- Tests behavior users/callers care about
-- Uses public API only
-- Survives internal refactors
-- Describes WHAT, not HOW
-- One logical assertion per test
+- 测试用户/调用方在意的行为
+- 只使用公开 API
+- 能挺过内部重构
+- 描述 WHAT，而不是 HOW
+- 每个测试一个逻辑断言
 
-## Bad Tests
+## 坏测试
 
-**Implementation-detail tests**: Coupled to internal structure.
+**实现细节测试**：与内部结构耦合。
 
 ```typescript
 // BAD: Tests implementation details
@@ -35,14 +35,14 @@ test("checkout calls paymentService.process", async () => {
 });
 ```
 
-Red flags:
+危险信号：
 
-- Mocking internal collaborators
-- Testing private methods
-- Asserting on call counts/order
-- Test breaks when refactoring without behavior change
-- Test name describes HOW not WHAT
-- Verifying through external means instead of interface
+- mock 内部协作者
+- 测试私有方法
+- 对调用次数/调用顺序做断言
+- 重构但行为未变时测试就破
+- 测试名描述 HOW 而不是 WHAT
+- 通过外部手段而不是接口来验证
 
 ```typescript
 // BAD: Bypasses interface to verify
@@ -60,7 +60,7 @@ test("createUser makes user retrievable", async () => {
 });
 ```
 
-**Tautological tests**: Expected value restates the implementation, so the test passes by construction.
+**同义反复的测试**：期望值只是把实现重述一遍，于是测试靠构造就通过。
 
 ```typescript
 // BAD: Expected value is recomputed the way the code computes it

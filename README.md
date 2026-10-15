@@ -38,11 +38,27 @@
 
 | 路径 | 是什么 |
 |---|---|
-| `workflow/` | 自己的技能（交付层，目前只有 `doc-quality`） |
+| `workflow/` | 自己的技能（交付层）：12 个，见下节 |
 | `docs/workflow-notes.md` | 当前的设计与进度 |
 | `docs/attempts/` | 尝试记录，一次一条 |
 | `docs/upstream-mirror.md` | 上游技能库的存档说明：DSH 挂载规则、11 个技能的减法判据 |
 | `docs/learn-*/` | 上游阅读路线与译文（mattpocock / superpowers / openspec） |
 | `reference/` | 三套上游参考的存档（只读，无 `.git`，版本 pin 见其 `README.md`） |
 | `openspec/` | OpenSpec 工作区（已初始化，尚无 change） |
+
+## workflow 技能
+
+主线（已全部中文化、本地化：产物写 `docs/specs/`，不依赖任何 tracker）：
+
+```
+/grill-with-docs → /to-plan → /implement → /code-review → /retro
+```
+
+| 角色 | 技能 |
+|---|---|
+| 主流程 | `grill-with-docs` · `to-plan` · `implement` · `code-review` · `retro` |
+| 支撑（被主线调用） | `grilling` · `domain-modeling` · `tdd` · `codebase-design` · `writing-for-agents` |
+| 自写 | `doc-quality`（中文）· `show-me`（上游原文照搬，英文） |
+
+来源 `reference/mattpocock-skills @ 49dd158`；原样导入基线见提交 `010369f`，其后的中译与本地化改动均在此之上。技能尚未挂载（挂载方式见 `docs/upstream-mirror.md` 的发现规则）。
 

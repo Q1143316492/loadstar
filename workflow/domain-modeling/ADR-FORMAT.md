@@ -1,47 +1,47 @@
-# ADR Format
+# ADR 格式
 
-ADRs live in `docs/adr/` and use sequential numbering: `0001-slug.md`, `0002-slug.md`, etc.
+ADR 存放在 `docs/adr/`，用顺序编号：`0001-slug.md`、`0002-slug.md` 等。
 
-Create the `docs/adr/` directory lazily: only when the first ADR is needed.
+惰性创建 `docs/adr/` 目录：只在需要第一篇 ADR 时。
 
-## Template
+## 模板
 
 ```md
-# {Short title of the decision}
+# {决策的简短标题}
 
-{1-3 sentences: what's the context, what did we decide, and why.}
+{1-3 句话：背景是什么、决定了什么、为什么。}
 ```
 
-That's it. An ADR can be a single paragraph. The value is in recording *that* a decision was made and *why*, not in filling out sections.
+就这样。一篇 ADR 可以只有一段。价值在于记录*确实*做了某个决策、以及*为什么*，而不在于把各小节填满。
 
-## Optional sections
+## 可选小节
 
-Only include these when they add genuine value. Most ADRs won't need them.
+只在它们带来真正价值时才包含。大多数 ADR 不需要。
 
-- **Status** frontmatter (`proposed | accepted | deprecated | superseded by ADR-NNNN`): useful when decisions are revisited
-- **Considered Options**: only when the rejected alternatives are worth remembering
-- **Consequences**: only when non-obvious downstream effects need to be called out
+- **Status** frontmatter（`proposed | accepted | deprecated | superseded by ADR-NNNN`）：在决策可能被重新审视时有用
+- **Considered Options**：只在被拒绝的备选方案值得记住时
+- **Consequences**：只在需要点出不明显的下游影响时
 
-## Numbering
+## 编号
 
-Scan `docs/adr/` for the highest existing number and increment by one.
+扫描 `docs/adr/` 找出已有的最大编号，加一。
 
-## When to offer an ADR
+## 何时提议 ADR
 
-All three of these must be true:
+以下三条必须全部成立：
 
-1. **Hard to reverse**: the cost of changing your mind later is meaningful
-2. **Surprising without context**: a future reader will look at the code and wonder "why on earth did they do it this way?"
-3. **The result of a real trade-off**: there were genuine alternatives and you picked one for specific reasons
+1. **难以逆转**：以后改变主意代价显著
+2. **脱离上下文会令人意外**：未来的读者会看着代码想「他们到底为什么这么做？」
+3. **真实权衡的结果**：确实存在其他可选方案，而你出于具体理由选了这一个
 
-If a decision is easy to reverse, skip it: you'll just reverse it. If it's not surprising, nobody will wonder why. If there was no real alternative, there's nothing to record beyond "we did the obvious thing."
+容易逆转的决策就跳过：到时候直接逆转就行。不令人意外的，没人会去想为什么。没有真实替代方案的，除了「我们做了显而易见的事」，没什么可记的。
 
-### What qualifies
+### 什么样的决策够格
 
-- **Architectural shape.** "We're using a monorepo." "The write model is event-sourced, the read model is projected into Postgres."
-- **Integration patterns between contexts.** "Ordering and Billing communicate via domain events, not synchronous HTTP."
-- **Technology choices that carry lock-in.** Database, message bus, auth provider, deployment target. Not every library: just the ones that would take a quarter to swap out.
-- **Boundary and scope decisions.** "Customer data is owned by the Customer context; other contexts reference it by ID only." The explicit no-s are as valuable as the yes-s.
-- **Deliberate deviations from the obvious path.** "We're using manual SQL instead of an ORM because X." Anything where a reasonable reader would assume the opposite. These stop the next engineer from "fixing" something that was deliberate.
-- **Constraints not visible in the code.** "We can't use AWS because of compliance requirements." "Response times must be under 200ms because of the partner API contract."
-- **Rejected alternatives when the rejection is non-obvious.** If you considered GraphQL and picked REST for subtle reasons, record it; otherwise someone will suggest GraphQL again in six months.
+- **架构形态。**「我们用的是 monorepo。」「写模型是事件溯源的，读模型投影进 Postgres。」
+- **上下文之间的集成模式。**「Ordering 与 Billing 通过领域事件通信，不用同步 HTTP。」
+- **带有锁定效应的技术选型。** 数据库、消息总线、认证服务商、部署目标。不是每个库：只是换掉要花一个季度的那些。
+- **边界与范围决策。**「Customer 数据归 Customer 上下文所有；其他上下文只按 ID 引用。」明确说「不」的地方，和明确说「是」的地方一样有价值。
+- **对显而易见路径的有意偏离。**「因为 X，我们用手写 SQL 而不用 ORM。」凡是讲道理的读者会假设相反做法的地方。这些能阻止下一位工程师去「修」一件本是有意为之的事。
+- **代码里看不见的约束。**「由于合规要求，我们不能用 AWS。」「由于合作方 API 合同，响应时间必须低于 200ms。」
+- **拒绝理由不明显时的被拒备选方案。** 如果你考虑过 GraphQL 却出于微妙的理由选了 REST，把它记下来；否则六个月后会有人再次提议 GraphQL。
