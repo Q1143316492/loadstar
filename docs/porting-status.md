@@ -1,10 +1,10 @@
 # mattpocock 技能移植状态
 
-`reference/mattpocock-skills`（`@ 49dd158`）共 **38 个技能**，本表逐个记录去向。技能在 `workflow/` 内部的关系（主干 / 匝道 / 保养 / 底层）见 [`workflow-map.md`](workflow-map.md)；第一批减法 11 个的原始判据见 [`upstream-mirror.md`](upstream-mirror.md)。
+`reference/mattpocock-skills`（`@ 49dd158`）共 **38 个技能**，本表逐个记录去向。技能在 `workflow/` 内部的关系（主干 / 匝道 / 保养 / 底层）见 [`workflow-map.md`](workflow-map.md)。
 
 图例：✅ 已移植 · ❌ 不做 · ⏸️ 暂缓（条件到了再搬）
 
-## ✅ 已移植（17 个 → 16 个目录）
+## ✅ 已移植（18 个 → 17 个目录）
 
 | 上游技能 | workflow 目录 | 本地化要点 |
 |---|---|---|
@@ -24,12 +24,15 @@
 | `prototype` | `cwl-prototype/` | 中译（含 LOGIC、UI）；分支产物保留 web 形态，首次使用时按技术栈再本地化 |
 | `handoff` | `cwl-handoff/` | 中译 |
 | `wayfinder` | `cwl-wayfinder/` | 中译 + 本地化：地图与决策 ticket 改为 `docs/maps/<努力名>/`（`map.md` + `tickets/NN-*.md`），认领 / 阻塞 / 前沿全部换成文件字段（`类型` / `状态` / `阻塞于`） |
+| `wait-what` | `cwl-wait-what/` | 中译；description 面向人一行。**2026-10-16 复检改判**：原判「不做」（意思等价 + 5 分钟可搬），后按「镜头型技能」改判——与 `cwl-show-me` 同族：零设置、全场景、口头禅即修 |
 
 > `workflow/` 里另有 3 个非 matt 技能：`cwl-doc-quality`（自写）、`cwl-ask`（自写路由器，形制来自上游 `ask-matt`）、`cwl-show-me`（humanlayer，原文照搬）。
 
-## ❌ 不做（16 个）
+## ❌ 不做（15 个）
 
-### 第一批减法（2026-10-13，11 个；判据详见 `upstream-mirror.md`）
+### 第一批减法（2026-10-13，11 个）
+
+判据来源：[`learn-mattpocock/READING-mattpocock.md`](learn-mattpocock/READING-mattpocock.md) 第 5 节——工具适配层、非核心桶、写作教学线一律不读。
 
 | 技能 | 判据 |
 |---|---|
@@ -50,7 +53,6 @@
 | `pr` | 使用场景不经 PR：自己的库直推 `main`；公司靠需求文档而非 PR 描述。模型可触发但触发面不存在 |
 | `ask-matt` | 上游版不做（流程图引用未移植技能、带 setup 前置）。**2026-10-16 改判衍生**：做了自己的版本 `cwl-ask`——地图不会跟着技能挂载走，仓外需要它；`PHASE-BOUNDARIES.md` 的五选项已收入其简版 |
 | `grill-me` | 冗余：`cwl-grilling` 模型可触发即手工可打；仓库场景已有 `cwl-grill-with-docs` |
-| `wait-what` | 6 行；「没看懂，用大白话重讲」等价；要固定触发词的话搬它只要 5 分钟 |
 
 ### 2026-10-16 追加（worktree 禁用改判）
 
@@ -71,7 +73,7 @@ in-progress 桶、上游未晋级：`chief-of-staff`、`claude-handoff`、`loop-
 
 ---
 
-**合计 38** = 已移植 17 + 不做 16 + 暂缓 2 + 不在范围 3。
+**合计 38** = 已移植 18 + 不做 15 + 暂缓 2 + 不在范围 3。
 
 > 本文每次技能体检 / 移植后更新。
 

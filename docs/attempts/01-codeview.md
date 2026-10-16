@@ -9,7 +9,7 @@
 实验对象：**EqZero**（UE C++ 项目，623 个文本文件 / 72,645 行 / 172 目录，55 个目录区域）、  
 **pi-mono**（TS monorepo，1,927 文件，14 个包）。两份源码仅用于测试，不入归档。
 
-> 所属系列：[`README.md`](README.md) 的「尝试记录」索引与通用结论。本条产出（三条判据、可用件）已摘进 [`README.md`](README.md) 与 [`../workflow-notes.md`](../workflow-notes.md)。
+> 所属系列：[`README.md`](README.md) 的「尝试记录」索引与通用结论。本条产出（三条判据、可用件）已摘进 [`README.md`](README.md)。
 
 ---
 

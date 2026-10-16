@@ -29,6 +29,7 @@
 | `cwl-improve-codebase-architecture` | 扫描「加深机会」→ 生成 HTML 报告 → 选中后进盘问回路 | 手打 |
 | `cwl-prototype` | 一次性原型回答设计问题（逻辑 / 状态模型，或 UI 该长什么样） | 模型可触发 |
 | `cwl-handoff` | 把会话压成交接文档（写系统临时目录），供下个会话拾起 | 手打 |
+| `cwl-wait-what` | 哪条没看懂喊一声：补上下文、换大白话、重讲一遍 | 手打 |
 | `cwl-grilling` | 设计树盘问（被 `cwl-grill-with-docs` 等调用） | 模型可触发 |
 | `cwl-domain-modeling` | 建立、打磨领域词汇表（`GLOSSARY.md`）与 ADR | 模型可触发 |
 | `cwl-tdd` | 红 → 绿循环的参照：好测试、接缝、反模式 | 模型可触发 |

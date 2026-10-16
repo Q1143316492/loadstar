@@ -2,7 +2,7 @@
 
 `workflow/` 技能的索引：谁先谁后、谁被谁调用、哪些还欠着。
 
-状态：**✓ 已实现**（19 个，中译 + 本地化完成，可用）· **⏳ 暂缓**（2 个，条件到了再搬）· **❌ 不做**（5 个，已判定不移植；判据见 [`porting-status.md`](porting-status.md)）。
+状态：**✓ 已实现**（20 个，中译 + 本地化完成，可用）· **⏳ 暂缓**（2 个，条件到了再搬）· **❌ 不做**（4 个，已判定不移植；判据见 [`porting-status.md`](porting-status.md)）。
 
 ```
 入口：  /cwl-ask（拿不准用哪个？按处境指路）
@@ -12,7 +12,7 @@
         /cwl-diagnosing-bugs ──────────────────→(修好后 /cwl-retro)
 保养：  /cwl-improve-codebase-architecture ──→(候选并入 /cwl-grill-with-docs)
 旁路：  /cwl-prototype ⇄ /cwl-handoff 桥（出入）
-随时：  /cwl-handoff · /cwl-show-me · /cwl-doc-quality
+随时：  /cwl-handoff · /cwl-wait-what · /cwl-show-me · /cwl-doc-quality
 底层：  /cwl-grilling · /cwl-domain-modeling · /cwl-codebase-design · /cwl-tdd（被引用，不主动跑）
 ```
 
@@ -51,7 +51,7 @@
 | `cwl-prototype` | ✓ | 一次性原型回答设计问题（逻辑 / 状态模型，或 UI 该长什么样） |
 | `cwl-handoff` | ✓ | 把会话压成交接文档（写系统临时目录），供下个会话拾起；也作 `cwl-prototype` 的出入桥 |
 | `grill-me` | ❌ | 没有仓库场合的 `cwl-grilling`（3 行路由） |
-| `wait-what` | ❌ | 「没听懂，重讲」：给上下文、简化措辞、带上词汇表语言 |
+| `cwl-wait-what` | ✓ | 「没听懂，重讲」：补上下文、换大白话、用回术语（上游 `wait-what`，2026-10-16 从 ❌ 改判移植） |
 | `to-questionnaire` | ⏳ | 把「我答不了、得问别人」变成一份问卷 |
 | `ask-matt` | ❌ | 路由器：按你的处境推荐用哪个技能（与本文地图重复，不搬） |
 | `wizard` | ⏳ | 生成 bash 向导，陪人一步步做只有人能做的操作 |
@@ -76,6 +76,6 @@
 
 ---
 
-- 挂载方法、技能发现规则，以及「第一批减法」删掉的 11 个技能与判据：见 [`upstream-mirror.md`](upstream-mirror.md)。
+- 技能发现规则与挂载注意（DSH 实测）：见 [`upstream-mirror.md`](upstream-mirror.md)。
 - 上游 38 个技能逐个的去向（已移植 / 不做 / 暂缓）：见 [`porting-status.md`](porting-status.md)。
 - ⏳ 的对应文件都在 [`reference/mattpocock-skills/`](../reference/mattpocock-skills/) 里，条件到了可直接取用移植；❌ 的不再规划移植。

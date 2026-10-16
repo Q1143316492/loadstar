@@ -25,6 +25,7 @@ disable-model-invocation: true
 | 库越改越难受，想巡检 | `cwl-improve-codebase-architecture` |
 | 设计问题在纸上说不清 | `cwl-prototype` |
 | 换会话 / 换人，要交接 | `cwl-handoff` |
+| 「它刚才说的没看懂」 | `cwl-wait-what` |
 | 「别说了，画给我看」 | `cwl-show-me` |
 | 文档列举了却不展开、读不顺 | `cwl-doc-quality` |
 | 一次性的小事 | 什么都不用，直接说 |
@@ -55,6 +56,7 @@ disable-model-invocation: true
 
 - **`cwl-prototype`** —— 一个设计问题（状态模型对不对、UI 该长什么样）纸上说不清时，用一次性原型给出能跑 / 能看的答案。要离开当前会话去做原型、再带结果回来，用 `cwl-handoff` 当进出门。
 - **`cwl-handoff`** —— 只在**要携带**时用：换 harness、换目录、交给别人、阶段中途分叉。同一个 harness、同一个目录，就不用它（见「会话边界」）。
+- **`cwl-wait-what`** —— 哪条消息没看懂，喊一声：把它重讲一遍（补上下文 + 换大白话 + 用回术语）。与 `cwl-show-me` 同族：一条口头禅立刻见效。
 - **`cwl-show-me`** —— 解释不清时换个呈现：图、调用树、代码形状草图。
 - **`cwl-doc-quality`** —— 审一篇「列举了却不展开」的文档；报告、README、设计文档都行。
 
