@@ -2,7 +2,7 @@
 
 `workflow/` 技能的索引：谁先谁后、谁被谁调用、哪些还欠着。
 
-状态：**✓ 已实现**（20 个，中译 + 本地化完成，可用）· **⏳ 暂缓**（2 个，条件到了再搬）· **❌ 不做**（4 个，已判定不移植；判据见 [`porting-status.md`](porting-status.md)）。
+状态：**✓ 已实现**（22 个，中译 + 本地化完成，可用）· **⏳ 暂缓**（2 个，条件到了再搬）· **❌ 不做**（3 个，已判定不移植；判据见 [`porting-status.md`](porting-status.md)）。
 
 ```
 入口：  /cwl-ask（拿不准用哪个？按处境指路）
@@ -12,7 +12,7 @@
         /cwl-diagnosing-bugs ──────────────────→(修好后 /cwl-retro)
 保养：  /cwl-improve-codebase-architecture ──→(候选并入 /cwl-grill-with-docs)
 旁路：  /cwl-prototype ⇄ /cwl-handoff 桥（出入）
-随时：  /cwl-handoff · /cwl-wait-what · /cwl-show-me · /cwl-doc-quality
+随时：  /cwl-handoff · /cwl-wait-what · /cwl-show-me · /cwl-doc-quality · /cwl-teach
 底层：  /cwl-grilling · /cwl-domain-modeling · /cwl-codebase-design · /cwl-tdd（被引用，不主动跑）
 ```
 
@@ -26,9 +26,9 @@
 | `cwl-to-plan` | ✓ | 把对话综合成 spec + 曳光弹 ticket，写入 `docs/specs/<slug>/`（= 上游 `to-spec` + `to-tickets` 的合并） |
 | `cwl-implement` | ✓ | 按 ticket 实现，在约定接缝上调 `cwl-tdd`；收尾调 `cwl-code-review`；不自动提交 |
 | `cwl-code-review` | ✓ | 对固定点起的 diff 做两轴评审（标准 / Spec），并行子智能体，只读只报告 |
+| `cwl-pr` | ✓ | 走 PR 时写正文：最小视图（Summary）、前后证据（Evidence）、单行道 / 双行道与爆炸半径（Merge Danger） |
 | `cwl-retro` | ✓ | 复盘会话：提的是环境改进（导航、检查、规范），不是代码意见 |
 | `implement-spec` | ❌ | 整份 spec 并行实现（每票一个 worktree）——游戏项目禁用 worktree，核心机制不可用，不移植 |
-| `pr` | ❌ | 写 PR 正文：Summary / Evidence / Merge Danger |
 
 ## 匝道：先产生工作，再并入主干
 
@@ -50,6 +50,7 @@
 |---|---|---|
 | `cwl-prototype` | ✓ | 一次性原型回答设计问题（逻辑 / 状态模型，或 UI 该长什么样） |
 | `cwl-handoff` | ✓ | 把会话压成交接文档（写系统临时目录），供下个会话拾起；也作 `cwl-prototype` 的出入桥 |
+| `cwl-teach` | ✓ | 多会话教学：当前目录即教学工作区（`MISSION.md` / `lessons/*.html` / `learning-records/` / `assets/`），一节课一个 HTML；不在工作项目里跑，另开目录（上游 `teach`，2026-10-19 从 ❌ 改判移植） |
 | `grill-me` | ❌ | 没有仓库场合的 `cwl-grilling`（3 行路由） |
 | `cwl-wait-what` | ✓ | 「没听懂，重讲」：补上下文、换大白话、用回术语（上游 `wait-what`，2026-10-16 从 ❌ 改判移植） |
 | `to-questionnaire` | ⏳ | 把「我答不了、得问别人」变成一份问卷 |

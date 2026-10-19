@@ -4,7 +4,7 @@
 
 ## 来自哪里
 
-- **技能**：主体来自 [mattpocock/skills](https://github.com/mattpocock/skills)（`@ 49dd158`，原样导入基线见提交 `010369f`），之后做了中译与本地化——去掉 tracker 依赖，规划产物写本地 `docs/specs/`。`cwl-show-me` 来自 [humanlayer/skills](https://github.com/humanlayer/skills)（原文照搬，未译）；`cwl-doc-quality` 与 `cwl-ask` 自写。
+- **技能**：主体来自 [mattpocock/skills](https://github.com/mattpocock/skills)（`@ 49dd158`，原样导入基线见提交 `010369f`），之后做了中译与本地化——去掉 tracker 依赖，规划产物写本地 `docs/specs/`。`cwl-show-me` 来自 [humanlayer/skills](https://github.com/humanlayer/skills)（原文照搬，未译；`cwl-pr` 的 Summary 视觉菜单亦取自该技能）；`cwl-doc-quality` 与 `cwl-ask` 自写。
 - **参考存档**：[`reference/`](reference/) 存着三套上游库的纯文件快照（mattpocock / openspec / superpowers，只读；版本 pin 见其 [`README.md`](reference/README.md)），供取材用。
 
 ## 安装
@@ -22,6 +22,7 @@
 | `cwl-to-plan` | 把对话综合成 spec + 曳光弹 ticket，写入 `docs/specs/<slug>/` | 手打 |
 | `cwl-implement` | 按 ticket/spec 实现（调 `cwl-tdd`）；收尾调 `cwl-code-review`；不自动提交 | 手打 |
 | `cwl-code-review` | 对固定点起的 diff 做两轴评审（标准 / Spec），只读只报告 | 模型可触发 |
+| `cwl-pr` | 写 PR 正文：最小视图（Summary）/ 前后证据（Evidence）/ 合并风险（Merge Danger） | 模型可触发 |
 | `cwl-retro` | 复盘会话，给环境改进建议 | 手打 |
 | `cwl-wayfinder` | 大块迷雾努力：把决策 ticket 画成地图逐张解决，出口并入 `cwl-to-plan` | 手打 |
 | `cwl-diagnosing-bugs` | 疑难 bug 的诊断回路：先建能打红的反馈回路，再谈原因 | 手打 |
@@ -29,6 +30,7 @@
 | `cwl-improve-codebase-architecture` | 扫描「加深机会」→ 生成 HTML 报告 → 选中后进盘问回路 | 手打 |
 | `cwl-prototype` | 一次性原型回答设计问题（逻辑 / 状态模型，或 UI 该长什么样） | 模型可触发 |
 | `cwl-handoff` | 把会话压成交接文档（写系统临时目录），供下个会话拾起 | 手打 |
+| `cwl-teach` | 多会话教学：把当前目录当有状态的教学工作区，一节课一个 HTML | 手打 |
 | `cwl-wait-what` | 哪条没看懂喊一声：补上下文、换大白话、重讲一遍 | 手打 |
 | `cwl-grilling` | 设计树盘问（被 `cwl-grill-with-docs` 等调用） | 模型可触发 |
 | `cwl-domain-modeling` | 建立、打磨领域词汇表（`GLOSSARY.md`）与 ADR | 模型可触发 |

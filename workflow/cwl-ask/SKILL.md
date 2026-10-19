@@ -18,6 +18,7 @@ disable-model-invocation: true
 | 聊透了，要变成可执行计划 | `cwl-to-plan` |
 | 手上有计划 / ticket，要写代码 | `cwl-implement` |
 | 代码写完了，要挑毛病 | `cwl-code-review` |
+| 改动要发 PR，要写正文 | `cwl-pr` |
 | 干完一段，想改进环境 | `cwl-retro` |
 | 想法太大，一个会话装不下 | `cwl-wayfinder` |
 | 东西坏了，且难缠 | `cwl-diagnosing-bugs` |
@@ -39,7 +40,7 @@ disable-model-invocation: true
 1. **`cwl-grill-with-docs`** —— 盘问澄清；边盘边把术语写进 `GLOSSARY.md`、把决策落成 ADR。想法还糊从这里开始。
 2. **`cwl-to-plan`** —— 把对话综合成 spec + 一组曳光弹 ticket（写进 `docs/specs/<slug>/`，ticket 带「阻塞于」字段）。它**不做访谈**——只综合已聊过的；要再盘，回上一步。
 3. **`cwl-implement`** —— 按 ticket 或 spec 实现，在约定接缝上调 `cwl-tdd`。**不自动提交**：做完给你改动概要和一份建议的提交信息，提交由你决定。
-4. **`cwl-code-review`** —— 两轴评审（标准 / Spec），只读只报告。`cwl-implement` 收尾会带上它；想单独评审一段 diff 也可以直接用。
+4. **`cwl-code-review`** —— 两轴评审（标准 / Spec），只读只报告。`cwl-implement` 收尾会带上它；想单独评审一段 diff 也可以直接用。要发 PR 时，正文交给 `cwl-pr`。
 5. **`cwl-retro`** —— 在**刚干完的同一个会话里**复盘：提的是环境改进（导航、检查、规范），不是代码意见。
 
 ## 匝道：先产生工作，再并入主流程
