@@ -8,6 +8,8 @@
 
 样例在 `packages/agent` 上实跑一份给你看；规格以「你看一眼能不能用」为准。
 
+参考：[`../research/module-viewers.md`](../research/module-viewers.md)（Uncle Bob 的 `uml-viewer` / `arch-view`：分层矩形 + 入/出边三角 + 下钻、深度上限的画法）。
+
 类型：prototype
 状态：待办
 阻塞于：01

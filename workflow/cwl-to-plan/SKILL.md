@@ -1,6 +1,6 @@
 ---
 name: cwl-to-plan
-description: "把当前对话转成一份计划——一份 spec 加一组曳光弹 ticket——写入本地 docs/specs/：不做访谈，只综合你已经讨论过的内容。"
+description: "把当前对话转成一份计划——一份 spec 加一组曳光弹（tracer bullet）ticket——写入本地 docs/specs/：不做访谈，只综合你已经讨论过的内容。"
 disable-model-invocation: true
 ---
 
@@ -103,7 +103,7 @@ docs/specs/<feature-slug>/
 
 ### 3. 起草垂直切片
 
-把工作拆成**曳光弹** ticket。
+把工作拆成**曳光弹（tracer bullet）** ticket。
 
 <vertical-slice-rules>
 
