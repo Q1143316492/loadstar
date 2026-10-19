@@ -25,7 +25,7 @@
 | `cwl-grill-with-docs` | ✓ | 盘问澄清想法；边盘边把术语写进词汇表、把决策落成 ADR（调 `cwl-grilling` + `cwl-domain-modeling`） |
 | `cwl-to-plan` | ✓ | 把对话综合成 spec + 曳光弹 ticket，写入 `docs/specs/<slug>/`（= 上游 `to-spec` + `to-tickets` 的合并） |
 | `cwl-implement` | ✓ | 按 ticket 实现，在约定接缝上调 `cwl-tdd`；收尾调 `cwl-code-review`；不自动提交 |
-| `cwl-code-review` | ✓ | 对固定点起的 diff 做两轴评审（标准 / Spec），并行子智能体，只读只报告 |
+| `cwl-code-review` | ✓ | 对固定点起的 diff 做两轴评审（标准 / Spec），并行子智能体 |
 | `cwl-pr` | ✓ | 走 PR 时写正文：最小视图（Summary）、前后证据（Evidence）、单行道 / 双行道与爆炸半径（Merge Danger） |
 | `cwl-retro` | ✓ | 复盘会话：提的是环境改进（导航、检查、规范），不是代码意见 |
 | `implement-spec` | ❌ | 整份 spec 并行实现（每票一个 worktree）——游戏项目禁用 worktree，核心机制不可用，不移植 |

@@ -11,7 +11,7 @@
 | `grill-with-docs` | `cwl-grill-with-docs/` | 中译；正文原样（调 `cwl-grilling` + `cwl-domain-modeling`） |
 | `to-spec` + `to-tickets` | `cwl-to-plan/` | **合并为一步**（对齐 OpenSpec `propose` 的形状）；产物写本地 `docs/specs/`，剥掉 setup / tracker / 标签 |
 | `implement` | `cwl-implement/` | 收尾改为「不提交」（报告改动 + 建议提交信息） |
-| `code-review` | `cwl-code-review/` | 只读约束（不提交 / 不暂存 / 不 fetch）；支持未提交改动的 diff；解除 setup 依赖 |
+| `code-review` | `cwl-code-review/` | 不提交 / 不暂存 / 不 fetch；支持未提交改动的 diff；解除 setup 依赖 |
 | `pr` | `cwl-pr/` | 中译；模板与 Summary 视觉菜单原样保留（代码块英文） |
 | `retro` | `cwl-retro/` | 中译 |
 | `grilling` | `cwl-grilling/` | 中译 |
