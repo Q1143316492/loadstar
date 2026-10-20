@@ -1,8 +1,8 @@
 # ADR 格式
 
-ADR 存放在 `docs/adr/`，用顺序编号：`0001-slug.md`、`0002-slug.md` 等。
+ADR 存放在 `docs/workflow/adr/`，用顺序编号：`0001-slug.md`、`0002-slug.md` 等。
 
-惰性创建 `docs/adr/` 目录：只在需要第一篇 ADR 时。
+惰性创建 `docs/workflow/adr/` 目录：只在需要第一篇 ADR 时。
 
 ## 模板
 
@@ -24,7 +24,7 @@ ADR 存放在 `docs/adr/`，用顺序编号：`0001-slug.md`、`0002-slug.md` �
 
 ## 编号
 
-扫描 `docs/adr/` 找出已有的最大编号，加一。
+扫描 `docs/workflow/adr/` 找出已有的最大编号，加一。
 
 ## 何时提议 ADR
 

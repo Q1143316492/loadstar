@@ -2,7 +2,7 @@
 
 `workflow/` 技能的索引：谁先谁后、谁被谁调用、哪些还欠着。
 
-状态：**✓ 已实现**（22 个，中译 + 本地化完成，可用）· **⏳ 暂缓**（2 个，条件到了再搬）· **❌ 不做**（3 个，已判定不移植；判据见 [`porting-status.md`](porting-status.md)）。
+状态：**✓ 已实现**（23 个，中译 + 本地化完成，可用）· **⏳ 暂缓**（2 个，条件到了再搬）· **❌ 不做**（3 个，已判定不移植；判据见 [`porting-status.md`](porting-status.md)）。
 
 ```
 入口：  /cwl-ask（拿不准用哪个？按处境指路）
@@ -12,7 +12,7 @@
         /cwl-diagnosing-bugs ──────────────────→(修好后 /cwl-retro)
 保养：  /cwl-improve-codebase-architecture ──→(候选并入 /cwl-grill-with-docs)
 旁路：  /cwl-prototype ⇄ /cwl-handoff 桥（出入）
-随时：  /cwl-handoff · /cwl-wait-what · /cwl-show-me · /cwl-doc-quality · /cwl-teach
+随时：  /cwl-handoff · /cwl-wait-what · /cwl-show-me · /cwl-doc-quality · /cwl-explore · /cwl-teach
 底层：  /cwl-grilling · /cwl-domain-modeling · /cwl-codebase-design · /cwl-tdd（被引用，不主动跑）
 ```
 
@@ -23,7 +23,7 @@
 | 技能 | 状态 | 做什么 |
 |---|---|---|
 | `cwl-grill-with-docs` | ✓ | 盘问澄清想法；边盘边把术语写进词汇表、把决策落成 ADR（调 `cwl-grilling` + `cwl-domain-modeling`） |
-| `cwl-to-plan` | ✓ | 把对话综合成 spec + 曳光弹 ticket，写入 `docs/specs/<slug>/`（= 上游 `to-spec` + `to-tickets` 的合并） |
+| `cwl-to-plan` | ✓ | 把对话综合成 spec + 曳光弹 ticket，写入 `docs/workflow/specs/<slug>/`（= 上游 `to-spec` + `to-tickets` 的合并） |
 | `cwl-implement` | ✓ | 按 ticket 实现，在约定接缝上调 `cwl-tdd`；收尾调 `cwl-code-review`；不自动提交 |
 | `cwl-code-review` | ✓ | 对固定点起的 diff 做两轴评审（标准 / Spec），并行子智能体 |
 | `cwl-pr` | ✓ | 走 PR 时写正文：最小视图（Summary）、前后证据（Evidence）、单行道 / 双行道与爆炸半径（Merge Danger） |
@@ -48,6 +48,7 @@
 
 | 技能 | 状态 | 做什么 |
 |---|---|---|
+| `cwl-explore` | ✓ | 探索模式：陪用户探索想法、调查问题、澄清需求；只读，不写代码也不写文件（据 openspec `explore` 改写，剥掉 CLI 绑定） |
 | `cwl-prototype` | ✓ | 一次性原型回答设计问题（逻辑 / 状态模型，或 UI 该长什么样） |
 | `cwl-handoff` | ✓ | 把会话压成交接文档（写系统临时目录），供下个会话拾起；也作 `cwl-prototype` 的出入桥 |
 | `cwl-teach` | ✓ | 多会话教学：当前目录即教学工作区（`MISSION.md` / `lessons/*.html` / `learning-records/` / `assets/`），一节课一个 HTML；不在工作项目里跑，另开目录（上游 `teach`，2026-10-19 从 ❌ 改判移植） |
@@ -62,7 +63,7 @@
 | 技能 | 状态 | 做什么 |
 |---|---|---|
 | `cwl-grilling` | ✓ | 设计树盘问（`cwl-grill-with-docs`、`cwl-improve-codebase-architecture` 都引它） |
-| `cwl-domain-modeling` | ✓ | 领域词汇表（`GLOSSARY.md`）与 ADR 的建立、打磨 |
+| `cwl-domain-modeling` | ✓ | 领域词汇表（`docs/workflow/GLOSSARY.md`）与 ADR 的建立、打磨 |
 | `cwl-codebase-design` | ✓ | 深模块词汇：模块 / 接口 / 深度 / 接缝 / 适配器 / 杠杆 / 局部性（含 DEEPENING、DESIGN-IT-TWICE） |
 | `cwl-tdd` | ✓ | 红 → 绿循环的参照：好测试、接缝、反模式（含 tests、mocking） |
 | `cwl-writing-for-agents` | ✓ | 给 agent 写文档的参考（`cwl-retro` 引它；含 SKILL-MECHANICS） |

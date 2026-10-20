@@ -14,6 +14,7 @@ disable-model-invocation: true
 
 | 你的处境 | 用它 |
 |---|---|
+| 只是想聊清楚，不要流程和产物 | `cwl-explore` |
 | 有个想法，还没想透 | `cwl-grill-with-docs` |
 | 聊透了，要变成可执行计划 | `cwl-to-plan` |
 | 手上有计划 / ticket，要写代码 | `cwl-implement` |
@@ -29,6 +30,7 @@ disable-model-invocation: true
 | 「它刚才说的没看懂」 | `cwl-wait-what` |
 | 「别说了，画给我看」 | `cwl-show-me` |
 | 文档列举了却不展开、读不顺 | `cwl-doc-quality` |
+| 想分几次把一个主题学完 | `cwl-teach` |
 | 一次性的小事 | 什么都不用，直接说 |
 
 速查给答案，下面几节给例外和口径。
@@ -37,15 +39,15 @@ disable-model-invocation: true
 
 盘问 → 计划这两步要在**一个不中断的上下文窗口**里完成，之后的实现各开新窗：
 
-1. **`cwl-grill-with-docs`** —— 盘问澄清；边盘边把术语写进 `GLOSSARY.md`、把决策落成 ADR。想法还糊从这里开始。
-2. **`cwl-to-plan`** —— 把对话综合成 spec + 一组曳光弹 ticket（写进 `docs/specs/<slug>/`，ticket 带「阻塞于」字段）。它**不做访谈**——只综合已聊过的；要再盘，回上一步。
+1. **`cwl-grill-with-docs`** —— 盘问澄清；边盘边把术语写进 `docs/workflow/GLOSSARY.md`、把决策落成 ADR。想法还糊从这里开始。
+2. **`cwl-to-plan`** —— 把对话综合成 spec + 一组曳光弹 ticket（写进 `docs/workflow/specs/<slug>/`，ticket 带「阻塞于」字段）。它**不做访谈**——只综合已聊过的；要再盘，回上一步。
 3. **`cwl-implement`** —— 按 ticket 或 spec 实现，在约定接缝上调 `cwl-tdd`。**不自动提交**：做完给你改动概要和一份建议的提交信息，提交由你决定。
 4. **`cwl-code-review`** —— 两轴评审（标准 / Spec）。`cwl-implement` 收尾会带上它；想单独评审一段 diff 也可以直接用。要发 PR 时，正文交给 `cwl-pr`。
 5. **`cwl-retro`** —— 在**刚干完的同一个会话里**复盘：提的是环境改进（导航、检查、规范），不是代码意见。
 
 ## 匝道：先产生工作，再并入主流程
 
-- **想法太大、装不进一个会话**（新项目、大特性） → **`cwl-wayfinder`**：把路画成 `docs/maps/<地图名>/` 下的**决策 ticket** 地图，一次解一张，产出决策、不施工。地图清了就**交接**：你把出口并入 `cwl-to-plan`，把一串决策收拢成可执行的计划。它慢且重，只为真装不下的想法准备——范围明确的特性留在 `cwl-grill-with-docs`。
+- **想法太大、装不进一个会话**（新项目、大特性） → **`cwl-wayfinder`**：把路画成 `docs/workflow/maps/<地图名>/` 下的**决策 ticket** 地图，一次解一张，产出决策、不施工。地图清了就**交接**：你把出口并入 `cwl-to-plan`，把一串决策收拢成可执行的计划。它慢且重，只为真装不下的想法准备——范围明确的特性留在 `cwl-grill-with-docs`。
 - **东西坏了、且难缠**（第一眼看不出的、时好时坏的、两个已知良好状态之间的回归） → **`cwl-diagnosing-bugs`**：它拒绝在建出**能打红的紧回路**之前谈原因，修完带回归测试。修好后在**同一会话**手打 `cwl-retro`，问「什么本可以防住它」；如果发现的是「没有可锁定的接缝」，那是 `cwl-improve-codebase-architecture` 的活。
 - **要查资料** → **`cwl-research`**：后台智能体查一手来源（官方文档、源码），留一张带引用的 Markdown 笔记。拿到后回主流程——它喂思考，不替思考。
 
@@ -55,15 +57,17 @@ disable-model-invocation: true
 
 ## 旁路与随用
 
+- **`cwl-explore`** —— 只想一边想一边聊、不要流程也不要产物时用它：只读、会画图，不写代码也不写文件。想清楚了要变成决策，再进 `cwl-grill-with-docs`。
 - **`cwl-prototype`** —— 一个设计问题（状态模型对不对、UI 该长什么样）纸上说不清时，用一次性原型给出能跑 / 能看的答案。要离开当前会话去做原型、再带结果回来，用 `cwl-handoff` 当进出门。
 - **`cwl-handoff`** —— 只在**要携带**时用：换 harness、换目录、交给别人、阶段中途分叉。同一个 harness、同一个目录，就不用它（见「会话边界」）。
 - **`cwl-wait-what`** —— 哪条消息没看懂，喊一声：把它重讲一遍（补上下文 + 换大白话 + 用回术语）。与 `cwl-show-me` 同族：一条口头禅立刻见效。
 - **`cwl-show-me`** —— 解释不清时换个呈现：图、调用树、代码形状草图。
 - **`cwl-doc-quality`** —— 审一篇「列举了却不展开」的文档；报告、README、设计文档都行。
+- **`cwl-teach`** —— 要跨多次会话学会一个主题：把当前目录当教学工作区（`MISSION.md`、`lessons/*.html`、`learning-records/`），一节课一个 HTML。另开一个目录用它，别在正在工作的项目里跑。
 
 ## 底层：被引用，不用刻意记
 
-五个砖，由上面的技能按需带上（也能直接点名）：**`cwl-grilling`**（盘问原语）、**`cwl-domain-modeling`**（`GLOSSARY.md` 与 ADR）、**`cwl-codebase-design`**（深模块词汇：模块 / 接口 / 深度 / 接缝 / 适配器 / 杠杆 / 局部性）、**`cwl-tdd`**（红 → 绿循环的参照）、**`cwl-writing-for-agents`**（给 agent 写文档的参考）。
+五个砖，由上面的技能按需带上（也能直接点名）：**`cwl-grilling`**（盘问原语）、**`cwl-domain-modeling`**（`docs/workflow/GLOSSARY.md` 与 ADR）、**`cwl-codebase-design`**（深模块词汇：模块 / 接口 / 深度 / 接缝 / 适配器 / 杠杆 / 局部性）、**`cwl-tdd`**（红 → 绿循环的参照）、**`cwl-writing-for-agents`**（给 agent 写文档的参考）。
 
 ## 会话边界：换不换窗口，怎么换
 

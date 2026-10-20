@@ -9,7 +9,7 @@
 | 上游技能 | workflow 目录 | 本地化要点 |
 |---|---|---|
 | `grill-with-docs` | `cwl-grill-with-docs/` | 中译；正文原样（调 `cwl-grilling` + `cwl-domain-modeling`） |
-| `to-spec` + `to-tickets` | `cwl-to-plan/` | **合并为一步**（对齐 OpenSpec `propose` 的形状）；产物写本地 `docs/specs/`，剥掉 setup / tracker / 标签 |
+| `to-spec` + `to-tickets` | `cwl-to-plan/` | **合并为一步**（对齐 OpenSpec `propose` 的形状）；产物写本地 `docs/workflow/specs/`，剥掉 setup / tracker / 标签 |
 | `implement` | `cwl-implement/` | 收尾改为「不提交」（报告改动 + 建议提交信息） |
 | `code-review` | `cwl-code-review/` | 不提交 / 不暂存 / 不 fetch；支持未提交改动的 diff；解除 setup 依赖 |
 | `pr` | `cwl-pr/` | 中译；模板与 Summary 视觉菜单原样保留（代码块英文） |
@@ -25,10 +25,10 @@
 | `prototype` | `cwl-prototype/` | 中译（含 LOGIC、UI）；分支产物保留 web 形态，首次使用时按技术栈再本地化 |
 | `handoff` | `cwl-handoff/` | 中译 |
 | `teach` | `cwl-teach/` | 中译（含 MISSION / RESOURCES / LEARNING-RECORD / GLOSSARY 四个格式文件）；补上上游 `SKILL.md` 断掉的 GLOSSARY-FORMAT 链接（上游只发文件不给入口）；加一句本地化提示：另开目录、别在正在工作的项目里跑。**2026-10-19 改判**：原判「不做」的理由是「与 agent 流程设计无关」——判据本身仍成立，但技能库不只服务工程流；它是零依赖的通用教学机制，不碰 tracker / setup，搬进来不改任何既有技能 |
-| `wayfinder` | `cwl-wayfinder/` | 中译 + 本地化：地图与决策 ticket 改为 `docs/maps/<努力名>/`（`map.md` + `tickets/NN-*.md`），认领 / 阻塞 / 前沿全部换成文件字段（`类型` / `状态` / `阻塞于`） |
+| `wayfinder` | `cwl-wayfinder/` | 中译 + 本地化：地图与决策 ticket 改为 `docs/workflow/maps/<努力名>/`（`map.md` + `tickets/NN-*.md`），认领 / 阻塞 / 前沿全部换成文件字段（`类型` / `状态` / `阻塞于`） |
 | `wait-what` | `cwl-wait-what/` | 中译；description 面向人一行。**2026-10-16 复检改判**：原判「不做」（意思等价 + 5 分钟可搬），后按「镜头型技能」改判——与 `cwl-show-me` 同族：零设置、全场景、口头禅即修 |
 
-> `workflow/` 里另有 3 个非 matt 技能：`cwl-doc-quality`（自写）、`cwl-ask`（自写路由器，形制来自上游 `ask-matt`）、`cwl-show-me`（humanlayer，原文照搬）。
+> `workflow/` 里另有 4 个非 matt 技能：`cwl-doc-quality`（自写）、`cwl-ask`（自写路由器，形制来自上游 `ask-matt`）、`cwl-show-me`（humanlayer，原文照搬）、`cwl-explore`（据 openspec `explore` 改写，剥掉 CLI 绑定与 store 机制）。
 
 ## ❌ 不做（13 个）
 

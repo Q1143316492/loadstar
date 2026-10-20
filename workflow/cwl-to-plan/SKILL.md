@@ -1,8 +1,10 @@
 ---
 name: cwl-to-plan
-description: "把当前对话转成一份计划——一份 spec 加一组曳光弹（tracer bullet）ticket——写入本地 docs/specs/：不做访谈，只综合你已经讨论过的内容。"
+description: "把当前对话转成一份计划——一份 spec 加一组曳光弹（tracer bullet）ticket——写入本地 docs/workflow/specs/：不做访谈，只综合你已经讨论过的内容。"
 disable-model-invocation: true
 ---
+
+**先读 `docs/workflow/AGENTS.md`**（若存在）：本项目自己的工作流约定。
 
 本技能拿当前对话上下文和对代码库的理解，产出**计划**：一份 spec，加一组拆好的 ticket，全部写入本地文件。
 
@@ -11,7 +13,7 @@ disable-model-invocation: true
 产物与目录约定：
 
 ```
-docs/specs/<feature-slug>/
+docs/workflow/specs/<feature-slug>/
 ├── spec.md              ← 第 2 步的产物
 └── tickets/
     ├── 01-<slug>.md     ← 第 5 步的产物（每 ticket 一文件）
@@ -39,7 +41,7 @@ docs/specs/<feature-slug>/
 
 从对话上下文中已有的内容开始工作；用户作为参数传了引用（spec 路径或功能名）的，先把它取来读完。探索仓库，理解代码库的当前状态，如果你还没做过的话。整份计划都要使用项目领域词汇表的术语，并尊重你正在触及的区域中的任何 ADR。
 
-用户给的是**地图**（`docs/maps/<地图名>/` 的路径，或地图名）时，先读 `map.md`，再读「已定决策」指向的票全文。那些是**已定决策**：不重新推、不重新盘问，把它们收拢进 spec 的「实现决策」一节；地图此后只作索引，不当施工清单。地图还没清（前沿仍有待办的票）时，先停下点名还差哪几张——不要带着未决问题写计划。
+用户给的是**地图**（`docs/workflow/maps/<地图名>/` 的路径，或地图名）时，先读 `map.md`，再读「已定决策」指向的票全文。那些是**已定决策**：不重新推、不重新盘问，把它们收拢进 spec 的「实现决策」一节；地图此后只作索引，不当施工清单。地图还没清（前沿仍有待办的票）时，先停下点名还差哪几张——不要带着未决问题写计划。
 
 寻找把代码预重构（prefactor）的机会，让实现更容易。「先让改动变简单，再做那个简单的改动。」
 
@@ -49,7 +51,7 @@ docs/specs/<feature-slug>/
 
 ### 2. 写 spec
 
-用下面的模板写 spec，写入 `docs/specs/<feature-slug>/spec.md`。
+用下面的模板写 spec，写入 `docs/workflow/specs/<feature-slug>/spec.md`。
 
 <spec-template>
 
@@ -146,7 +148,7 @@ docs/specs/<feature-slug>/
 
 ### 5. 写出 ticket 文件
 
-把批准的 ticket 逐个写入 `docs/specs/<feature-slug>/tickets/<NN>-<slug>.md`，从 `01` 开始按依赖顺序编号（阻塞者在前）。每个文件的「阻塞于」列出它所依赖的编号/标题。用下面的模板：每个 ticket 一个文件，绝不合并成一个文件。
+把批准的 ticket 逐个写入 `docs/workflow/specs/<feature-slug>/tickets/<NN>-<slug>.md`，从 `01` 开始按依赖顺序编号（阻塞者在前）。每个文件的「阻塞于」列出它所依赖的编号/标题。用下面的模板：每个 ticket 一个文件，绝不合并成一个文件。
 
 按**前沿（frontier）**推进：任何阻塞者都已完成的 ticket 都可以开始。对于一条纯线性的链条，那就是从上到下。
 

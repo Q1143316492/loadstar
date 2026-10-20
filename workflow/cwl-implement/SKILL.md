@@ -4,6 +4,8 @@ description: "根据一份 spec 或一组 ticket 实现一项工作。"
 disable-model-invocation: true
 ---
 
+**先读 `docs/workflow/AGENTS.md`**（若存在）：本项目自己的工作流约定。
+
 实现用户在 spec 或 ticket 里描述的工作。
 
 如果用户传入了一个 ticket 引用（文件路径或编号），先读回它，并在开始前报出它的标题。引用有歧义就问。

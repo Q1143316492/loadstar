@@ -3,6 +3,8 @@ name: cwl-code-review
 description: "对从某个固定点（commit、分支、tag 或 merge-base）起的改动沿两条轴评审：标准（Standards，代码是否遵循本仓库文档化的编码标准与个人风格？）与 Spec（代码是否符合起源 issue / spec 的要求？）。两条评审以并行子智能体运行、并排报告。用于用户想评审一个分支、一个 PR、进行中的改动，或提出「review since X」时。"
 ---
 
+**先读 `docs/workflow/AGENTS.md`**（若存在）：本项目自己的工作流约定。
+
 对固定点与当前状态之间的 diff 做两条轴的评审：
 
 - **标准（Standards）**：代码是否符合本仓库文档化的编码标准与用户的个人风格（后者主观，仓库优先）？
@@ -32,7 +34,7 @@ description: "对从某个固定点（commit、分支、tag 或 merge-base）起
 
 1. 用户作为参数传入的路径。
 2. 提交信息里引用到的 issue / spec（`#123`、`Closes #45` 等）——能直接取回就取回（比如引用指向仓库内的文件）；取不回就跳过。
-3. `docs/`、`specs/`、`openspec/changes/` 或 `.scratch/` 下、与分支名或功能名匹配的 spec 文件。
+3. `docs/`、`specs/`、`openspec/changes/` 或 `.scratch/` 下、与分支名或功能名匹配的 spec 文件（本仓的规划产物在 `docs/workflow/specs/`）。
 4. 都没找到，就问用户 spec 在哪里。如果用户说没有，**Spec** 子智能体跳过并报告 "no spec available"。
 
 ### 3. 确定标准来源

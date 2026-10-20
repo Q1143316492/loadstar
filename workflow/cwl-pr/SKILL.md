@@ -28,7 +28,7 @@ description: "写 PR 正文时使用：用最小视图讲清改动（Summary）�
 
 ## 各节
 
-跳过所有开场白，正文保持简短。使用 `GLOSSARY.md` 里用户的领域语言。
+跳过所有开场白，正文保持简短。使用 `docs/workflow/GLOSSARY.md` 里用户的领域语言。
 
 ### Summary
 

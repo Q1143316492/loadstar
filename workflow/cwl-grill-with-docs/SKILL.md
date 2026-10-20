@@ -4,4 +4,6 @@ description: "一场不留情面的盘问，用来磨利一份计划或设计，
 disable-model-invocation: true
 ---
 
+**先读 `docs/workflow/AGENTS.md`**（若存在）：本项目自己的工作流约定。
+
 调用 Skill 工具两次，分别传入 "cwl-grilling" 和 "cwl-domain-modeling"。

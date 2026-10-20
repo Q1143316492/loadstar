@@ -31,18 +31,18 @@ _避免_：Client、buyer、account
 
 ## 单上下文与多上下文仓库
 
-**单上下文（大多数仓库）：** 仓库根目录一份 `GLOSSARY.md`。
+**单上下文（大多数仓库）：** `docs/workflow/` 下一份 `GLOSSARY.md`。
 
-**多上下文：** 根目录的 `GLOSSARY-MAP.md` 列出各个上下文、它们所在的位置，以及彼此如何关联：
+**多上下文：** `docs/workflow/` 下的 `GLOSSARY-MAP.md` 列出各个上下文、它们所在的位置，以及彼此如何关联：
 
 ```md
 # 词汇表地图
 
 ## 上下文
 
-- [Ordering](./src/ordering/GLOSSARY.md)：接收并跟踪客户订单
-- [Billing](./src/billing/GLOSSARY.md)：生成发票并处理付款
-- [Fulfillment](./src/fulfillment/GLOSSARY.md)：管理仓库拣货与发货
+- [Ordering](./glossary/ordering.md)：接收并跟踪客户订单
+- [Billing](./glossary/billing.md)：生成发票并处理付款
+- [Fulfillment](./glossary/fulfillment.md)：管理仓库拣货与发货
 
 ## 关联
 
@@ -53,8 +53,8 @@ _避免_：Client、buyer、account
 
 本技能推断适用哪种结构：
 
-- 存在 `GLOSSARY-MAP.md` 时，读它找出各个上下文
-- 只有一份根 `GLOSSARY.md` 时，是单上下文
-- 两者都不存在时，在第一个术语定下来时惰性创建一份根 `GLOSSARY.md`
+- 存在 `docs/workflow/GLOSSARY-MAP.md` 时，读它找出各个上下文
+- 只有一份 `docs/workflow/GLOSSARY.md` 时，是单上下文
+- 两者都不存在时，在第一个术语定下来时惰性创建一份 `docs/workflow/GLOSSARY.md`
 
 存在多个上下文时，推断当前话题与哪一个相关。不清楚就问。

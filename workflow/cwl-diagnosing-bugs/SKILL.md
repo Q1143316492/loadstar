@@ -6,9 +6,11 @@ disable-model-invocation: true
 
 # 诊断 bug
 
+**先读 `docs/workflow/AGENTS.md`**（若存在）：本项目自己的工作流约定。
+
 一套对付疑难 bug 的纪律。除非有明确理由，不要跳过任何阶段。
 
-探索代码库时，读 `GLOSSARY.md`（如果存在），拿到相关模块的清晰心智模型；并检查你正在触碰区域的 ADR。
+探索代码库时，读 `docs/workflow/GLOSSARY.md`（如果存在），拿到相关模块的清晰心智模型；并检查你正在触碰区域的 ADR。
 
 ## 脱敏
 

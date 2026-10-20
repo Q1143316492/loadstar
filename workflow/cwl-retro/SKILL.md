@@ -4,6 +4,8 @@ description: "对一次编码会话做复盘。"
 disable-model-invocation: true
 ---
 
+**先读 `docs/workflow/AGENTS.md`**（若存在）：本项目自己的工作流约定。
+
 用户要求做一次**复盘**。你要建议的是对编码 agent 的**环境**做哪些改进，以改善未来的运行。
 
 ## 步骤

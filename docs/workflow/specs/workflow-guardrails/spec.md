@@ -48,7 +48,7 @@
 
 1. 结构性、零歧义：UTF-8 无 BOM；frontmatter `name` = 目录名；同目录兄弟 md 链接可解析。
 2. 跨文件引用：技能正文里的跨技能引用指向真实存在的技能；技能目录数、README 表行数、地图状态行、移植表的数字互相一致（**数字由脚本从磁盘算**，不复述文档结论）。
-3. 地图与切片的边界：决策票的 `类型` 取值限于 `research | prototype | grilling | task`，`状态` 限于 `待办 | 已认领 | 已解决 | 已关闭`，`阻塞于` 里的编号指向存在的票，地图「已定决策」的链接目标存在；切片只住在 `docs/specs/<slug>/slices/`、带验收清单、不带 `类型` 行；决策票只住在 `docs/maps/<effort>/tickets/`、带 `类型` 行、不带验收清单。
+3. 地图与切片的边界：决策票的 `类型` 取值限于 `research | prototype | grilling | task`，`状态` 限于 `待办 | 已认领 | 已解决 | 已关闭`，`阻塞于` 里的编号指向存在的票，地图「已定决策」的链接目标存在；切片只住在 `docs/workflow/specs/<slug>/slices/`、带验收清单、不带 `类型` 行；决策票只住在 `docs/workflow/maps/<effort>/tickets/`、带 `类型` 行、不带验收清单。
 
 **红证**
 
@@ -82,7 +82,7 @@
 
 ## 超出范围
 
-- 读码陪读那条线（`docs/maps/reading-companion/` 的 03–07）：本 spec 不涉及，按地图推进。
+- 读码陪读那条线（`docs/workflow/maps/reading-companion/` 的 03–07）：本 spec 不涉及，按地图推进。
 - 两个暂缓技能（`wizard`、`to-questionnaire`）。
 - 引入 CI、pre-commit hook、GitHub Actions：条件未到，单人单机手跑即可。
 - 任何渲染器、HTML 报告、可视化工具。

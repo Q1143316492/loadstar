@@ -1,11 +1,13 @@
 ---
 name: cwl-domain-modeling
-description: 构建并打磨项目的领域模型。在讨论代码库术语、编写或编辑 GLOSSARY.md，或记录、编辑 ADR 时使用。
+description: 构建并打磨项目的领域模型。在讨论代码库术语、编写或编辑 docs/workflow/GLOSSARY.md，或记录、编辑 ADR 时使用。
 ---
 
 # 领域建模
 
-在设计过程中主动构建并打磨项目的领域模型。这是*主动*的纪律：挑战术语、发明边界场景，并在术语与决策定型的当下，把词汇表和决策写下来。（仅仅为了用词而*读* `GLOSSARY.md` 不算本技能：那是任何技能都能做的一行习惯。本技能适用于你*改变*模型的时候，而不只是消费它的时候。）
+**先读 `docs/workflow/AGENTS.md`**（若存在）：本项目自己的工作流约定。
+
+在设计过程中主动构建并打磨项目的领域模型。这是*主动*的纪律：挑战术语、发明边界场景，并在术语与决策定型的当下，把词汇表和决策写下来。（仅仅为了用词而*读* `docs/workflow/GLOSSARY.md` 不算本技能：那是任何技能都能做的一行习惯。本技能适用于你*改变*模型的时候，而不只是消费它的时候。）
 
 ## 文件结构
 
@@ -13,37 +15,38 @@ description: 构建并打磨项目的领域模型。在讨论代码库术语、�
 
 ```
 /
-├── GLOSSARY.md
 ├── docs/
-│   └── adr/
-│       ├── 0001-event-sourced-orders.md
-│       └── 0002-postgres-for-write-model.md
+│   └── workflow/
+│       ├── GLOSSARY.md
+│       └── adr/
+│           ├── 0001-event-sourced-orders.md
+│           └── 0002-postgres-for-write-model.md
 └── src/
 ```
 
-如果根目录存在 `GLOSSARY-MAP.md`，这个仓库就有多个上下文。地图指向每一个上下文所在的位置：
+如果 `docs/workflow/` 下存在 `GLOSSARY-MAP.md`，这个仓库就有多个上下文。地图指向每一个上下文所在的位置：
 
 ```
 /
-├── GLOSSARY-MAP.md
 ├── docs/
-│   └── adr/                          ← 系统级决策
-├── src/
-│   ├── ordering/
-│   │   ├── GLOSSARY.md
-│   │   └── docs/adr/                 ← 上下文专属决策
-│   └── billing/
-│       ├── GLOSSARY.md
-│       └── docs/adr/
+│   └── workflow/
+│       ├── GLOSSARY-MAP.md
+│       ├── glossary/
+│       │   ├── ordering.md               ← 上下文专属词汇表
+│       │   └── billing.md
+│       └── adr/                          ← 系统级决策
+└── src/
+    ├── ordering/
+    └── billing/
 ```
 
-惰性创建文件：只在有东西要写的时候才创建。不存在 `GLOSSARY.md` 时，在第一个术语定下来时创建。不存在 `docs/adr/` 时，在需要第一篇 ADR 时创建。
+惰性创建文件：只在有东西要写的时候才创建。不存在 `docs/workflow/GLOSSARY.md` 时，在第一个术语定下来时创建。不存在 `docs/workflow/adr/` 时，在需要第一篇 ADR 时创建。
 
 ## 会话期间
 
 ### 对照词汇表提出质疑
 
-当用户使用的术语与 `GLOSSARY.md` 里已有的用语冲突时，立刻指出来。「你的词汇表把 'cancellation' 定义为 X，但你似乎指的是 Y。到底是哪一个？」
+当用户使用的术语与 `docs/workflow/GLOSSARY.md` 里已有的用语冲突时，立刻指出来。「你的词汇表把 'cancellation' 定义为 X，但你似乎指的是 Y。到底是哪一个？」
 
 ### 打磨模糊的措辞
 
@@ -59,9 +62,9 @@ description: 构建并打磨项目的领域模型。在讨论代码库术语、�
 
 ### 就地更新 GLOSSARY.md
 
-一个术语定下来时，就地更新 `GLOSSARY.md`。不要攒批：发生的当下就记下来。格式见 [GLOSSARY-FORMAT.md](./GLOSSARY-FORMAT.md)。
+一个术语定下来时，就地更新 `docs/workflow/GLOSSARY.md`。不要攒批：发生的当下就记下来。格式见 [GLOSSARY-FORMAT.md](./GLOSSARY-FORMAT.md)。
 
-`GLOSSARY.md` 应当完全不含实现细节。不要把它当成 spec、草稿本或实现决策的存放处。它就是一份词汇表，仅此而已。
+`docs/workflow/GLOSSARY.md` 应当完全不含实现细节。不要把它当成 spec、草稿本或实现决策的存放处。它就是一份词汇表，仅此而已。
 
 ### 谨慎提议 ADR
 
