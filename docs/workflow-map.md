@@ -4,17 +4,7 @@
 
 状态：**✓ 已实现**（23 个，中译 + 本地化完成，可用）· **⏳ 暂缓**（2 个，条件到了再搬）· **❌ 不做**（3 个，已判定不移植；判据见 [`porting-status.md`](porting-status.md)）。
 
-```
-入口：  /cwl-ask（拿不准用哪个？按处境指路）
-主干：  /cwl-grill-with-docs → /cwl-to-plan → /cwl-implement → /cwl-code-review → /cwl-retro
-                                 ↑               ↑
-匝道：  /cwl-wayfinder ──────────┘(并入)        │
-        /cwl-diagnosing-bugs ──────────────────→(修好后 /cwl-retro)
-保养：  /cwl-improve-codebase-architecture ──→(候选并入 /cwl-grill-with-docs)
-旁路：  /cwl-prototype ⇄ /cwl-handoff 桥（出入）
-随时：  /cwl-handoff · /cwl-wait-what · /cwl-show-me · /cwl-doc-quality · /cwl-explore · /cwl-teach
-底层：  /cwl-grilling · /cwl-domain-modeling · /cwl-codebase-design · /cwl-tdd（被引用，不主动跑）
-```
+路线怎么连，见 [`workflow/cwl-ask/SKILL.md`](../workflow/cwl-ask/SKILL.md) 的「路线图」——那张图只此一份，这里按同一分组列每个技能的去向。
 
 ## 主干：idea → ship
 

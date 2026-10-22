@@ -10,6 +10,21 @@ disable-model-invocation: true
 
 我指路，你输入：本库多数技能是**用户调用**（只有你手打名字才会启动），少数**模型可触发**（我可以直接带上）。本页只是路标——要引用某个技能的具体做法、或建议跳过某一步之前，我会先读那个技能的 `SKILL.md`。
 
+## 路线图
+
+`→` 是下一步，`⇄` 是来回：
+
+```text
+主干    /cwl-grill-with-docs → /cwl-to-plan → /cwl-implement → /cwl-code-review → /cwl-retro
+匝道    /cwl-research → /cwl-grill-with-docs
+        /cwl-wayfinder → /cwl-to-plan
+        /cwl-diagnosing-bugs → /cwl-retro
+保养    /cwl-improve-codebase-architecture → /cwl-grill-with-docs
+旁路    /cwl-prototype ⇄ /cwl-handoff（进出桥）
+随时    /cwl-wait-what · /cwl-show-me · /cwl-doc-quality · /cwl-explore · /cwl-teach
+底层    /cwl-grilling · /cwl-domain-modeling · /cwl-codebase-design · /cwl-tdd（被引用，不主动跑）
+```
+
 ## 速查
 
 | 你的处境 | 用它 |
