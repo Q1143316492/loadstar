@@ -4,7 +4,7 @@
 
 图例：✅ 已移植 · ❌ 不做 · ⏸️ 暂缓（条件到了再搬）
 
-## ✅ 已移植（20 个 → 19 个目录）
+## ✅ 已移植（19 个 → 18 个目录）
 
 | 上游技能 | workflow 目录 | 本地化要点 |
 |---|---|---|
@@ -20,7 +20,6 @@
 | `codebase-design` | `cwl-codebase-design/` | 中译（含 DEEPENING、DESIGN-IT-TWICE） |
 | `writing-for-agents` | `cwl-writing-for-agents/` | 中译（含 SKILL-MECHANICS） |
 | `improve-codebase-architecture` | `cwl-improve-codebase-architecture/` | 中译（含 HTML-REPORT）；徽章 / 依赖标签 / 示例本地化 |
-| `diagnosing-bugs` | `cwl-diagnosing-bugs/` | 中译；HITL 脚本保留 bash 原文（代码不译）**并改为 user-invoked**：上游触发面过宽（「任何报错」都自动触发，与「疑难 bug」的定位矛盾；且 Unity 玩法 bug 的回路常是 HITL，硬门常造不出）——疑难时手打召唤 |
 | `research` | `cwl-research/` | 中译 |
 | `prototype` | `cwl-prototype/` | 中译（含 LOGIC、UI）；分支产物保留 web 形态，首次使用时按技术栈再本地化 |
 | `handoff` | `cwl-handoff/` | 中译 |
@@ -28,7 +27,13 @@
 | `wayfinder` | `cwl-wayfinder/` | 中译 + 本地化：地图与决策 ticket 改为 `docs/workflow/maps/<努力名>/`（`map.md` + `tickets/NN-*.md`），认领 / 阻塞 / 前沿全部换成文件字段（`类型` / `状态` / `阻塞于`） |
 | `wait-what` | `cwl-wait-what/` | 中译；description 面向人一行。**2026-10-16 复检改判**：原判「不做」（意思等价 + 5 分钟可搬），后按「镜头型技能」改判——与 `cwl-show-me` 同族：零设置、全场景、口头禅即修 |
 
-> `workflow/` 里另有 4 个非 matt 技能：`cwl-doc-quality`（自写）、`cwl-ask`（自写路由器，形制来自上游 `ask-matt`）、`cwl-show-me`（humanlayer，原文照搬）、`cwl-explore`（据 openspec `explore` 改写，剥掉 CLI 绑定与 store 机制）。
+> `workflow/` 里另有 5 个非 matt 技能：`cwl-doc-quality`（自写）、`cwl-ask`（自写路由器，形制来自上游 `ask-matt`）、`cwl-show-me`（humanlayer，原文照搬）、`cwl-explore`（据 openspec `explore` 改写，剥掉 CLI 绑定与 store 机制）、`cwl-debug-mode`（自写，替换已删除的 `diagnosing-bugs`）。
+
+## 🗑️ 已删除（1 个，2026-10-31）
+
+| 上游技能 | 原目录 | 为什么删 |
+|---|---|---|
+| `diagnosing-bugs` | `cwl-diagnosing-bugs/` | 用户判定「先造出能打红的紧回路」这道硬门过重，且与本库当前的调试需求不符；替换为自写的 `cwl-debug-mode`（Cursor Debug Mode 式：插桩 → 复现 → 读日志 → 修复 → 清场）。上游原文仍在 [`learn-mattpocock/translate/27-diagnosing-bugs.md`](learn-mattpocock/translate/27-diagnosing-bugs.md)，需要时也可从 git 历史恢复 |
 
 ## ❌ 不做（13 个）
 

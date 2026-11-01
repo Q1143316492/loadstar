@@ -25,7 +25,7 @@
 | 技能 | 状态 | 做什么 |
 |---|---|---|
 | `cwl-wayfinder` | ✓ | 装不进一个会话的迷雾努力：把「决策票据」做成地图逐张解决，出口并入 `cwl-to-plan` |
-| `cwl-diagnosing-bugs` | ✓ | 硬 bug：先建紧反馈回路（一个命令就能打红），再修 + 回归测试；修好后同会话 `cwl-retro`；没有可锁定的接缝就转 `cwl-improve-codebase-architecture` |
+| `cwl-debug-mode` | ✓ | 自写（替换上游 `diagnosing-bugs`）：先提可证伪的假设，再用项目自己的日志通道插桩取证；复现 → 分析 → 定点修复 → 清场（删探针和临时日志） |
 | `cwl-research` | ✓ | 后台智能体查一手来源（官方文档、源码），写一份带引用的 Markdown 笔记 |
 
 ## 保养：不是功能开发

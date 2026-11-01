@@ -18,7 +18,7 @@ disable-model-invocation: true
 主干    /cwl-grill-with-docs → /cwl-to-plan → /cwl-implement → /cwl-code-review → /cwl-retro
 匝道    /cwl-research → /cwl-grill-with-docs
         /cwl-wayfinder → /cwl-to-plan
-        /cwl-diagnosing-bugs → /cwl-retro
+        /cwl-debug-mode（用完即走）
 保养    /cwl-improve-codebase-architecture → /cwl-grill-with-docs
 旁路    /cwl-prototype ⇄ /cwl-handoff（进出桥）
 随时    /cwl-wait-what · /cwl-show-me · /cwl-doc-quality · /cwl-explore · /cwl-teach
@@ -37,7 +37,7 @@ disable-model-invocation: true
 | 改动要发 PR，要写正文 | `cwl-pr` |
 | 干完一段，想改进环境 | `cwl-retro` |
 | 想法太大，一个会话装不下 | `cwl-wayfinder` |
-| 东西坏了，且难缠 | `cwl-diagnosing-bugs` |
+| 代码看着对，行为就是不对 | `cwl-debug-mode` |
 | 要查资料（文档 / API 事实） | `cwl-research` |
 | 库越改越难受，想巡检 | `cwl-improve-codebase-architecture` |
 | 设计问题在纸上说不清 | `cwl-prototype` |
@@ -63,7 +63,7 @@ disable-model-invocation: true
 ## 匝道：先产生工作，再并入主流程
 
 - **想法太大、装不进一个会话**（新项目、大特性） → **`cwl-wayfinder`**：把路画成 `docs/workflow/maps/<地图名>/` 下的**决策 ticket** 地图，一次解一张，产出决策、不施工。地图清了就**交接**：你把出口并入 `cwl-to-plan`，把一串决策收拢成可执行的计划。它慢且重，只为真装不下的想法准备——范围明确的特性留在 `cwl-grill-with-docs`。
-- **东西坏了、且难缠**（第一眼看不出的、时好时坏的、两个已知良好状态之间的回归） → **`cwl-diagnosing-bugs`**：它拒绝在建出**能打红的紧回路**之前谈原因，修完带回归测试。修好后在**同一会话**手打 `cwl-retro`，问「什么本可以防住它」；如果发现的是「没有可锁定的接缝」，那是 `cwl-improve-codebase-architecture` 的活。
+- **代码看着没问题，行为就是不对**（第一眼看不出原因、答案取决于运行时到底发生了什么） → **`cwl-debug-mode`**：先提几条可证伪的假设，再用项目自己的日志方式插桩，复现取证、定点修复，最后删掉全部探针。它不允许靠读代码猜运行时值，也不要求先造出「能打红的紧回路」那道硬门。
 - **要查资料** → **`cwl-research`**：后台智能体查一手来源（官方文档、源码），留一张带引用的 Markdown 笔记。拿到后回主流程——它喂思考，不替思考。
 
 ## 保养：不是功能开发
