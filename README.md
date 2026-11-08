@@ -1,6 +1,6 @@
 # lodestar
 
-自己的 AI 编码工作流技能库：23 个技能，覆盖「想法 → 计划 → 实现 → 评审 → 交付」，以及盘问、调试、调研、教学等旁路。技能正文为中文（`cwl-show-me` 除外），取材上游、不逐字复刻。
+自己的 AI 编码工作流技能库：24 个技能，覆盖「想法 → 计划 → 实现 → 评审 → 交付」，以及盘问、调试、调研、教学等旁路。技能正文为中文（`cwl-show-me` 除外），取材上游、不逐字复刻。
 
 装上之后手打 `/cwl-ask`：说不清该用哪个，就把处境说给它听。
 
@@ -42,6 +42,8 @@ mkdir -p .claude/skills
 cp -r workflow/cwl-* .claude/skills/
 ```
 
+装好之后，后续的安装与更新交给 [`cwl-sync`](workflow/cwl-sync/SKILL.md)：它从远端拉最新技能，平铺覆盖到项目级或用户级技能目录，先删后换（技能库里移除的技能也会跟着消失），其他技能不动。
+
 PowerShell 用 `Copy-Item -Recurse`。想跟着本仓库更新，用符号链接或目录联接代替复制（Windows 目录联接的注意事项见 [`docs/upstream-mirror.md`](docs/upstream-mirror.md)）。
 
 装完手打 `/cwl-ask` 验证：它应该能根据你的处境指到一个具体技能。
@@ -75,5 +77,6 @@ PowerShell 用 `Copy-Item -Recurse`。想跟着本仓库更新，用符号链接
 | `cwl-writing-for-agents` | 给 agent 写文档（技能、`AGENTS.md`）的参考 | 模型可触发 |
 | `cwl-doc-quality` | 审阅文档「列举了却不展开」的毛病 | 模型可触发 |
 | `cwl-show-me` | 用图与代码形状草图把当前话题画出来 | 手打 |
+| `cwl-sync` | 从远端技能库拉最新版本，平铺覆盖到项目级 / 用户级技能目录（先删后换） | 手打 |
 
 维护者材料（设计笔记、尝试记录、上游译文、移植台账）都在 [`docs/`](docs/)。

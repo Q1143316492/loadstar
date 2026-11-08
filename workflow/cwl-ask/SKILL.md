@@ -46,6 +46,7 @@ disable-model-invocation: true
 | 「别说了，画给我看」 | `cwl-show-me` |
 | 文档列举了却不展开、读不顺 | `cwl-doc-quality` |
 | 想分几次把一个主题学完 | `cwl-teach` |
+| 技能库更新了，要把本机技能换成最新版 | `cwl-sync` |
 | 一次性的小事 | 什么都不用，直接说 |
 
 速查给答案，下面几节给例外和口径。
@@ -69,6 +70,7 @@ disable-model-invocation: true
 ## 保养：不是功能开发
 
 - **`cwl-improve-codebase-architecture`** —— 平时有空就跑：扫描**加深机会**，以 HTML 报告呈现（写系统临时目录，不进仓）。选中一个候选，就等于**生出一个想法**，带进主流程继续。
+- **`cwl-sync`** —— 技能库本身迭代后，从远端拉最新版本覆盖本机技能目录；先删后换，本机其他技能不动。
 
 ## 旁路与随用
 
