@@ -1,6 +1,6 @@
 # lodestar
 
-自己的 AI 编码工作流技能库：24 个技能，覆盖「想法 → 计划 → 实现 → 评审 → 交付」，以及盘问、调试、调研、教学等旁路。技能正文为中文（`cwl-show-me` 除外），取材上游、不逐字复刻。
+自己的 AI 编码工作流技能库：25 个技能，覆盖「想法 → 计划 → 实现 → 评审 → 交付」，以及盘问、调试、调研、教学等旁路。技能正文为中文（`cwl-show-me` 除外），取材上游、不逐字复刻。
 
 装上之后手打 `/cwl-ask`：说不清该用哪个，就把处境说给它听。
 
@@ -8,7 +8,7 @@
 
 - **主体**：[mattpocock/skills](https://github.com/mattpocock/skills)（`@ 49dd158`，原样导入基线见提交 `010369f`），之后做了中译与本地化——去掉 tracker 依赖，规划产物写本地 `docs/workflow/specs/`。
 - **外来技能**：`cwl-show-me` 来自 [humanlayer/skills](https://github.com/humanlayer/skills)（原文照搬，未译；`cwl-pr` 的 Summary 视觉菜单亦取自该技能）。
-- **自写**：`cwl-doc-quality`、`cwl-ask`、`cwl-debug-mode`。
+- **自写**：`cwl-doc-quality`、`cwl-ask`、`cwl-debug-mode`、`cwl-direct`。
 - **参考存档**：[`reference/`](reference/) 存着三套上游库的只读快照（mattpocock / openspec / superpowers，版本 pin 见其 [`README.md`](reference/README.md)），供取材用。
 
 ## 安装
@@ -55,6 +55,7 @@ PowerShell 用 `Copy-Item -Recurse`。想跟着本仓库更新，用符号链接
 | 技能 | 是什么 | 怎么调 |
 |---|---|---|
 | `cwl-ask` | 路由器：拿不准用哪个，说处境，它指路（也可能说「什么都不用」） | 手打 |
+| `cwl-direct` | 范围明确的任务：先读项目约定，然后直接动手，一次做成正式可用的实现 | 手打 |
 | `cwl-explore` | 探索模式：陪你想清楚，只读、不写代码，也不交产物 | 模型可触发 |
 | `cwl-grill-with-docs` | 盘问澄清想法；边盘边产出词汇表与 ADR | 手打 |
 | `cwl-to-plan` | 把对话综合成 spec + 曳光弹 ticket，写入 `docs/workflow/specs/<slug>/` | 手打 |

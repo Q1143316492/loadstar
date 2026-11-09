@@ -21,7 +21,7 @@ disable-model-invocation: true
         /cwl-debug-mode（用完即走）
 保养    /cwl-improve-codebase-architecture → /cwl-grill-with-docs
 旁路    /cwl-prototype ⇄ /cwl-handoff（进出桥）
-随时    /cwl-wait-what · /cwl-show-me · /cwl-doc-quality · /cwl-explore · /cwl-teach
+随时    /cwl-direct · /cwl-wait-what · /cwl-show-me · /cwl-doc-quality · /cwl-explore · /cwl-teach
 底层    /cwl-grilling · /cwl-domain-modeling · /cwl-codebase-design · /cwl-tdd（被引用，不主动跑）
 ```
 
@@ -47,6 +47,7 @@ disable-model-invocation: true
 | 文档列举了却不展开、读不顺 | `cwl-doc-quality` |
 | 想分几次把一个主题学完 | `cwl-teach` |
 | 技能库更新了，要把本机技能换成最新版 | `cwl-sync` |
+| 范围明确，直接做成正式可用的实现 | `cwl-direct` |
 | 一次性的小事 | 什么都不用，直接说 |
 
 速查给答案，下面几节给例外和口径。
@@ -100,4 +101,4 @@ disable-model-invocation: true
 
 ## 也可能：什么都不用
 
-一次性的小改动、一个直接的问题——**直接说就行**。技能是给有形状的工作的：想法要盘、计划要拆、bug 要回路、库要巡检。没那个形状，省下这一步。
+一次性的小改动、一个直接的问题——**直接说就行**。技能是给有形状的工作的：想法要盘、计划要拆、bug 要回路、库要巡检。没那个形状，省下这一步。范围已经明确时用 `cwl-direct`：动手前先读项目约定，然后直接动手一次做成正式可用的实现，短板收尾点名；范围变大就升级回主流程。
