@@ -21,7 +21,7 @@ disable-model-invocation: true
         /cwl-debug-mode（用完即走）
 保养    /cwl-improve-codebase-architecture → /cwl-grill-with-docs
 旁路    /cwl-prototype ⇄ /cwl-handoff（进出桥）
-随时    /cwl-direct · /cwl-wait-what · /cwl-show-me · /cwl-doc-quality · /cwl-explore · /cwl-teach
+随时    /cwl-direct · /cwl-wait-what · /cwl-show-me · /cwl-doc-writing · /cwl-explore · /cwl-teach
 底层    /cwl-grilling · /cwl-domain-modeling · /cwl-codebase-design · /cwl-tdd（被引用，不主动跑）
 ```
 
@@ -44,7 +44,7 @@ disable-model-invocation: true
 | 换会话 / 换人，要交接 | `cwl-handoff` |
 | 「它刚才说的没看懂」 | `cwl-wait-what` |
 | 「别说了，画给我看」 | `cwl-show-me` |
-| 文档列举了却不展开、读不顺 | `cwl-doc-quality` |
+| 文档读起来像 AI 写的、找不到要查的东西 | `cwl-doc-writing` |
 | 想分几次把一个主题学完 | `cwl-teach` |
 | 技能库更新了，要把本机技能换成最新版 | `cwl-sync` |
 | 范围明确，直接做成正式可用的实现 | `cwl-direct` |
@@ -80,7 +80,7 @@ disable-model-invocation: true
 - **`cwl-handoff`** —— 只在**要携带**时用：换 harness、换目录、交给别人、阶段中途分叉。同一个 harness、同一个目录，就不用它（见「会话边界」）。
 - **`cwl-wait-what`** —— 哪条消息没看懂，喊一声：把它重讲一遍（补上下文 + 换大白话 + 用回术语）。与 `cwl-show-me` 同族：一条口头禅立刻见效。
 - **`cwl-show-me`** —— 解释不清时换个呈现：图、调用树、代码形状草图。
-- **`cwl-doc-quality`** —— 审一篇「列举了却不展开」的文档；报告、README、设计文档都行。
+- **`cwl-doc-writing`** —— 写文档前先读的清单：结构上让读者扫得到答案，措辞上去掉 AI 腔。也用来审已写好的稿。
 - **`cwl-teach`** —— 要跨多次会话学会一个主题：把当前目录当教学工作区（`MISSION.md`、`lessons/*.html`、`learning-records/`），一节课一个 HTML。另开一个目录用它，别在正在工作的项目里跑。
 
 ## 底层：被引用，不用刻意记

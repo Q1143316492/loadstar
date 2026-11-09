@@ -8,7 +8,7 @@
 
 - **主体**：[mattpocock/skills](https://github.com/mattpocock/skills)（`@ 49dd158`，原样导入基线见提交 `010369f`），之后做了中译与本地化——去掉 tracker 依赖，规划产物写本地 `docs/workflow/specs/`。
 - **外来技能**：`cwl-show-me` 来自 [humanlayer/skills](https://github.com/humanlayer/skills)（原文照搬，未译；`cwl-pr` 的 Summary 视觉菜单亦取自该技能）。
-- **自写**：`cwl-ask`、`cwl-debug-mode`、`cwl-direct`。
+- **自写**：`cwl-ask`、`cwl-debug-mode`、`cwl-direct`、`cwl-doc-writing`（据 pstack `unslop` 与 OpenSpec `writing.md` 合并）。
 - **参考存档**：[`reference/`](reference/) 存着四套上游库的只读快照（mattpocock / openspec / superpowers / poteto-plugins，版本 pin 见其 [`README.md`](reference/README.md)），供取材用。poteto 那份已裁剪，只留 41 篇与通用工作流相关的技能。
 
 ## 安装
@@ -52,6 +52,7 @@
 | `cwl-codebase-design` | 深模块词汇：模块 / 接口 / 深度 / 接缝 / 适配器 / 杠杆 / 局部性 | 模型可触发 |
 | `cwl-writing-for-agents` | 给 agent 写文档（技能、`AGENTS.md`）的参考 | 模型可触发 |
 | `cwl-show-me` | 用图与代码形状草图把当前话题画出来 | 手打 |
+| `cwl-doc-writing` | 写文档前先读：结构让读者扫得到答案，措辞去掉空话 | 手打 |
 | `cwl-sync` | 从远端技能库拉最新版本，平铺覆盖到项目级 / 用户级技能目录（先删后换） | 手打 |
 
 维护者材料（设计笔记、尝试记录、上游译文、移植台账）都在 [`docs/`](docs/)。

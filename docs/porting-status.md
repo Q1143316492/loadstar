@@ -27,7 +27,7 @@
 | `wayfinder` | `cwl-wayfinder/` | 中译 + 本地化：地图与决策 ticket 改为 `docs/workflow/maps/<努力名>/`（`map.md` + `tickets/NN-*.md`），认领 / 阻塞 / 前沿全部换成文件字段（`类型` / `状态` / `阻塞于`） |
 | `wait-what` | `cwl-wait-what/` | 中译；description 面向人一行。**2026-10-16 复检改判**：原判「不做」（意思等价 + 5 分钟可搬），后按「镜头型技能」改判——与 `cwl-show-me` 同族：零设置、全场景、口头禅即修 |
 
-> `workflow/` 里另有 6 个非 matt 技能：`cwl-doc-quality`（自写）、`cwl-ask`（自写路由器，形制来自上游 `ask-matt`）、`cwl-show-me`（humanlayer，原文照搬）、`cwl-explore`（据 openspec `explore` 改写，剥掉 CLI 绑定与 store 机制）、`cwl-debug-mode`（自写，替换已删除的 `diagnosing-bugs`）、`cwl-sync`（自写，同步本技能库到本机技能目录）。
+> `workflow/` 里另有 6 个非 matt 技能：`cwl-doc-writing`（据 pstack `unslop` 与 OpenSpec `writing.md` 合并）、`cwl-ask`（自写路由器，形制来自上游 `ask-matt`）、`cwl-show-me`（humanlayer，原文照搬）、`cwl-explore`（据 openspec `explore` 改写，剥掉 CLI 绑定与 store 机制）、`cwl-debug-mode`（自写，替换已删除的 `diagnosing-bugs`）、`cwl-sync`（自写，同步本技能库到本机技能目录）。
 
 ## 🗑️ 已删除（1 个，2026-10-31）
 

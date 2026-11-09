@@ -68,7 +68,7 @@
 - [ ] **30** `skills/show-me-your-work/SKILL.md` — 一行一个决策的 TSV 决策痕迹（what / why / evidence / result），可提交给评审者。
 - [ ] **31** `skills/tdd/SKILL.md` — 只在这一步的测试路径便宜且本地时用；路径不清、昂贵、集成重时跳过。**明确的「TDD 不是万能」立场。**
 - [ ] **32** `skills/reflect/SKILL.md` — 一段活干完，三个并行评审者读当前会话，把学到的落到某份既有技能的**具体改动**上。
-- [ ] **33** `skills/unslop/SKILL.md` — 去掉 AI 腔。与本仓 `cwl-doc-quality` 是同一问题的两种切法。
+- [ ] **33** `skills/unslop/SKILL.md` — 去掉 AI 腔。本仓 `cwl-doc-writing` 的措辞部分主要取自这里。
 - [ ] **34** `skills/typescript-best-practices/SKILL.md` — 把 `type-system-discipline` 落到 TS 语法。
 - [ ] **35** `skills/automate-me/SKILL.md` — 从会话记录里挖出用户的真实工作方式，起草一份 `<名字>-mode` 技能。
 
