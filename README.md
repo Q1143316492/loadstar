@@ -9,42 +9,17 @@
 - **主体**：[mattpocock/skills](https://github.com/mattpocock/skills)（`@ 49dd158`，原样导入基线见提交 `010369f`），之后做了中译与本地化——去掉 tracker 依赖，规划产物写本地 `docs/workflow/specs/`。
 - **外来技能**：`cwl-show-me` 来自 [humanlayer/skills](https://github.com/humanlayer/skills)（原文照搬，未译；`cwl-pr` 的 Summary 视觉菜单亦取自该技能）。
 - **自写**：`cwl-doc-quality`、`cwl-ask`、`cwl-debug-mode`、`cwl-direct`。
-- **参考存档**：[`reference/`](reference/) 存着三套上游库的只读快照（mattpocock / openspec / superpowers，版本 pin 见其 [`README.md`](reference/README.md)），供取材用。
+- **参考存档**：[`reference/`](reference/) 存着四套上游库的只读快照（mattpocock / openspec / superpowers / poteto-plugins，版本 pin 见其 [`README.md`](reference/README.md)），供取材用。poteto 那份已裁剪，只留 41 篇与通用工作流相关的技能。
 
 ## 安装
 
-技能目录必须**平铺**：`<技能根>/cwl-<名字>/SKILL.md`。不要整个搬 `workflow/`，也不要再套一层分类目录。
+**装哪一级，先问用户，不要替用户选**：项目目录只对当前项目生效、通常随项目进版本控制；用户目录对所有项目生效，不进任何项目仓库。
 
-**安装前先问用户：装到项目目录，还是用户目录？** 不要替用户选。
+日常安装与更新都交给 [`cwl-sync`](workflow/cwl-sync/SKILL.md)：它从远端拉最新技能，平铺覆盖到项目级或用户级技能目录，先删后换（技能库里移除的技能也会跟着消失），其他技能不动。各 agent 的技能根路径、`.agents/skills/` 这个跨 runtime 通用位置的取舍，都在那个技能里。
 
-- **项目目录**：只对当前项目生效，通常随项目进版本控制。
-- **用户目录**：对所有项目生效，不进入任何项目仓库。
+唯一要记的约定：技能目录必须**平铺**为 `<技能根>/cwl-<名字>/SKILL.md`，不要整个搬 `workflow/`，也不要再套一层分类目录。
 
-各 agent 的技能根：
-
-| Agent | 项目目录 | 用户目录 |
-|---|---|---|
-| Claude Code | `.claude/skills/` | `~/.claude/skills/` |
-| Cursor | `.cursor/skills/` | `~/.cursor/skills/` |
-| Codex | `.agents/skills/` | `~/.agents/skills/` |
-| Gemini CLI | `.gemini/skills/` | `~/.gemini/skills/` |
-| OpenCode | `.opencode/skills/` | `~/.config/opencode/skills/` |
-| GitHub Copilot CLI | `.github/skills/` | `~/.agents/skills/` |
-| DSH | `.dsh/skills/` | `~/.dsh/skills/` |
-| 其他 / 通用 | `.agents/skills/` | `~/.agents/skills/` |
-
-`.agents/skills/` 是跨 runtime 的通用位置，Codex、Gemini CLI、Copilot CLI 等都认；同一层级两者都在时，它优先。不在表里的 agent，先查它自己的技能目录；没有就用这一行。这些路径会随 agent 版本变化，拿不准时优先用通用位置，并核对 agent 当前文档。
-
-复制（以 Claude Code 项目级为例）：
-
-```bash
-mkdir -p .claude/skills
-cp -r workflow/cwl-* .claude/skills/
-```
-
-装好之后，后续的安装与更新交给 [`cwl-sync`](workflow/cwl-sync/SKILL.md)：它从远端拉最新技能，平铺覆盖到项目级或用户级技能目录，先删后换（技能库里移除的技能也会跟着消失），其他技能不动。
-
-PowerShell 用 `Copy-Item -Recurse`。想跟着本仓库更新，用符号链接或目录联接代替复制（Windows 目录联接的注意事项见 [`docs/upstream-mirror.md`](docs/upstream-mirror.md)）。
+不想重复同步、想跟着本仓库实时更新时，用符号链接或目录联接代替复制（Windows 目录联接的注意事项见 [`docs/upstream-mirror.md`](docs/upstream-mirror.md)）。
 
 装完手打 `/cwl-ask` 验证：它应该能根据你的处境指到一个具体技能。
 
@@ -55,7 +30,7 @@ PowerShell 用 `Copy-Item -Recurse`。想跟着本仓库更新，用符号链接
 | 技能 | 是什么 | 怎么调 |
 |---|---|---|
 | `cwl-ask` | 路由器：拿不准用哪个，说处境，它指路（也可能说「什么都不用」） | 手打 |
-| `cwl-direct` | 范围明确的任务：先读项目约定，然后直接动手，一次做成正式可用的实现 | 手打 |
+| `cwl-direct` | 范围明确的任务：读项目约定 → 写一份一次性清单（要做 / 验收）→ 直接做成正式实现；不需要盘问与计划 | 手打 |
 | `cwl-explore` | 探索模式：陪你想清楚，只读、不写代码，也不交产物 | 模型可触发 |
 | `cwl-grill-with-docs` | 盘问澄清想法；边盘边产出词汇表与 ADR | 手打 |
 | `cwl-to-plan` | 把对话综合成 spec + 曳光弹 ticket，写入 `docs/workflow/specs/<slug>/` | 手打 |
