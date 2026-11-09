@@ -5,10 +5,12 @@
 ## 目录
 
 - `specs/<slug>/` —— 计划产物：`spec.md` 加 `tickets/<NN>-<slug>.md`（`cwl-to-plan`）。
+- `spec-lite/<任务slug>.md` —— 一次性清单：「要做」与「验收」两列，小任务三五条、大任务按需（`cwl-direct` 写，`cwl-code-review` 读）。任务完成即删，不留档。
 - `maps/<地图名>/` —— 决策地图：`map.md` 加 `tickets/<NN>-<slug>.md` 与 `research/<名字>.md`（`cwl-wayfinder`）。
 - `adr/NNNN-slug.md` —— 架构决策记录（`cwl-domain-modeling`）。
 - `GLOSSARY.md` —— 领域词汇表；多上下文时用 `GLOSSARY-MAP.md` 指向 `glossary/<上下文>.md`（`cwl-domain-modeling`）。
 - `PREFERENCES.md` —— 项目的执行偏好（`cwl-direct` 读取）；没有就不建，格式见该技能的 `PREFERENCES-FORMAT.md`。
+- `CODING_STANDARDS.md` —— 编码标准（`cwl-code-review` 读取）；没有就不建，格式见该技能的 `CODING-STANDARDS-FORMAT.md`。
 
 ## 约定
 

@@ -51,7 +51,7 @@
 **委派**
 
 - [ ] **21** `principle-guard-the-context-window` — 大输出、长文件、重复读、扇出规划交给子智能体；主线程只留摘要。
-- [ ] **22** `principle-never-block-on-the-human` — 可逆的活直接做、事后给人纠偏；确认只留给不可逆动作。**这条和本仓 `cwl-direct` 的停手条件是同一问题的两种答案。**
+- [ ] **22** `principle-never-block-on-the-human` — 可逆的活直接做、事后给人纠偏；确认只留给不可逆动作。**这条和本仓 `cwl-direct` 的停手条件是同一问题的两种答案。** 译文：[`translate/22-never-block-on-the-human.md`](translate/22-never-block-on-the-human.md)（中英对照）
 
 **元**
 
