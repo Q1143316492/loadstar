@@ -29,30 +29,30 @@
 
 | 技能 | 是什么 | 怎么调 |
 |---|---|---|
-| `cwl-ask` | 路由器：拿不准用哪个，说处境，它指路（也可能说「什么都不用」） | 手打 |
-| `cwl-direct` | 范围明确的任务：读项目约定 → 写一份一次性清单（要做 / 验收）→ 直接做成正式实现；不需要盘问与计划 | 手打 |
-| `cwl-explore` | 探索模式：陪你想清楚，只读、不写代码，也不交产物 | 模型可触发 |
-| `cwl-grill-with-docs` | 盘问澄清想法；边盘边产出词汇表与 ADR | 手打 |
-| `cwl-to-plan` | 把对话综合成 spec + 曳光弹 ticket，写入 `docs/workflow/specs/<slug>/` | 手打 |
-| `cwl-implement` | 按 ticket/spec 实现（调 `cwl-tdd`）；收尾调 `cwl-code-review`；不自动提交 | 手打 |
-| `cwl-code-review` | 对固定点起的 diff 做两轴评审（标准 / Spec） | 模型可触发 |
-| `cwl-pr` | 写 PR 正文：最小视图（Summary）/ 前后证据（Evidence）/ 合并风险（Merge Danger） | 模型可触发 |
-| `cwl-retro` | 复盘会话，给环境改进建议 | 手打 |
-| `cwl-wayfinder` | 大块迷雾努力：把决策 ticket 画成地图逐张解决，出口并入 `cwl-to-plan` | 手打 |
-| `cwl-debug-mode` | 调试模式：提假设 → 用项目日志插桩 → 复现取证 → 定点修复 → 清场 | 手打 |
-| `cwl-research` | 后台查一手来源（文档、源码），写一份带引用的 Markdown 笔记 | 模型可触发 |
-| `cwl-improve-codebase-architecture` | 扫描「加深机会」→ 生成 HTML 报告 → 选中后进盘问回路 | 手打 |
-| `cwl-prototype` | 一次性原型回答设计问题（逻辑 / 状态模型，或 UI 该长什么样） | 模型可触发 |
-| `cwl-handoff` | 把会话压成交接文档（写系统临时目录），供下个会话拾起 | 手打 |
-| `cwl-teach` | 多会话教学：把当前目录当有状态的教学工作区，一节课一个 HTML | 手打 |
-| `cwl-wait-what` | 哪条没看懂喊一声：补上下文、换大白话、重讲一遍 | 手打 |
-| `cwl-grilling` | 设计树盘问（被 `cwl-grill-with-docs` 等调用） | 模型可触发 |
-| `cwl-domain-modeling` | 建立、打磨领域词汇表（`docs/workflow/GLOSSARY.md`）与 ADR | 模型可触发 |
-| `cwl-tdd` | 红 → 绿循环的参照：好测试、接缝、反模式 | 模型可触发 |
-| `cwl-codebase-design` | 深模块词汇：模块 / 接口 / 深度 / 接缝 / 适配器 / 杠杆 / 局部性 | 模型可触发 |
-| `cwl-writing-for-agents` | 给 agent 写文档（技能、`AGENTS.md`）的参考 | 模型可触发 |
-| `cwl-show-me` | 用图与代码形状草图把当前话题画出来 | 手打 |
-| `cwl-doc-writing` | 写文档前先读：结构让读者扫得到答案，措辞去掉空话 | 手打 |
-| `cwl-sync` | 从远端技能库拉最新版本，平铺覆盖到项目级 / 用户级技能目录（先删后换） | 手打 |
+| [`cwl-ask`](workflow/cwl-ask/SKILL.md) | 路由器：拿不准用哪个，说处境，它指路（也可能说「什么都不用」） | 手打 |
+| [`cwl-direct`](workflow/cwl-direct/SKILL.md) | 范围明确的任务：读项目约定 → 写一份一次性清单（要做 / 验收）→ 直接做成正式实现；不需要盘问与计划 | 手打 |
+| [`cwl-explore`](workflow/cwl-explore/SKILL.md) | 探索模式：陪你想清楚，只读、不写代码，也不交产物 | 模型可触发 |
+| [`cwl-grill-with-docs`](workflow/cwl-grill-with-docs/SKILL.md) | 盘问澄清想法；边盘边产出词汇表与 ADR | 手打 |
+| [`cwl-to-plan`](workflow/cwl-to-plan/SKILL.md) | 把对话综合成 spec + 曳光弹 ticket，写入 `docs/workflow/specs/<slug>/` | 手打 |
+| [`cwl-implement`](workflow/cwl-implement/SKILL.md) | 按 ticket/spec 实现（调 `cwl-tdd`）；收尾调 `cwl-code-review`；不自动提交 | 手打 |
+| [`cwl-code-review`](workflow/cwl-code-review/SKILL.md) | 对固定点起的 diff 做两轴评审（标准 / Spec） | 模型可触发 |
+| [`cwl-pr`](workflow/cwl-pr/SKILL.md) | 写 PR 正文：最小视图（Summary）/ 前后证据（Evidence）/ 合并风险（Merge Danger） | 模型可触发 |
+| [`cwl-retro`](workflow/cwl-retro/SKILL.md) | 复盘会话，给环境改进建议 | 手打 |
+| [`cwl-wayfinder`](workflow/cwl-wayfinder/SKILL.md) | 大块迷雾努力：把决策 ticket 画成地图逐张解决，出口并入 `cwl-to-plan` | 手打 |
+| [`cwl-debug-mode`](workflow/cwl-debug-mode/SKILL.md) | 调试模式：提假设 → 用项目日志插桩 → 复现取证 → 定点修复 → 清场 | 手打 |
+| [`cwl-research`](workflow/cwl-research/SKILL.md) | 后台查一手来源（文档、源码），写一份带引用的 Markdown 笔记 | 模型可触发 |
+| [`cwl-improve-codebase-architecture`](workflow/cwl-improve-codebase-architecture/SKILL.md) | 扫描「加深机会」→ 生成 HTML 报告 → 选中后进盘问回路 | 手打 |
+| [`cwl-prototype`](workflow/cwl-prototype/SKILL.md) | 一次性原型回答设计问题（逻辑 / 状态模型，或 UI 该长什么样） | 模型可触发 |
+| [`cwl-handoff`](workflow/cwl-handoff/SKILL.md) | 把会话压成交接文档（写系统临时目录），供下个会话拾起 | 手打 |
+| [`cwl-teach`](workflow/cwl-teach/SKILL.md) | 多会话教学：把当前目录当有状态的教学工作区，一节课一个 HTML | 手打 |
+| [`cwl-wait-what`](workflow/cwl-wait-what/SKILL.md) | 哪条没看懂喊一声：补上下文、换大白话、重讲一遍 | 手打 |
+| [`cwl-grilling`](workflow/cwl-grilling/SKILL.md) | 设计树盘问（被 `cwl-grill-with-docs` 等调用） | 模型可触发 |
+| [`cwl-domain-modeling`](workflow/cwl-domain-modeling/SKILL.md) | 建立、打磨领域词汇表（`docs/workflow/GLOSSARY.md`）与 ADR | 模型可触发 |
+| [`cwl-tdd`](workflow/cwl-tdd/SKILL.md) | 红 → 绿循环的参照：好测试、接缝、反模式 | 模型可触发 |
+| [`cwl-codebase-design`](workflow/cwl-codebase-design/SKILL.md) | 深模块词汇：模块 / 接口 / 深度 / 接缝 / 适配器 / 杠杆 / 局部性 | 模型可触发 |
+| [`cwl-writing-for-agents`](workflow/cwl-writing-for-agents/SKILL.md) | 给 agent 写文档（技能、`AGENTS.md`）的参考 | 模型可触发 |
+| [`cwl-show-me`](workflow/cwl-show-me/SKILL.md) | 用图与代码形状草图把当前话题画出来 | 手打 |
+| [`cwl-doc-writing`](workflow/cwl-doc-writing/SKILL.md) | 写文档前先读：结构让读者扫得到答案，措辞去掉空话 | 手打 |
+| [`cwl-sync`](workflow/cwl-sync/SKILL.md) | 从远端技能库拉最新版本，平铺覆盖到项目级 / 用户级技能目录（先删后换） | 手打 |
 
 维护者材料（设计笔记、尝试记录、上游译文、移植台账）都在 [`docs/`](docs/)。
