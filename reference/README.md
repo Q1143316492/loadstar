@@ -11,6 +11,11 @@
 | `superpowers/` | <https://github.com/obra/superpowers.git> | `8ca22db`（v6.4.2，2026-09-25） |
 | `openspec/` | <https://github.com/Fission-AI/openspec.git> | `79b6aa9`（2026-09-25） |
 | `mattpocock-skills/` | <https://github.com/mattpocock/skills.git> | `49dd158`（2026-10-09） |
+| `poteto-plugins/` | <https://github.com/poteto/plugins.git> | `74dd229`（2026-11-10） |
+
+`poteto-plugins/` 是 Cursor 插件市场仓库（16 个插件、69 个技能）的**筛选存档**，只留了与通用工作流相关的部分：`pstack/`（33 个技能，Lauren Tan 的个人工作流，重点）、`cursor-team-kit/`（6 个：`verify-this`、`deslop`、`make-pr-easy-to-review`、`thermo-nuclear-code-quality-review`、`control-ui`、`pr-review-canvas`）、`thermos/`（1 个：`thermo-nuclear-review` 及其 subagent）、`cli-for-agents/`（1 个）。
+
+> **这份存档做过四轮裁剪（2026-11-10）**：① 删 Cursor 平台机制——`.github/`、`scripts/`、`schemas/`、`.cursor-plugin/` 清单、`assets/` 图片、`orchestrate/` 的 TypeScript；② 删整个 Cursor 专属插件——`cursor-sdk`、`create-plugin`、`agent-compatibility`、`orchestrate`、`ralph-loop`、`docs-canvas`、`pr-review-canvas`（顶层插件）、`continual-learning`，以及 `pstack/skills/setup-pstack`；③ 删与自有流程重叠的九个——`check-compiler-errors`、`new-branch-and-pr`、`get-pr-comments`、`loop-on-ci`、`fix-ci`、`weekly-review`、`what-did-i-get-done`、`run-smoke-tests`、`fix-merge-conflicts`；④ 再删七个——`teaching/` 两篇、`thermos/thermos`、重复的 `thermo-nuclear-code-quality-review`、`review-and-ship`、`workflow-from-chats`、`control-cli`。剩下 41 篇 `SKILL.md`。上游各插件的 `README.md` 未改，表里仍会列出已删技能；以本段为准。上游原样需重拉：commit 见下表。
 
 三个都是 `--depth 1` 浅克隆的产物（只为读，不带历史），现已作为存档。上表的 commit 是**唯一**能证明「当时存的是哪一版」的记录，更新前先照抄新值再动手。
 
@@ -21,12 +26,15 @@
 - superpowers → [`docs/learn-superpowers/READING-superpowers.md`](../docs/learn-superpowers/READING-superpowers.md)
 - openspec → [`docs/learn-openspec/READING-openspec.md`](../docs/learn-openspec/READING-openspec.md)（编号 = 读序 = 译序，译文见同目录 `translate/`；工具适配层已剔除）
 - mattpocock → [`docs/learn-mattpocock/READING-mattpocock.md`](../docs/learn-mattpocock/READING-mattpocock.md)
+- pstack → [`docs/learn-pstack/READING-pstack.md`](../docs/learn-pstack/READING-pstack.md)
 
 ## 从哪读起
 
 - `superpowers/skills/<法名>/SKILL.md` —— 15 篇，最强制的一套，入口先看 `using-superpowers`
 - `openspec/skills/openspec-*/SKILL.md` —— 12 篇，围绕 change 的 propose → apply → archive 生命周期
 - `mattpocock-skills/skills/{engineering,productivity,misc,in-progress}/<法名>/SKILL.md` —— 小而可组合，招牌是 `grilling`
+- `poteto-plugins/pstack/skills/<名字>/SKILL.md` —— 33 篇，读序见 `docs/learn-pstack/READING-pstack.md`；先读 `poteto-mode` 看它怎么路由，再看 20 条 `principle-*`
+- `poteto-plugins/cursor-team-kit/skills/<名字>/SKILL.md` —— 6 篇：`verify-this`、`deslop`、`make-pr-easy-to-review`、`thermo-nuclear-code-quality-review`、`control-ui`、`pr-review-canvas`（带可复用的 CSS/JS diff 渲染器）
 - 各仓库的 `README.md` / `AGENTS.md` 是作者自述的设计意图，比读单个 SKILL 更快抓到定位
 
 ## 重新拉取
