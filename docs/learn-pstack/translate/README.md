@@ -1,6 +1,11 @@
 # pstack 译文
 
-本目录是 `reference/poteto-plugins/pstack/` 的逐篇中译，编号与 [`READING-pstack.md`](../READING-pstack.md) 的读序一一对应。
+本目录是 `reference/poteto-plugins/` 的逐篇中译，编号与 [`READING-pstack.md`](../READING-pstack.md) 的读序一一对应；pstack 之外的技能按名字命名。
+
+## 已有译文
+
+- `22-never-block-on-the-human.md` —— `pstack/skills/principle-never-block-on-the-human`
+- `verify-this.md` —— `cursor-team-kit/skills/verify-this`
 
 ## 翻译约定
 
