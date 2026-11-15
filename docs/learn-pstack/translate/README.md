@@ -5,6 +5,8 @@
 ## 已有译文
 
 - `22-never-block-on-the-human.md` —— `pstack/skills/principle-never-block-on-the-human`
+- `27-how.md` —— `pstack/skills/how`（只译 `SKILL.md`，`references/` 未译）
+- `28-why.md` —— `pstack/skills/why`（只译 `SKILL.md`，`references/` 未译）
 - `verify-this.md` —— `cursor-team-kit/skills/verify-this`
 
 ## 翻译约定

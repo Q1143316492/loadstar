@@ -2,7 +2,7 @@
 
 `workflow/` 技能的索引：谁先谁后、谁被谁调用、哪些还欠着。
 
-状态：**✓ 已实现**（25 个，中译 + 本地化完成，可用）· **⏳ 暂缓**（2 个，条件到了再搬）· **❌ 不做**（3 个，已判定不移植；判据见 [`porting-status.md`](porting-status.md)）。
+状态：**✓ 已实现**（24 个，中译 + 本地化完成，可用）· **⏳ 暂缓**（2 个，条件到了再搬）· **❌ 不做**（3 个，已判定不移植；判据见 [`porting-status.md`](porting-status.md)）。
 
 路线怎么连，见 [`workflow/cwl-ask/SKILL.md`](../workflow/cwl-ask/SKILL.md) 的「路线图」——那张图只此一份，这里按同一分组列每个技能的去向。
 
@@ -38,7 +38,6 @@
 
 | 技能 | 状态 | 做什么 |
 |---|---|---|
-| `cwl-explore` | ✓ | 探索模式：陪用户探索想法、调查问题、澄清需求；只读，不写代码也不写文件（据 openspec `explore` 改写，剥掉 CLI 绑定） |
 | `cwl-prototype` | ✓ | 一次性原型回答设计问题（逻辑 / 状态模型，或 UI 该长什么样） |
 | `cwl-handoff` | ✓ | 把会话压成交接文档（写系统临时目录），供下个会话拾起；也作 `cwl-prototype` 的出入桥 |
 | `cwl-teach` | ✓ | 多会话教学：当前目录即教学工作区（`MISSION.md` / `lessons/*.html` / `learning-records/` / `assets/`），一节课一个 HTML；不在工作项目里跑，另开目录（上游 `teach`，2026-10-19 从 ❌ 改判移植） |

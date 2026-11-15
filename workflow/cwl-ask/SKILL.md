@@ -21,7 +21,7 @@ disable-model-invocation: true
         /cwl-debug-mode（用完即走）
 保养    /cwl-improve-codebase-architecture → /cwl-grill-with-docs
 旁路    /cwl-prototype ⇄ /cwl-handoff（进出桥）
-随时    /cwl-direct · /cwl-wait-what · /cwl-show-me · /cwl-doc-writing · /cwl-explore · /cwl-teach
+随时    /cwl-direct · /cwl-wait-what · /cwl-show-me · /cwl-doc-writing · /cwl-teach
 底层    /cwl-grilling · /cwl-domain-modeling · /cwl-codebase-design · /cwl-tdd（被引用，不主动跑）
 ```
 
@@ -29,7 +29,6 @@ disable-model-invocation: true
 
 | 你的处境 | 用它 |
 |---|---|
-| 只是想聊清楚，不要流程和产物 | `cwl-explore` |
 | 有个想法，还没想透 | `cwl-grill-with-docs` |
 | 聊透了，要变成可执行计划 | `cwl-to-plan` |
 | 手上有计划 / ticket，要写代码 | `cwl-implement` |
@@ -75,7 +74,6 @@ disable-model-invocation: true
 
 ## 旁路与随用
 
-- **`cwl-explore`** —— 只想一边想一边聊、不要流程也不要产物时用它：只读、会画图，不写代码也不写文件。想清楚了要变成决策，再进 `cwl-grill-with-docs`。
 - **`cwl-prototype`** —— 一个设计问题（状态模型对不对、UI 该长什么样）纸上说不清时，用一次性原型给出能跑 / 能看的答案。要离开当前会话去做原型、再带结果回来，用 `cwl-handoff` 当进出门。
 - **`cwl-handoff`** —— 只在**要携带**时用：换 harness、换目录、交给别人、阶段中途分叉。同一个 harness、同一个目录，就不用它（见「会话边界」）。
 - **`cwl-wait-what`** —— 哪条消息没看懂，喊一声：把它重讲一遍（补上下文 + 换大白话 + 用回术语）。与 `cwl-show-me` 同族：一条口头禅立刻见效。

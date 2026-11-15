@@ -1,6 +1,6 @@
 # lodestar
 
-自己的 AI 编码工作流技能库：25 个技能，覆盖「想法 → 计划 → 实现 → 评审 → 交付」，以及盘问、调试、调研、教学等旁路。
+自己的 AI 编码工作流技能库：24 个技能，覆盖「想法 → 计划 → 实现 → 评审 → 交付」，以及盘问、调试、调研、教学等旁路。
 
 装上之后手打 `/cwl-ask`：说不清该用哪个，就把处境说给它听。
 
@@ -31,7 +31,6 @@
 |---|---|---|
 | [`cwl-ask`](workflow/cwl-ask/SKILL.md) | 路由器：拿不准用哪个，说处境，它指路（也可能说「什么都不用」） | 手打 |
 | [`cwl-direct`](workflow/cwl-direct/SKILL.md) | 范围明确的任务：读项目约定 → 写一份一次性清单（要做 / 验收）→ 直接做成正式实现；不需要盘问与计划 | 手打 |
-| [`cwl-explore`](workflow/cwl-explore/SKILL.md) | 探索模式：陪你想清楚，只读、不写代码，也不交产物 | 模型可触发 |
 | [`cwl-grill-with-docs`](workflow/cwl-grill-with-docs/SKILL.md) | 盘问澄清想法；边盘边产出词汇表与 ADR | 手打 |
 | [`cwl-to-plan`](workflow/cwl-to-plan/SKILL.md) | 把对话综合成 spec + 曳光弹 ticket，写入 `docs/workflow/specs/<slug>/` | 手打 |
 | [`cwl-implement`](workflow/cwl-implement/SKILL.md) | 按 ticket/spec 实现（调 `cwl-tdd`）；收尾调 `cwl-code-review`；不自动提交 | 手打 |
@@ -55,4 +54,4 @@
 | [`cwl-doc-writing`](workflow/cwl-doc-writing/SKILL.md) | 写文档前先读：结构让读者扫得到答案，措辞去掉空话 | 手打 |
 | [`cwl-sync`](workflow/cwl-sync/SKILL.md) | 从远端技能库拉最新版本，平铺覆盖到项目级 / 用户级技能目录（先删后换） | 手打 |
 
-维护者材料（设计笔记、尝试记录、上游译文、移植台账）都在 [`docs/`](docs/)。
+维护者材料（设计笔记、尝试记录、上游译文、移植台账）都在 [`docs/`](docs/)。暂不使用、但还没定要不要删的技能退役到 [`archive/`](archive/)，不参与同步。
