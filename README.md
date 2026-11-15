@@ -34,7 +34,7 @@
 | [`cwl-grill-with-docs`](workflow/cwl-grill-with-docs/SKILL.md) | 盘问澄清想法；边盘边产出词汇表与 ADR | 手打 |
 | [`cwl-to-plan`](workflow/cwl-to-plan/SKILL.md) | 把对话综合成 spec + 曳光弹 ticket，写入 `docs/workflow/specs/<slug>/` | 手打 |
 | [`cwl-implement`](workflow/cwl-implement/SKILL.md) | 按 ticket/spec 实现（调 `cwl-tdd`）；收尾调 `cwl-code-review`；不自动提交 | 手打 |
-| [`cwl-code-review`](workflow/cwl-code-review/SKILL.md) | 对固定点起的 diff 做两轴评审（标准 / Spec） | 模型可触发 |
+| [`cwl-code-review`](workflow/cwl-code-review/SKILL.md) | 对固定点起的 diff 做两轴评审（标准 / Spec），发现带严重度与依据，主审四档过滤后另存临时目录 | 模型可触发 |
 | [`cwl-pr`](workflow/cwl-pr/SKILL.md) | 写 PR 正文：最小视图（Summary）/ 前后证据（Evidence）/ 合并风险（Merge Danger） | 模型可触发 |
 | [`cwl-retro`](workflow/cwl-retro/SKILL.md) | 复盘会话，给环境改进建议 | 手打 |
 | [`cwl-wayfinder`](workflow/cwl-wayfinder/SKILL.md) | 大块迷雾努力：把决策 ticket 画成地图逐张解决，出口并入 `cwl-to-plan` | 手打 |

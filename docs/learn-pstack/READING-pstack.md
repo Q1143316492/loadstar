@@ -60,7 +60,7 @@
 ## 2. 有独立技能形态的流程
 
 - [ ] **24** `skills/architect/SKILL.md` — 写代码前先定类型、签名、模块形状，实现期间人保持在回路里。与本仓「先 spec 后 ticket」互补：它只定**代码形状**，不定需求。
-- [ ] **25** `skills/interrogate/SKILL.md` — 拿 diff 让多个评审者从独立角度拆。是本仓 `cwl-code-review` 的对照物：那边两轴（标准 / spec），这边多模型独立视角。
+- [ ] **25** `skills/interrogate/SKILL.md` — 拿 diff 让多个评审者从独立角度拆。是本仓 `cwl-code-review` 的对照物：那边两轴（标准 / spec），这边多模型独立视角。译文：[`translate/25-interrogate.md`](translate/25-interrogate.md)（含 `references/reviewer-prompt.md`）
 - [ ] **26** `skills/arena/SKILL.md` — 同一任务并行 N 个候选，选一个做底，把输家的强处移植进来。
 - [ ] **27** `skills/how/SKILL.md` — 解释子系统怎么工作：Overview / Key Concepts / How It Works / Where Things Live / Gotchas，复杂问题拆 2–4 个并行探索视角。译文：[`translate/27-how.md`](translate/27-how.md)。**2026-11-16 评估：暂不移植**——姿态与 `cwl-explore` 重叠，Critique 模式已被 `cwl-code-review` / `cwl-improve-codebase-architecture` 覆盖；若要移植，删 Critique、改 Claude Code 子智能体配置，只留 Explain
 - [ ] **28** `skills/why/SKILL.md` — 为什么长这样：运行时发现可用 MCP，并行查询版本控制、issue、文档、聊天、可观测、错误追踪、分析仓。译文：[`translate/28-why.md`](translate/28-why.md)。**2026-11-16 评估：暂不移植**——七类证据里六类依赖 MCP，本环境只有 git/gh 与本地文档；认识论（引用、置信度分层、缺口）可并进 `cwl-research`，不必单开技能
