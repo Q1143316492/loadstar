@@ -1,12 +1,16 @@
 ---
 name: cwl-show-me
-description: Help the user understand the current topic visually with concise diagrams, code-shape sketches, and focused HTML artifacts.
+description: "把当前话题画给用户看：伪代码、调用树、结构草图，或一份专注的 HTML 视觉件。"
 disable-model-invocation: true
 ---
 
-Help the user understand the current topic of conversation visually. Skip the preamble and keep prose brief. Pick the smallest view that makes the key point clear.
+把当前话题画给用户看。不写开场白，正文从简。
 
-- Show logic or an algorithm as pseudocode:
+这份文件是一份视图品种的清单：按话题挑一种，挑最省的那种。最后一种是 HTML 视觉件，它还要落盘并打开。
+
+## 形状
+
+- 逻辑或算法，写成伪代码：
 
 ```text
 on(save)
@@ -16,7 +20,7 @@ on(save)
   return fresh result
 ```
 
-- Show runtime control flow as a call tree:
+- 运行时的控制流，画成调用树：
 
 ```text
 submitForm
@@ -26,7 +30,7 @@ submitForm
   navigateToSession
 ```
 
-- Show UI structure as a component tree, including state and module boundaries that matter:
+- UI 结构，画成组件树，只留真正要紧的状态与模块边界：
 
 ```tsx
 <SessionPage> (apps/example/src/routes/session.tsx)
@@ -35,7 +39,7 @@ submitForm
     <RunSkillButton> (packages/ui)
 ```
 
-- Show file responsibility or a broad refactor as a shallow file tree:
+- 文件职责或一次大范围重构，画成浅树：
 
 ```text
 src/
@@ -44,7 +48,7 @@ src/
 └── transport/      # sends API requests
 ```
 
-- Show component interaction, control flow, or data flow with Mermaid:
+- 组件之间怎么交互、控制流、数据流，用 Mermaid：
 
 ```mermaid
 sequenceDiagram
@@ -56,9 +60,11 @@ sequenceDiagram
     Daemon-->>UI: stream result
 ```
 
-- Use `diff` when the point is what changes and the surrounding shape already exists. Match the diff shape to the topic.
+## 变了什么
 
-For a component change:
+要讲的是「变了什么」、而周围的形状本来就存在时，用 `diff`。缩进照搬上面那几种树，行首标 `+` / `-`，未改的行留原样。diff 的形状跟着改动的类型走——下面四种各自不同的地方在于「哪一行值得单独标出来」。
+
+组件改动，标出新增的组件与它落进的父级：
 
 ```diff
  <SessionPage>
@@ -69,7 +75,7 @@ For a component change:
 +    <SkillResultCard />
 ```
 
-For a file-layout change:
+文件布局改动，一次说清新增、删除、改名与拆成目录：
 
 ```diff
  src/
@@ -82,7 +88,7 @@ For a file-layout change:
 +    └── stream.ts
 ```
 
-For a call-tree or call-stack change:
+调用树或调用栈改动，标出新增的调用、以及被替换掉的整条路径：
 
 ```diff
  submitForm
@@ -95,7 +101,7 @@ For a call-tree or call-stack change:
 +    subscribeToEvents
 ```
 
-For a state or control-flow change:
+状态或控制流改动，旧行 `-`、新行 `+`，一个分支替换另一个分支：
 
 ```diff
  on(save)
@@ -106,7 +112,7 @@ For a state or control-flow change:
 +  invalidate cache
 ```
 
-- Show the whole block when most of it is new, when omitted context would hide ownership or order, or when the user needs a copyable target shape:
+整块都新、或者省掉的上下文会藏住归属和顺序、或者用户需要一段能直接抄走的形状，就整块写出来：
 
 ```ts
 function expandSkill(command: string): string {
@@ -115,14 +121,20 @@ function expandSkill(command: string): string {
 }
 ```
 
-- For a visual UI, layout, state comparison, or concept too dense for Mermaid, write one focused HTML file — a diagram, an infographic, or a short slide deck, whichever fits the point. Match the product's colors, type, spacing, and components; use real labels and data; support desktop and mobile. Then open it for the user:
+## HTML 视觉件
+
+UI、布局、状态对比，或密到 Mermaid 画不清的概念，写一个专注的 HTML 文件：图、信息图、或几页幻灯片，哪个贴题用哪个。用真实的标签和数据，桌面上和窄屏上都读得通。
+
+从本技能目录下的 `TEMPLATE.html` 起步：拷一份，样式块留着，正文换掉。数字条、卡片、目录树、前后对比、提示框都在里面。内容需要新形状时才往上加布局。
+
+写到系统临时目录（`$TMPDIR`，没有就用 `/tmp`；Windows 上是 `%TEMP%`），文件名 `show-me-<描述>.html`，仓库里不落文件。然后打开给用户看，并给出绝对路径：
 
 ```
 Bash(open path/to/show-me-{description}.html)
 ```
 
-### guidance
+### 分寸
 
-Place each visual next to the short text it supports. Keep only the calls, files, props, states, and boundaries needed to answer the user's current question or the options to resolve the current discussion point.
+每个视觉件挨着它支撑的那几句话放。只留回答当前问题所需的那几个调用、文件、props、状态和边界。
 
-You may use one of these, you may use several, it is unlikely you will use all of them. Use your judgement and don't overwhelm the user.
+下面这些手段用一种还是几种都行，全用上倒不太可能。自己判断，别一次性压垮用户。

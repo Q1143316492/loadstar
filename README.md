@@ -7,7 +7,7 @@
 ## 来自哪里
 
 - **主体**：[mattpocock/skills](https://github.com/mattpocock/skills)（`@ 49dd158`，原样导入基线见提交 `010369f`），之后做了中译与本地化——去掉 tracker 依赖，规划产物写本地 `docs/workflow/specs/`。
-- **外来技能**：`cwl-show-me` 来自 [humanlayer/skills](https://github.com/humanlayer/skills)（原文照搬，未译；`cwl-pr` 的 Summary 视觉菜单亦取自该技能）。
+- **外来技能**：`cwl-show-me` 来自 [humanlayer/skills](https://github.com/humanlayer/skills)（已译，并另配 HTML 模板；`cwl-pr` 的 Summary 视觉菜单亦取自该技能）。
 - **自写**：`cwl-ask`、`cwl-debug-mode`、`cwl-direct`、`cwl-doc-writing`（据 pstack `unslop` 与 OpenSpec `writing.md` 合并）。
 - **参考存档**：[`reference/`](reference/) 存着四套上游库的只读快照（mattpocock / openspec / superpowers / poteto-plugins，版本 pin 见其 [`README.md`](reference/README.md)），供取材用。poteto 那份已裁剪，只留 41 篇与通用工作流相关的技能。
 
@@ -37,6 +37,7 @@
 | [`cwl-code-review`](workflow/cwl-code-review/SKILL.md) | 对固定点起的 diff 做两轴评审（标准 / Spec），发现带严重度与依据，主审四档过滤后另存临时目录 | 模型可触发 |
 | [`cwl-pr`](workflow/cwl-pr/SKILL.md) | 写 PR 正文：最小视图（Summary）/ 前后证据（Evidence）/ 合并风险（Merge Danger） | 模型可触发 |
 | [`cwl-retro`](workflow/cwl-retro/SKILL.md) | 复盘会话，给环境改进建议 | 手打 |
+| [`cwl-show-me-your-work`](workflow/cwl-show-me-your-work/SKILL.md) | 回来时问「刚才干了什么」：对着产物报状态（改了什么 / 为什么 / 到哪了 / 该看哪几处），十行以内 | 模型可触发 |
 | [`cwl-wayfinder`](workflow/cwl-wayfinder/SKILL.md) | 大块迷雾努力：把决策 ticket 画成地图逐张解决，出口并入 `cwl-to-plan` | 手打 |
 | [`cwl-debug-mode`](workflow/cwl-debug-mode/SKILL.md) | 调试模式：提假设 → 用项目日志插桩 → 复现取证 → 定点修复 → 清场 | 手打 |
 | [`cwl-research`](workflow/cwl-research/SKILL.md) | 后台查一手来源（文档、源码），写一份带引用的 Markdown 笔记 | 模型可触发 |

@@ -1,0 +1,227 @@
+<!doctype html>
+<!--
+  展示用 HTML 的起步模板。stone 底、emerald 单色、衬线标题、发丝线、慷慨留白。
+
+  用法：整份拷到系统临时目录，改 <title> 与正文；样式块基本不动。
+  下面每块组件都在正文里有一份演示，标了 DEMO 的区间复制后整段替换。
+  要 Mermaid 时，放开 <head> 里注释掉的那行 import。
+-->
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>标题换成这一页在说什么</title>
+<!-- <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs"; mermaid.initialize({ startOnLoad: true, theme: "neutral" });</script> -->
+<style>
+  :root {
+    --stone-50:  #fafaf9;
+    --stone-100: #f5f5f4;
+    --stone-200: #e7e5e4;
+    --stone-400: #a8a29e;
+    --stone-500: #78716c;
+    --stone-600: #57534e;
+    --ink:       #0f172a;
+
+    --emerald-600: #059669;   /* 图形与粗体数字 */
+    --emerald-700: #047857;   /* 小字用这一档，对白底 5.25:1 */
+    --emerald-50:  #ecfdf5;
+    --amber-700:   #92400e;   /* 配 amber-50 底 6.84:1 */
+    --amber-50:    #fffbeb;
+    --amber-600:   #d97706;
+    --red-600:     #dc2626;
+
+    --sans: ui-sans-serif, system-ui, "Segoe UI", "Microsoft YaHei UI", "PingFang SC", sans-serif;
+    --serif: ui-serif, Georgia, "Noto Serif SC", "Source Han Serif SC", "Songti SC", serif;
+    --mono: ui-monospace, "Cascadia Mono", Consolas, "Courier New", monospace;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--stone-50); color: var(--ink);
+    font: 14px/1.7 var(--sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1024px; margin: 0 auto; padding: 56px 32px 88px; }
+
+  /* ── 页头 ─────────────────────────────── */
+  .eyebrow {
+    margin: 0 0 14px; font-size: 11px;
+    letter-spacing: .16em; text-transform: uppercase; color: var(--stone-400);
+  }
+  h1 {
+    margin: 0 0 14px; max-width: 24ch;
+    font: 600 32px/1.32 var(--serif); letter-spacing: -.01em;
+  }
+  .lede { margin: 0; max-width: 62ch; font-size: 15px; color: var(--stone-600); }
+  .lede b { color: var(--ink); font-weight: 600; }
+
+  /* 图例：三种线型对应三种含义，只在页面真的用到三种时才留 */
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 18px;
+    margin-top: 22px; font-size: 12px; color: var(--stone-600);
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 7px; }
+  .legend i { width: 18px; height: 0; border-top: 2px solid currentColor; }
+  .legend .k1 { color: var(--emerald-600); }
+  .legend .k2 { color: var(--red-600); }
+  .legend .k3 { color: var(--stone-400); }
+
+  /* ── 数字条 ───────────────────────────── */
+  .stats {
+    display: flex; flex-wrap: wrap; gap: 40px;
+    margin: 0 0 34px; padding: 24px 0;
+    border-top: 1px solid var(--stone-200); border-bottom: 1px solid var(--stone-200);
+  }
+  .stats div b {
+    display: block; font: 600 30px/1.1 var(--serif);
+    font-variant-numeric: tabular-nums;
+  }
+  .stats div:first-child b { color: var(--emerald-600); }
+  .stats div span { font-size: 12px; color: var(--stone-500); }
+
+  /* ── 版块与卡片 ───────────────────────── */
+  section { margin-bottom: 44px; }
+  h2 {
+    margin: 0 0 16px; font-size: 12px; font-weight: 600;
+    letter-spacing: .16em; text-transform: uppercase; color: var(--stone-500);
+  }
+  .card {
+    margin-bottom: 14px; padding: 22px 24px;
+    background: #fff; border: 1px solid var(--stone-200); border-radius: 8px;
+  }
+  .card > :first-child { margin-top: 0; }
+  .card > :last-child { margin-bottom: 0; }
+
+  .badges { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .badge { padding: 2px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+  .badge.go   { background: var(--emerald-50); color: var(--emerald-700); }
+  .badge.wait { background: var(--amber-50);   color: var(--amber-700); }
+  .badge.flat { background: var(--stone-100);  color: var(--stone-600); }
+
+  .meta-line {
+    margin-bottom: 14px; font: 12px/1.6 var(--mono); color: var(--stone-600);
+  }
+  .point { margin: 0 0 6px; font-size: 14px; }
+  .point b { color: var(--emerald-700); font-weight: 600; }
+
+  /* 短句标签：收益、清单、并列结论 */
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 0; padding: 0; list-style: none; }
+  .chips li {
+    padding: 3px 9px; border-radius: 4px; font-size: 12px;
+    color: var(--stone-600); background: var(--stone-100);
+  }
+
+  /* ── 代码与目录树 ─────────────────────── */
+  pre.tree {
+    margin: 0; overflow-x: auto; white-space: pre;
+    font: 12px/1.85 var(--mono); color: var(--stone-600);
+  }
+  pre.tree .a { color: var(--emerald-700); font-weight: 600; }
+  pre.tree .d { color: var(--red-600); }
+  pre.tree .c { color: var(--stone-400); }
+  code {
+    padding: 1px 5px; border-radius: 3px; font: 12.5px var(--mono);
+    background: var(--stone-100); color: var(--ink);
+  }
+
+  /* ── 前 / 后两栏 ──────────────────────── */
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .pair h3 {
+    margin: 0 0 6px; font-size: 11px; font-weight: 600;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--stone-500);
+  }
+  .pair .to h3 { color: var(--emerald-700); }
+  .pair p { position: relative; margin: 0 0 5px; padding-left: 13px; font-size: 13.5px; }
+  .pair .from p::before { content: "−"; position: absolute; left: 0; color: var(--stone-400); }
+  .pair .to   p::before { content: "+"; position: absolute; left: 0; color: var(--emerald-700); }
+
+  /* ── 提示框 ───────────────────────────── */
+  .adr {
+    margin-top: 14px; padding: 10px 14px;
+    background: var(--amber-50); border-left: 3px solid var(--amber-600);
+    border-radius: 4px; font-size: 13px; color: var(--amber-700);
+  }
+
+  @media (max-width: 760px) {
+    .wrap { padding: 36px 18px 64px; }
+    h1 { font-size: 25px; }
+    .stats { gap: 24px; }
+    .pair { grid-template-columns: 1fr; gap: 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">这一页的来由 · 日期 · 分支</p>
+    <h1>一句话说清这页在讲什么</h1>
+    <p class="lede">两三行补上下文：从哪来、要回答什么。<b>关键词加粗</b>，别写引言段。</p>
+    <div class="legend">
+      <span class="k1"><i></i>实线：已完成</span>
+      <span class="k2"><i></i>红：风险</span>
+      <span class="k3"><i></i>灰：未处理</span>
+    </div>
+  </header>
+
+  <!-- DEMO 起点：复制后把这一段整段换成正文 -->
+  <div class="stats">
+    <div><b>4</b><span>改了哪些文件</span></div>
+    <div><b>1</b><span>没跑过的路径</span></div>
+    <div><b>0</b><span>次提交</span></div>
+    <div><b>12</b><span>新增正文行数</span></div>
+  </div>
+
+  <section>
+    <h2>这一节讲什么</h2>
+    <article class="card">
+      <div class="badges">
+        <span class="badge go">已完成</span>
+        <span class="badge wait">待拍板</span>
+        <span class="badge flat">依赖上游</span>
+      </div>
+      <div class="meta-line">路径/到/产物 · 或一句等宽的元信息</div>
+      <p class="point"><b>一句话结论。</b>后面跟一句解释，别铺开。</p>
+      <ul class="chips">
+        <li>短句收益一</li>
+        <li>短句收益二</li>
+        <li>短句收益三</li>
+      </ul>
+    </article>
+  </section>
+
+  <section>
+    <h2>结构或目录</h2>
+    <article class="card">
+<pre class="tree">目录/
+<span class="a">+├── 新增的/</span>
+<span class="a">+│   └── 文件.md</span>          <span class="c"># 一句话说它做什么</span>
+├── 原有的/
+<span class="d">−│   └── 删掉的.md</span>
+└── 改过的.md              <span class="c"># 改了什么</span></pre>
+    </article>
+  </section>
+
+  <section>
+    <h2>前后对比</h2>
+    <article class="card">
+      <div class="pair">
+        <div class="from">
+          <h3>之前</h3>
+          <p>旧做法一</p>
+          <p>旧做法二</p>
+        </div>
+        <div class="to">
+          <h3>之后</h3>
+          <p>新做法一</p>
+          <p>新做法二</p>
+        </div>
+      </div>
+      <div class="adr">需要提醒的一句：代价、前提，或下次别踩的坑。</div>
+    </article>
+  </section>
+  <!-- DEMO 终点 -->
+
+</div>
+</body>
+</html>
