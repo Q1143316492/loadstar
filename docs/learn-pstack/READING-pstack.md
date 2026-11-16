@@ -15,7 +15,7 @@
 ## 0. 先看它怎么组织
 
 - [ ] **01** `README.md` — 作者的定位自述：反对「ai 写出太多 slop」，主张「要快先要深」、少写但高质量。末尾「why are there no planning skills?」一节很关键：**他不信计划，最好的 spec 是代码**——这与本仓「先 spec 后 ticket」是正面冲突，读的时候要当成一个反方观点。
-- [ ] **02** `skills/poteto-mode/SKILL.md` — 只有 124 行，但配了 16 份 playbook（`skills/poteto-mode/playbooks/`，65K）。先读 `SKILL.md`：它按任务类型给出手册清单，再路由到别的技能。playbook 按需读——最值得先看的是 `bug-fix.md`、`feature.md`、`multi-phase-plan.md`、`autonomous-run.md`。读完回答一个问题：它用什么形状把「一个任务从头做到尾」切段。
+- [ ] **02** `skills/poteto-mode/SKILL.md` — 只有 124 行，但配了 16 份 playbook（`skills/poteto-mode/playbooks/`，65K）。先读 `SKILL.md`：它按任务类型给出手册清单，再路由到别的技能。playbook 按需读——最值得先看的是 `bug-fix.md`、`feature.md`、`multi-phase-plan.md`、`autonomous-run.md`。读完回答一个问题：它用什么形状把「一个任务从头做到尾」切段。译文：[`translate/02-poteto-mode.md`](translate/02-poteto-mode.md)
 - [ ] **03** `skills/poteto-mode/SKILL.md` 里的 Principles 内联索引 — 20 条原则各自一句话。这是全仓的**词汇表**，后面所有技能都在引用这些名字。
 
 ## 1. 二十条原则（骨架，逐条读，每条 16–33 行）
@@ -65,7 +65,7 @@
 - [ ] **27** `skills/how/SKILL.md` — 解释子系统怎么工作：Overview / Key Concepts / How It Works / Where Things Live / Gotchas，复杂问题拆 2–4 个并行探索视角。译文：[`translate/27-how.md`](translate/27-how.md)。**2026-11-16 评估：暂不移植**——姿态与 `cwl-explore` 重叠，Critique 模式已被 `cwl-code-review` / `cwl-improve-codebase-architecture` 覆盖；若要移植，删 Critique、改 Claude Code 子智能体配置，只留 Explain
 - [ ] **28** `skills/why/SKILL.md` — 为什么长这样：运行时发现可用 MCP，并行查询版本控制、issue、文档、聊天、可观测、错误追踪、分析仓。译文：[`translate/28-why.md`](translate/28-why.md)。**2026-11-16 评估：暂不移植**——七类证据里六类依赖 MCP，本环境只有 git/gh 与本地文档；认识论（引用、置信度分层、缺口）可并进 `cwl-research`，不必单开技能
 - [ ] **29** `skills/figure-it-out/SKILL.md` — 没有现成 playbook 时的兜底：设计一份可审计的手册，跑假设回路，用 `show-me-your-work` 记决策。
-- [ ] **30** `skills/show-me-your-work/SKILL.md` — 一行一个决策的 TSV 决策痕迹（what / why / evidence / result），可提交给评审者。
+- [ ] **30** `skills/show-me-your-work/SKILL.md` — 一行一个决策的 TSV 决策痕迹（what / why / evidence / result），可提交给评审者。译文：[`translate/30-show-me-your-work.md`](translate/30-show-me-your-work.md)
 - [ ] **31** `skills/tdd/SKILL.md` — 只在这一步的测试路径便宜且本地时用；路径不清、昂贵、集成重时跳过。**明确的「TDD 不是万能」立场。**
 - [ ] **32** `skills/reflect/SKILL.md` — 一段活干完，三个并行评审者读当前会话，把学到的落到某份既有技能的**具体改动**上。
 - [ ] **33** `skills/unslop/SKILL.md` — 去掉 AI 腔。本仓 `cwl-doc-writing` 的措辞部分主要取自这里。

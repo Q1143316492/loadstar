@@ -4,10 +4,12 @@
 
 ## 已有译文
 
+- `02-poteto-mode.md` —— `pstack/skills/poteto-mode`（只译 `SKILL.md`，16 份 `playbooks/` 未译）
 - `22-never-block-on-the-human.md` —— `pstack/skills/principle-never-block-on-the-human`
 - `25-interrogate.md` —— `pstack/skills/interrogate`（含附录：`references/reviewer-prompt.md` 译文）
 - `27-how.md` —— `pstack/skills/how`（只译 `SKILL.md`，`references/` 未译）
 - `28-why.md` —— `pstack/skills/why`（只译 `SKILL.md`，`references/` 未译）
+- `30-show-me-your-work.md` —— `pstack/skills/show-me-your-work`（含附录：决策日志表头与 `scripts/log.sh`）
 - `verify-this.md` —— `cursor-team-kit/skills/verify-this`
 
 ## 翻译约定
