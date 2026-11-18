@@ -17,6 +17,7 @@ from typing import Literal
 from llm.assembler import BlockAssembler
 from llm.errors import CONTEXT_WINDOW_EXCEEDED, is_retryable
 from llm.protocol import LLMProvider, LLMRequest
+from llm.registry import ModelRegistry
 from llm.types import (
     LLMMessage,
     LlmCallConfig,
@@ -61,15 +62,22 @@ class ReactLoopAgent:
     def __init__(
         self,
         session: Session,
-        provider: LLMProvider,
+        provider: LLMProvider | None,
         options: AgentOptions,
         tools: ToolExecutor,
         system_prompt: SystemPromptRegistry | None = None,
         compaction=None,
         on_chunk: Callable[[StreamChunk], None] | None = None,
+        providers: ModelRegistry | None = None,
     ) -> None:
+        if provider is None and providers is None:
+            raise ValueError("ReactLoopAgent 需要 provider 或 provider 注册表")
+        if providers is not None:
+            # 组合期校验：请求中途才发现名字不对，会让日志留下一个假的 turn/end。
+            providers.require(options.provider)
         self._session = session
         self._provider = provider
+        self._registry = providers
         self._options = options
         self._tools = tools
         self._system_prompt = system_prompt
@@ -170,6 +178,14 @@ class ReactLoopAgent:
             temperature=self._options.temperature,
         )
 
+    def _active_provider(self) -> LLMProvider:
+        """请求期按 ``AgentOptions.provider`` 选路；没注册表时用注入的那一个。"""
+        if self._registry is not None:
+            return self._registry.require(self._options.provider)
+        provider = self._provider
+        if provider is None:
+            raise RuntimeError("没有可用的 provider")
+        return provider
     def _build_messages(self):
         messages = self._session.derive_messages()
         prompt = self._system_prompt.assemble() if self._system_prompt is not None else ""
@@ -253,7 +269,7 @@ class ReactLoopAgent:
             )
 
             assembler = BlockAssembler()
-            async for chunk in self._provider.stream(request, signal=self._cancel):
+            async for chunk in self._active_provider().stream(request, signal=self._cancel):
                 session.append(AssistantChunk(turn=turn, step=step, chunk=chunk))
                 assembler.push(chunk)
                 if self._on_chunk is not None:

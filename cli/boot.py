@@ -13,7 +13,9 @@ from cli.commands.registry import CommandRegistry
 from cli.observe import OnEnd, OnStart, wrap_tools
 from compaction import CompactionCapability, LlmSummarizer
 from compose import ComposeContext, compose
+from llm.auth import find_api_key, resolve_api_key
 from llm.deepseek import DeepSeekConfig, DeepSeekProvider
+from llm.registry import ModelRegistry
 from llm.types import StreamChunk
 from session import JsonlSessionStore, Session
 from skill import SkillCapability
@@ -22,6 +24,7 @@ from workspace import BashCapability, SearchCapability, WorkspaceCapability, res
 
 SKILLS_DIR = Path(__file__).resolve().parent / "skills"
 VENDOR_RG_DIR = Path(__file__).resolve().parent.parent / ".vendor" / "rg"
+PROVIDER = "deepseek"
 MODEL = "deepseek-v4-flash"
 
 
@@ -37,6 +40,7 @@ class Booted:
     provider: object | None = None
     options: AgentOptions | None = None
     on_chunk: Callable[[StreamChunk], None] | None = None
+    providers: ModelRegistry | None = None
 
     def replace_session(self, session: Session) -> None:
         self.session = session
@@ -51,11 +55,13 @@ class Booted:
             system_prompt=self.ctx.system_prompt,
             compaction=self.ctx.compaction,
             on_chunk=self.on_chunk,
+            providers=self.providers,
         )
 
 
 def api_key() -> str:
-    return os.environ.get("UTAGENT_API_KEY") or os.environ.get("DEEPSEEK_API_KEY") or ""
+    """启动前的可用性探测；真正解析在 ``boot`` 里。"""
+    return find_api_key(PROVIDER) or ""
 
 
 def latest_session_id(store: JsonlSessionStore) -> str | None:
@@ -80,13 +86,13 @@ def boot(
     on_tool_start: OnStart | None = None,
     on_tool_end: OnEnd | None = None,
 ) -> Booted:
-    key = api_key()
-    if not key:
-        raise RuntimeError("set UTAGENT_API_KEY or DEEPSEEK_API_KEY")
+    key = resolve_api_key(PROVIDER)
 
     provider = DeepSeekProvider(
         DeepSeekConfig(api_key=key, base_url="https://api.deepseek.com", model=MODEL)
     )
+    providers = ModelRegistry()
+    providers.register(PROVIDER, provider)
     workspace = Path(os.environ.get("WO_AGENT_WORKSPACE") or Path.cwd()).resolve()
     sessions_dir = Path(os.environ.get("WO_AGENT_SESSIONS") or (Path.cwd() / ".wo-sessions"))
     store = JsonlSessionStore(sessions_dir)
@@ -99,7 +105,7 @@ def boot(
 
     if session is None:
         session = Session()
-    options = AgentOptions(provider="deepseek", model=MODEL, max_tokens=1024, retry_backoff_s=0.5)
+    options = AgentOptions(provider=PROVIDER, model=MODEL, max_tokens=1024, retry_backoff_s=0.5)
     commands = CommandRegistry()
     mount_core(commands)
     mount_session(commands)
@@ -114,7 +120,7 @@ def boot(
     if search is not None:
         capabilities.append(search)
     capabilities.append(
-        CompactionCapability(LlmSummarizer(provider, provider_name="deepseek", model=MODEL))
+        CompactionCapability(LlmSummarizer(provider, provider_name=PROVIDER, model=MODEL))
     )
     ctx = compose(*capabilities, commands=commands)
     ctx.tools = wrap_tools(ctx.tools, on_tool_start, on_tool_end)
@@ -126,6 +132,7 @@ def boot(
         system_prompt=ctx.system_prompt,
         compaction=ctx.compaction,
         on_chunk=on_chunk,
+        providers=providers,
     )
     return Booted(
         ctx=ctx,
@@ -138,4 +145,5 @@ def boot(
         provider=provider,
         options=options,
         on_chunk=on_chunk,
+        providers=providers,
     )

@@ -40,8 +40,9 @@ from .types import (
     create_user_message,
 )
 from .protocol import LLMProvider, LLMRequest
-from .registry import ModelRegistry
+from .registry import ModelRegistry, ProviderNotRegistered
 from .assembler import BlockAssembler
+from .auth import find_api_key, resolve_api_key
 from .errors import LlmError, is_retryable
 from .deepseek import DeepSeekConfig, DeepSeekProvider
 
@@ -54,6 +55,7 @@ __all__ = [
     "DeepSeekProvider",
     "FinishChunk",
     "FinishReason",
+    "find_api_key",
     "ImageBlock",
     "LLMMessage",
     "LLMProvider",
@@ -66,8 +68,10 @@ __all__ = [
     "ModelRegistry",
     "ModelSource",
     "PluginSource",
+    "ProviderNotRegistered",
     "ReasoningBlock",
     "ReasoningDelta",
+    "resolve_api_key",
     "StreamChunk",
     "TextBlock",
     "TextDelta",

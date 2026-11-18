@@ -33,7 +33,7 @@ agent.session.derive_messages() # 模型看见的对话
 
 发请求前，若构造时传了 `compaction`，循环先 `compact_if_needed(..., trigger="pressure")`。模型报窗口超限，再压一次（`trigger="overflow"`）后重试该步。压缩怎么改表层见 [compaction.md](compaction.md)。系统提示词每步 `assemble()` 进请求，不写 session，见 [system_prompt.md](system_prompt.md)。
 
-循环不 import skill / 工作区 / bash。构造时只收 `tools`、`system_prompt`、`compaction`（都可以空）；挂哪些能力是 `compose()` 的事，循环只消费挂上之后的字段。
+循环不 import skill / 工作区 / bash。构造时只收 `tools`、`system_prompt`、`compaction`（都可以空）；挂哪些能力是 `compose()` 的事，循环只消费挂上之后的字段。provider 有两种接法：直接传一个实例，或传 `providers: ModelRegistry`、让循环在每次请求时按 `AgentOptions.provider` 选路；两者至少给一个，都没给则构造时报错。
 
 谁在用这个循环：
 

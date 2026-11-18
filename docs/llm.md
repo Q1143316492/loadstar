@@ -30,9 +30,10 @@ assembler.finish     # stop / tool-calls / error / ...
 通用（学这几份就够）：
 
 - `types.py` — 词汇。内容块、消息、流分片、`ToolSchema`。和哪家 API 无关。
-- `registry.py` — `ModelRegistry`：按名登记 provider。目前很薄。
+- `registry.py` — `ModelRegistry`：按名登记 provider，`require(name)` 取用；循环按 `AgentOptions.provider` 从它选路。未注册抛 `ProviderNotRegistered`。
 - `protocol.py` — `LLMRequest` + `LLMProvider.stream()`。各家适配器都实现这个接口。
 - `assembler.py` — `BlockAssembler`：分片拼成内容块。共享实现，适配器不要自己拼。
+- `auth.py` — `resolve_api_key(provider)`：按 provider 名解析密钥，显式 override 优先，其次环境变量（`deepseek` 读 `UTAGENT_API_KEY`，兼容 `DEEPSEEK_API_KEY`）。缺失抛 `LlmError(AUTH)`；`find_api_key` 是同样的查找但不抛错，给启动期探测用。
 
 - `errors.py` — 稳定错误码和 `is_retryable`。循环按 code 决定重不重试。
 
