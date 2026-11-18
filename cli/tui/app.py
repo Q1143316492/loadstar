@@ -231,11 +231,17 @@ class WoCli(App[None]):
         self.query_one("#status", StatusBar).update(f"{b.workspace.name}    {state}    {usage}")
 
     def _tick(self) -> None:
+        if not self._mounted():
+            return
         self._paint_live()
         self._sync_queue()
         if self._busy:
             self._spin = (self._spin + 1) % len(_SPIN)
             self._refresh_status()
+
+    def _mounted(self) -> bool:
+        """定时器可能在关机过程中还会烧一拍，此时屏幕子树已拆，查询会抛 NoMatches。"""
+        return bool(self.query(QueueStrip))
 
     def _sync_queue(self) -> None:
         """输入框上方只列还没 claim 的 next-turn；队头被 claim 后再写成 UserLine。"""
