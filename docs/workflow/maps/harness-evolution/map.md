@@ -24,6 +24,7 @@
 - [研究会话与崩溃恢复](tickets/02-research-session-durability.md)：dsh 恢复历史（补 balanced 边界再派生），pi 恢复意图（program counter 加 intent/settlement），wo-agent 是 turn 结束才全量落盘的快照；可搬的是效果前 checkpoint、合成 closers、torn-tail 恢复、intent 与预留 id、op 状态与 resume，分支与多 lane 判为与单线定位冲突。
 - [研究工具管线与权限](tickets/05-research-tool-pipeline-permissions.md)：dsh 用分阶段管线和三态审批，pi 只有 before/after 钩子且不带权限系统；wo-agent 缺的是执行器级超时、审批 seam、并发标记与统一输出契约，个人场景的刚需是 bash 人工闸门加凭据清洗，sandbox 与 permission preset 只留卡片。
 - [决定哪些架构进路线](tickets/06-decide-in-scope-capabilities.md)：持久性取 A 组加增量 append 与 intent；LLM 层取注册表、auth、usage 计量、错误分类；组合层取校验、disposer、skill 诊断；工具管线取三态审批、协作超时、错误码、并发标记、凭据清洗；分支/lane、能力协商、canonical output、sandbox、preset 只留卡片。
+- [排定渐进顺序与接缝](tickets/07-decide-port-order-and-seams.md)：八步有序表，先 usage 投影与压缩比例，再错误分类、崩溃恢复、组合校验、工具错误码与超时、三态审批，最后增量 append 与 intent；每步一次独立交付并同步文档。
 
 ## 尚未明确
 
