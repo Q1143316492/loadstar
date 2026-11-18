@@ -25,6 +25,8 @@
 - [研究工具管线与权限](tickets/05-research-tool-pipeline-permissions.md)：dsh 用分阶段管线和三态审批，pi 只有 before/after 钩子且不带权限系统；wo-agent 缺的是执行器级超时、审批 seam、并发标记与统一输出契约，个人场景的刚需是 bash 人工闸门加凭据清洗，sandbox 与 permission preset 只留卡片。
 - [决定哪些架构进路线](tickets/06-decide-in-scope-capabilities.md)：持久性取 A 组加增量 append 与 intent；LLM 层取注册表、auth、usage 计量、错误分类；组合层取校验、disposer、skill 诊断；工具管线取三态审批、协作超时、错误码、并发标记、凭据清洗；分支/lane、能力协商、canonical output、sandbox、preset 只留卡片。
 - [排定渐进顺序与接缝](tickets/07-decide-port-order-and-seams.md)：八步有序表，先 usage 投影与压缩比例，再错误分类、崩溃恢复、组合校验、工具错误码与超时、三态审批，最后增量 append 与 intent；每步一次独立交付并同步文档。
+- [决定学习产物回流机制](tickets/08-decide-knowledge-output-loop.md)：能力卡片放 `reference/harness-architectures/`，纯 markdown、一能力一文件、只写结论并链研究文档；复用 `cwl-research` 不新建技能；上游 commit 钉在卡片头，移植后只回填「现状」一段。
+- [建参考目录](tickets/10-build-reference-directory.md)：六张能力卡片落地，README 钉住上游 pin 与加卡片的四步；卡片与研究文档双向链接，细节只住在研究里。
 
 ## 尚未明确
 

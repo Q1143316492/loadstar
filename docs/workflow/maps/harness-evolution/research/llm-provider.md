@@ -2,6 +2,7 @@
 
 > 票：[03-research-llm-provider-layer.md](../tickets/03-research-llm-provider-layer.md)
 > 地图：[map.md](../map.md)
+> 结论视图：[llm-provider 卡片](../../../../../reference/harness-architectures/llm-provider.md)
 >
 > 本文只记录事实与可选方案，不做取舍；取舍留给后续 HITL 票。
 

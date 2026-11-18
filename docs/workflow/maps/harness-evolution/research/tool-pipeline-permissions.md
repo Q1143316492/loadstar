@@ -2,6 +2,7 @@
 
 > 票：[05-research-tool-pipeline-permissions.md](../tickets/05-research-tool-pipeline-permissions.md)
 > 地图：[map.md](../map.md)
+> 结论视图：[tool-pipeline 卡片](../../../../../reference/harness-architectures/tool-pipeline.md)
 >
 > 只列事实与选项，不做取舍；排序与是否进入路线留给后续 HITL 票。
 

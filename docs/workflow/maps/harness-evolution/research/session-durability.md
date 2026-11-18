@@ -2,6 +2,7 @@
 
 > 票：[02-research-session-durability.md](../tickets/02-research-session-durability.md)
 > 地图：[map.md](../map.md)
+> 结论视图：[session-durability 卡片](../../../../../reference/harness-architectures/session-durability.md)
 >
 > 只列事实与选项，不做取舍；排序与是否进入路线留给决策票。
 
