@@ -18,7 +18,7 @@ dsh 的 Cordis 插件组合与 pi 的扩展机制各解决了什么问题，wo-a
 
 ## 答案
 
-研究见 [composition-extension.md](../research/composition-extension.md)。
+研究见 [composition-extension.md](../../../../../reference/harness-architectures/research/composition-extension.md)。
 
 - **两种参考的差异**：dsh 是细粒度、可逆、依赖注入的服务图（插件 + `ctx.effect()` / `ctx.on()` + 类型化事件 + scope，组合数据化为 profile / bundle / patch 与 preset）；pi 是粗粒度、会话绑定的模块注入（一个 `ExtensionAPI`，隔离靠会话重建，撤销靠 `/reload`）；wo-agent 是静态能力列表加固定槽位，无 disposer、事件、作用域、preset、组合期校验。
 - **单宿主也回本的机制**：可逆注册与 disposer、组合期校验与 diagnostics（当前同名工具静默覆盖、skill 冲突静默跳过）、最小扩展点事件（`emit` + 一个 `tool/pre-execute` waterfall）、纯数据形态的命名 preset、skill 发现 diagnostics。

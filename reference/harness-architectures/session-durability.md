@@ -1,7 +1,7 @@
 # 会话持久性与崩溃恢复
 
 > dsh `0a53fb55be` · pi `853a80d26`
-> 研究：[session-durability.md](../../docs/workflow/maps/harness-evolution/research/session-durability.md)
+> 研究：[session-durability.md](research/session-durability.md)
 
 ## dsh 怎么做
 

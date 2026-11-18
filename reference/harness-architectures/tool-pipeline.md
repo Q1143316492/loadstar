@@ -1,7 +1,7 @@
 # 工具执行管线与权限
 
 > dsh `0a53fb55be` · pi `853a80d26`
-> 研究：[tool-pipeline-permissions.md](../../docs/workflow/maps/harness-evolution/research/tool-pipeline-permissions.md)
+> 研究：[tool-pipeline-permissions.md](research/tool-pipeline-permissions.md)
 
 ## dsh 怎么做
 

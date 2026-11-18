@@ -1,7 +1,7 @@
 # 沙箱与权限预设
 
 > dsh `0a53fb55be` · pi `853a80d26`
-> 研究：[tool-pipeline-permissions.md](../../docs/workflow/maps/harness-evolution/research/tool-pipeline-permissions.md) §1.7–§1.10、§4
+> 研究：[tool-pipeline-permissions.md](research/tool-pipeline-permissions.md) §1.7–§1.10、§4
 
 ## dsh 怎么做
 

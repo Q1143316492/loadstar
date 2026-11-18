@@ -1,7 +1,7 @@
 # LLM 接入与 provider 路由
 
 > dsh `0a53fb55be` · pi `853a80d26`
-> 研究：[llm-provider.md](../../docs/workflow/maps/harness-evolution/research/llm-provider.md)
+> 研究：[llm-provider.md](research/llm-provider.md)
 
 ## dsh 怎么做
 

@@ -18,7 +18,7 @@ dsh 与 pi 的工具执行、权限与沙箱各是什么形状，wo-agent 的 `t
 
 ## 答案
 
-研究见 [tool-pipeline-permissions.md](../research/tool-pipeline-permissions.md)。
+研究见 [tool-pipeline-permissions.md](../../../../../reference/harness-architectures/research/tool-pipeline-permissions.md)。
 
 - **三种形状**：dsh 是分阶段管线（`tool/call` 落日志 → pre-execute 的 allow/deny/ask → 单调 guard → approval → execute → post-execute → canonical output → 最终通知），参数不可改写，输出强制 schema + render，超时是工具声明的协作式预算，审批 / 权限 preset / sandbox 是三件独立机制；pi 只有 `beforeToolCall`（可 block）与 `afterToolCall`（可改结果），默认并行、按工具退回串行，明确不带权限系统、靠容器化；wo-agent 已有注册表、单调 guard、错误转 `is_error`、取消与进程树终止，`bash` / `grep` / `glob` 已有 30s 超时与尾部截断。
 - **票面假设的校正**：超时与输出截断在 `workspace` 的进程工具里已经存在，缺的是执行器级的通用 deadline 与统一输出契约；presentation 在 CLI 宿主里存在（`cli/observe.py`），缺的是核心层可声明的呈现契约。

@@ -18,7 +18,7 @@ dsh 与 pi-agent 的「会话与崩溃恢复」各是什么形状，wo-agent 现
 
 ## 答案
 
-研究见 [session-durability.md](../research/session-durability.md)。
+研究见 [session-durability.md](../../../../../reference/harness-architectures/research/session-durability.md)。
 
 - **三种形状**：dsh 恢复的是「历史」——把日志补到最后一个 balanced 边界再 `derive_messages()`；pi 恢复的是「意图」——三存储加 total 的 operation 状态（程序计数器），按 intent / settlement 的缺口决定重试、合成或标记 interrupted；wo-agent 是「整本历史快照」，只在 turn 结束后全量 `save`，mid-turn 崩溃会丢掉该 turn 的全部事件，且只补 `turn/end`，不补 `step/end` 与悬空 tool result。
 - **一个必须先说的事实**：pi 的 `harness.md` 是目标规格，当前源码是另一套 records + reducer 的实现；搬概念时二者可当作两种选项。

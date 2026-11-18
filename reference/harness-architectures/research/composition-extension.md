@@ -1,6 +1,6 @@
 # 组合层与扩展机制研究
 
-面向地图 `harness-evolution` 的票 04。只记录一手来源中的事实与可选项，不替后续 HITL 票做取舍。结论视图见 [composition-extension 卡片](../../../../../reference/harness-architectures/composition-extension.md)。参考实现钉在 dsh `0a53fb55be`、pi-agent `853a80d26`，路径均相对各自仓库根。
+面向地图 `harness-evolution` 的票 04。只记录一手来源中的事实与可选项，不替后续 HITL 票做取舍。结论视图见 [composition-extension 卡片](../composition-extension.md)。参考实现钉在 dsh `0a53fb55be`、pi-agent `853a80d26`，路径均相对各自仓库根。
 
 ## 事实速览
 

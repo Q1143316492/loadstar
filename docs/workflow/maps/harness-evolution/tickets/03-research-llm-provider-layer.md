@@ -18,7 +18,7 @@ dsh 与 pi-agent 的 LLM 接入层各是什么形状，wo-agent 的 `src/llm/` �
 
 ## 答案
 
-研究见 [llm-provider.md](../research/llm-provider.md)。
+研究见 [llm-provider.md](../../../../../reference/harness-architectures/research/llm-provider.md)。
 
 - **三层对照**：pi 把 Provider（身份、目录、auth）+ Api（线协议）+ Models（集合与分发）分开，失败写进 `stopReason` / `errorMessage` 而不抛出；dsh 的 `ctx.llm` 是 Cordis seam，请求是 `GenerateOptions`、流是 `StreamChunk`，usage 先落日志再由 token-meter 重放计价；wo-agent 已有同形的 shard 协议、唯一的 `BlockAssembler` 与最完整的 DeepSeek 适配器，但 `ModelRegistry` 没有调用点、auth 是构造参数、usage 只落日志不计量、400 一律判为窗口超限、重试只有循环内的固定码表与线性退避。
 - **最值得搬的六个接缝（按依赖顺序）**：provider 注册表与路由选择；auth / 凭据解析；usage 计量（轻量 meter，可升级为 replay fold）；错误分类与 per-route 重试策略；能力协商（窗口、默认 max tokens、reasoning effort）；跨 provider 消息变换。其中 Api 层分离建议等第二个 provider 出现再做。

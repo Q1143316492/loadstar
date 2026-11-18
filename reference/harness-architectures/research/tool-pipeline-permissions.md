@@ -1,8 +1,7 @@
 # 工具执行、权限与沙箱：dsh、pi、wo-agent 对照
 
-> 票：[05-research-tool-pipeline-permissions.md](../tickets/05-research-tool-pipeline-permissions.md)
-> 地图：[map.md](../map.md)
-> 结论视图：[tool-pipeline 卡片](../../../../../reference/harness-architectures/tool-pipeline.md)
+> 出自地图 `harness-evolution` 的对应研究票（规划产物，路线走完后可删）。
+> 结论视图：[tool-pipeline 卡片](../tool-pipeline.md)
 >
 > 只列事实与选项，不做取舍；排序与是否进入路线留给后续 HITL 票。
 

@@ -1,7 +1,7 @@
 # 持久会话模型：entry tree、lane、fork
 
 > dsh `0a53fb55be` · pi `853a80d26`
-> 研究：[session-durability.md](../../docs/workflow/maps/harness-evolution/research/session-durability.md) §2.1–§2.7
+> 研究：[session-durability.md](research/session-durability.md) §2.1–§2.7
 
 ## dsh 怎么做
 

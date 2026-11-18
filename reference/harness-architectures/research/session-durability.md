@@ -1,8 +1,7 @@
 # 会话与崩溃恢复：dsh、pi、wo-agent 对照
 
-> 票：[02-research-session-durability.md](../tickets/02-research-session-durability.md)
-> 地图：[map.md](../map.md)
-> 结论视图：[session-durability 卡片](../../../../../reference/harness-architectures/session-durability.md)
+> 出自地图 `harness-evolution` 的对应研究票（规划产物，路线走完后可删）。
+> 结论视图：[session-durability 卡片](../session-durability.md)
 >
 > 只列事实与选项，不做取舍；排序与是否进入路线留给决策票。
 
@@ -14,7 +13,7 @@
 - `pi:` = `d:\Unity\Src\DSH\pi-agent` @ `853a80d26`
 - `wo-agent:` = 本仓（调查时 HEAD `b9a96d6`）
 
-本文的存放位置按票面指定：`docs/workflow/maps/harness-evolution/research/`。该目录此前不存在，随本文建立；它与其他地图产物（`map.md`、`tickets/`）同级，符合「研究产物与地图同仓」的既有做法。
+本文原写在地图的 `research/` 下，后移入本目录与卡片同住：研究是长期资产，地图与票是规划产物，路线走完即可丢弃。
 
 一个必须先说明的事实：**pi 的 `harness.md` 是目标规格，不是当前源码的说明**。规格在 `pi:packages/agent/docs/harness.md`（2941 行），其中自述源码树里的 format-4 代码「unfinished and is replaced in place」（§1.7）。当前源码实现的是另一套「records + reducer」模型：`pi:packages/agent/src/harness/session/types.ts`（`OperationStartedRecord`、`StepAttemptRecord`、`ToolStartedRecord` 等）与 `pi:packages/agent/src/harness/reducer.ts`（按记录折叠出 lane 状态）。因此下文把「pi 规格的做法」与「pi 当前源码的做法」分开写；搬概念时两者可当作两种选项。
 

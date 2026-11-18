@@ -1,7 +1,7 @@
 # 能力组装与扩展点
 
 > dsh `0a53fb55be` · pi `853a80d26`
-> 研究：[composition-extension.md](../../docs/workflow/maps/harness-evolution/research/composition-extension.md)
+> 研究：[composition-extension.md](research/composition-extension.md)
 
 ## dsh 怎么做
 
