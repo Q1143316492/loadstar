@@ -12,6 +12,7 @@ from cli.boot import Booted
 from cli.tui.app import WoCli
 from cli.tui.banner import Banner
 from cli.tui.widgets import CancelLine, MetaLine, NoteLine, QueueStrip, ToolBlock, UserLine
+from compaction import CompactionOptions
 from session import Session
 
 
@@ -75,7 +76,10 @@ def _patch_boot(monkeypatch, tmp_path, agent: _FakeAgent) -> None:
 
     def fake_boot(on_chunk, resume=None, on_tool_start=None, on_tool_end=None):
         return Booted(
-            ctx=SimpleNamespace(tools=SimpleNamespace(schemas=lambda: [])),
+            ctx=SimpleNamespace(
+                tools=SimpleNamespace(schemas=lambda: []),
+                compaction=SimpleNamespace(options=CompactionOptions()),
+            ),
             session=agent.session,
             agent=agent,
             store=_FakeStore(),
@@ -99,6 +103,7 @@ async def test_mount_shows_session(tmp_path, monkeypatch):
         assert "idle" in status
         assert "in=0" in status
         assert "out=0" in status
+        assert "ctx=0%" in status
         composer = app.query_one("#composer")
         assert composer.placeholder
         meta = app.query_one(MetaLine)

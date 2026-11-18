@@ -36,7 +36,7 @@ session.derive_messages() # 只有 user 那条
 - `ReactLoopAgent` 写下几乎所有事件，并用 `derive_messages()` 拼请求。
 - `BasicCompaction` 对话太长时写入 `compaction/*`，再用 `replace` 改模型看见的那段。
 - `JsonlSessionStore` 把整本日志存成一个 `.jsonl`；重载时未闭合的 turn 补 `turn/end { reason: "interrupted" }`。
-- `cli/tui/app.py` 一轮结束后 `store.save(session)`。
+- `cli/tui/app.py` 一轮结束后 `store.save(session)`；状态栏读 `session.usage` 的投影。
 
 压缩不删日志。它先 `append(CompactionStart)`，再写摘要和 `compaction/summary`，然后追加一条带 `surface_op: replace` 的 `user/message`，最后 `CompactionEnd`。`derive_messages()` 走的那串节点各有一个 `seq`（`surface_seqs()`）；`replace` 的 `start` / `end` 是这些 seq，不是 `events` 里的下标。被换掉的事件仍在 `events` 里；下次 `derive_messages()` 看到的是「摘要 + 还留着的消息」。`compaction/*` 自己不算进对话。切分规则见 [compaction.md](compaction.md)。
 
@@ -47,3 +47,4 @@ session.derive_messages() # 只有 user 那条
 - `serialize.py` — 同一套类型进出 dict，`.jsonl` 不另造存储格式。
 - `persistence.py` — `SessionStore`：save / load / delete / list。
 - `jsonl.py` — 一个会话一个 `.jsonl`。实现上面的 `SessionStore`。header 带 `title`；`list()` 按修改时间新→旧。
+- `usage.py` — 只读投影：`sum_usage` 累加日志里的 `assistant/message.usage`；`context_pressure` 用最近一次 `usage` 作锚点、其后消息按字符粗估，给压缩与状态栏用；`message_chars` 是共用的字符计数。

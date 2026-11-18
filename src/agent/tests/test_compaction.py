@@ -62,7 +62,7 @@ async def test_loop_compacts_before_first_request():
     session = Session()
     _fill(session, 5, CHUNK)
     provider = ScriptedProvider([_text("ok")])
-    engine = BasicCompaction(FakeSummarizer(), CompactionOptions(threshold_chars=40, retain_chars=900))
+    engine = BasicCompaction(FakeSummarizer(), CompactionOptions(context_window=1000, threshold_ratio=0.04, retain_ratio=0.9, chars_per_token=1.0))
     agent = ReactLoopAgent(
         session, provider, AgentOptions(provider="fake", model="m"), FakeTools(), compaction=engine
     )
@@ -86,7 +86,7 @@ async def test_context_window_overflow_compacts_then_retries():
     provider = ScriptedProvider([_error(CONTEXT_WINDOW_EXCEEDED), _text("recovered")])
     engine = BasicCompaction(
         FakeSummarizer(),
-        CompactionOptions(threshold_chars=10_000, retain_chars=900),
+        CompactionOptions(context_window=10_000, threshold_ratio=1.0, retain_ratio=0.09, chars_per_token=1.0),
     )
     agent = ReactLoopAgent(
         session, provider, AgentOptions(provider="fake", model="m"), FakeTools(), compaction=engine

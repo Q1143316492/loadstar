@@ -7,19 +7,21 @@ from compaction import BasicCompaction, CompactionOptions, LlmSummarizer
 
 engine = BasicCompaction(
     LlmSummarizer(provider, provider_name="deepseek", model="deepseek-chat"),
-    CompactionOptions(threshold_chars=24000, retain_chars=6000),
+    CompactionOptions(context_window=131_072),  # 阈值 80%，尾部保留 16%
 )
 await engine.compact_if_needed(session, trigger="pressure")
 ```
 
-字符数超过 `threshold_chars` 才压；尾部大约 `retain_chars` 原样保留。没有可切的一段就什么也不做。
+压力超过 `threshold_ratio × context_window` 才压；尾部约 `retain_ratio × context_window` 原样保留。没有可切的一段就什么也不做。
 
-现在按字符数。`24000` / `6000` 是初值，不是从 dsh 抄的，仓库里没有换算依据。以后：有 token 计量和模型窗口之后，按 dsh 默认做——阈值 = 窗口 × 0.8，尾部 = 窗口 × 0.16（token）。
+压力不是按字符直接算，而是走 `session.usage.context_pressure`：最近一次请求的 provider `usage` 作 token 锚点，其后的消息按 `chars_per_token` 粗估。锚点必须晚于最后一次压缩——压缩改变了真正会发出的上下文，之前的 usage 不再代表当前请求；此时退化为整段字符估算。没有真实 tokenizer 之前这个粗估系数是显式参数，不藏在实现里。
+
+`context_window` 现在由宿主手写（DeepSeek 128K）。模型能力协商还没做，等第二个 provider 出现后改成 provider 声明的元数据。
 
 ## 文件
 
 - `protocol.py` — `Summarizer`：一段消息进，摘要字符串出。`CompactionEngine`：`compact_if_needed` / `compact_now`。
-- `engine.py` — `BasicCompaction`、`CompactionOptions`。按字符数判断要不要压，切哪一段。
+- `engine.py` — `BasicCompaction`、`CompactionOptions`。按窗口比例判断要不要压，切哪一段。`options` 属性给宿主读窗口与比例（状态栏显示压力）。
 - `pairing.py` — 切分不能拆开一对 tool-call / tool-result。
 - `summarizer.py` — `LlmSummarizer`：用已有的 `LLMProvider` 做一次无工具请求。`frame_summary` 把摘要包成检查点正文。
 - `capability.py` — `CompactionCapability`：`mount` 时把引擎放到 `ctx.compaction`。

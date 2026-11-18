@@ -62,7 +62,7 @@ class _SilentSummarizer:
 
 
 def test_compaction_capability_fills_slot():
-    ctx = compose(CompactionCapability(_SilentSummarizer(), CompactionOptions(threshold_chars=100)))
+    ctx = compose(CompactionCapability(_SilentSummarizer(), CompactionOptions()))
     assert ctx.compaction is not None
     assert hasattr(ctx.compaction, "compact_if_needed")
 

@@ -16,8 +16,8 @@ from cli.boot import Booted, boot
 from cli.commands import CommandContext, CommandOutcome, apply_suggestion, parse_line
 from cli.commands.dispatch import TABLE
 from cli.chunks import to_ui_event
-from cli.usage import sum_usage
 from cli.tui.banner import Banner
+from session import context_pressure, sum_usage
 from cli.tui.suggest import SlashMenu
 from cli.tui.widgets import (
     AgentMarkdown,
@@ -222,6 +222,12 @@ class WoCli(App[None]):
         usage = f"in={u.input} out={u.output}"
         if u.cache_read:
             usage += f" cache={u.cache_read}"
+        compaction = getattr(b.ctx, "compaction", None)
+        if compaction is not None:
+            options = compaction.options
+            pressure = context_pressure(b.session, chars_per_token=options.chars_per_token)
+            percent = round(100 * pressure.tokens / options.context_window)
+            usage += f"    ctx={percent}%"
         self.query_one("#status", StatusBar).update(f"{b.workspace.name}    {state}    {usage}")
 
     def _tick(self) -> None:

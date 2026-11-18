@@ -7,8 +7,7 @@ tool-result -1；切点处 in-progress 为 0 才安全。
 
 from __future__ import annotations
 
-from llm.types import LLMMessage
-from session import Session, fold_surface
+from session import Session, fold_surface, message_chars
 from session.events import SessionEventData
 
 
@@ -61,23 +60,3 @@ def tool_pairing_balanced_after(session: Session, seq: int) -> bool:
     except ValueError:
         raise ValueError(f"tool-pairing: seq {seq} is not a current surface node") from None
     return after[index]
-
-
-def message_chars(message: LLMMessage) -> int:
-    """字符数代理 token 计量。没有 tokenMeter 时用它做压力/保留阈值。"""
-    total = 0
-    for block in message.content:
-        if block.type in ("text", "reasoning"):
-            total += len(block.text)
-        elif block.type == "image":
-            total += len(block.url)
-        elif block.type == "tool-call":
-            total += len(block.id) + len(block.name) + len(block.arguments)
-        elif block.type == "tool-result":
-            total += len(block.tool_call_id)
-            for inner in block.content:
-                if inner.type in ("text", "reasoning"):
-                    total += len(inner.text)
-                elif inner.type == "image":
-                    total += len(inner.url)
-    return total

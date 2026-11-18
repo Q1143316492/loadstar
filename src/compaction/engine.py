@@ -1,6 +1,9 @@
-"""字符阈值 + 尾部保留的压缩后端。
+"""按上下文窗口比例的压缩后端。
 
-没有 tokenMeter：用派生消息的字符数做压力代理。切分遵守工具配对边界。
+压力用 `session.usage.context_pressure` 估：最近一次 provider `usage` 作锚点，
+其后追加的消息按字符数粗估。阈值与尾部保留都是窗口比例，对齐 dsh 默认
+（阈值 = 窗口 × 0.8，尾部 = 窗口 × 0.16）。切分遵守工具配对边界。
+
 成功路径与 dsh 相同：``compaction/start`` → 摘要 → ``compaction/summary``
 → ``user/message`` ``replace`` → ``compaction/end``。崩溃锁（未匹配 start）
 视为 busy，不自动清除。
@@ -9,11 +12,19 @@
 from __future__ import annotations
 
 import asyncio
+import math
 import uuid
 from dataclasses import dataclass
 
 from llm.types import TextBlock, create_message
-from session import Session, derive_event_message, fold_surface
+from session import (
+    DEFAULT_CHARS_PER_TOKEN,
+    Session,
+    context_pressure,
+    derive_event_message,
+    fold_surface,
+    message_chars,
+)
 from session.events import (
     CompactionEnd,
     CompactionStart,
@@ -22,25 +33,36 @@ from session.events import (
     UserMessageEvent,
 )
 
-from .pairing import (
-    message_chars,
-    tool_pairing_balanced_after,
-    tool_pairing_balanced_before,
-)
+from .pairing import tool_pairing_balanced_after, tool_pairing_balanced_before
 from .protocol import CompactionBusy, CompactionResult, CompactionTrigger, Summarizer, compact_checkpoint_source
 from .summarizer import frame_summary
 
 
 @dataclass(frozen=True)
 class CompactionOptions:
-    """``threshold_chars`` 触发压力压缩；``retain_chars`` 是原样保留的尾部预算。
+    """窗口比例与粗估系数。
 
-    没有 tokenMeter，不能按模型窗口算。24000 / 6000 是初值，仓库里没有换算依据。
-    以后有计量和窗口之后，改成 dsh 默认：阈值 = 窗口 × 0.8，尾部 = 窗口 × 0.16（token）。
+    ``context_window`` 是模型的 token 窗口；现在由宿主手写（DeepSeek 128K）。
+    模型能力协商还没做，等第二个 provider 出现后改成 provider 声明的元数据。
     """
 
-    threshold_chars: int = 24000
-    retain_chars: int = 6000
+    context_window: int = 131_072
+    threshold_ratio: float = 0.8
+    retain_ratio: float = 0.16
+    chars_per_token: float = DEFAULT_CHARS_PER_TOKEN
+
+    @property
+    def threshold_tokens(self) -> int:
+        return math.floor(self.context_window * self.threshold_ratio)
+
+    @property
+    def retain_tokens(self) -> int:
+        return math.floor(self.context_window * self.retain_ratio)
+
+    @property
+    def retain_chars(self) -> int:
+        """尾部保留预算，换算回字符。"""
+        return math.floor(self.retain_tokens * self.chars_per_token)
 
 
 def unmatched_compaction_start(session: Session):
@@ -90,6 +112,11 @@ class BasicCompaction:
         self._summarizer = summarizer
         self._options = options or CompactionOptions()
 
+    @property
+    def options(self) -> CompactionOptions:
+        """宿主读窗口与比例用（状态栏显示压力）。"""
+        return self._options
+
     async def compact_if_needed(
         self,
         session: Session,
@@ -100,9 +127,10 @@ class BasicCompaction:
     ) -> CompactionResult | None:
         if unmatched_compaction_start(session) is not None:
             return None
-        total = sum(message_chars(message) for message in session.derive_messages())
-        if trigger == "pressure" and total < self._options.threshold_chars:
-            return None
+        if trigger == "pressure":
+            pressure = context_pressure(session, chars_per_token=self._options.chars_per_token)
+            if pressure.tokens < self._options.threshold_tokens:
+                return None
         selected = select_compactable_range(session, self._options.retain_chars)
         if selected is None:
             return None

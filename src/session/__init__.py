@@ -29,6 +29,13 @@ from .persistence import (
     SessionStore,
 )
 from .jsonl import JsonlSessionStore
+from .usage import (
+    DEFAULT_CHARS_PER_TOKEN,
+    ContextPressure,
+    context_pressure,
+    message_chars,
+    sum_usage,
+)
 
 __all__ = [
     "AssistantChunk",
@@ -36,6 +43,8 @@ __all__ = [
     "CompactionEnd",
     "CompactionStart",
     "CompactionSummary",
+    "ContextPressure",
+    "DEFAULT_CHARS_PER_TOKEN",
     "JsonlSessionStore",
     "Session",
     "SessionCorruptionError",
@@ -51,9 +60,12 @@ __all__ = [
     "TurnEnd",
     "TurnStart",
     "UserMessageEvent",
+    "context_pressure",
     "derive_event_message",
     "dict_to_event",
     "event_to_dict",
     "fold_surface",
     "is_surface_event",
+    "message_chars",
+    "sum_usage",
 ]

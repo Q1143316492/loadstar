@@ -11,7 +11,7 @@ from agent import AgentOptions, ReactLoopAgent
 from cli.commands.builtins import mount_core, mount_session
 from cli.commands.registry import CommandRegistry
 from cli.observe import OnEnd, OnStart, wrap_tools
-from compaction import CompactionCapability, LlmSummarizer
+from compaction import CompactionCapability, CompactionOptions, LlmSummarizer
 from compose import ComposeContext, compose
 from llm.auth import find_api_key, resolve_api_key
 from llm.deepseek import DeepSeekConfig, DeepSeekProvider
@@ -26,6 +26,7 @@ SKILLS_DIR = Path(__file__).resolve().parent / "skills"
 VENDOR_RG_DIR = Path(__file__).resolve().parent.parent / ".vendor" / "rg"
 PROVIDER = "deepseek"
 MODEL = "deepseek-v4-flash"
+MODEL_CONTEXT_WINDOW = 131_072  # 换 MODEL 时一起改；模型能力协商还没做
 
 
 @dataclass
@@ -120,7 +121,10 @@ def boot(
     if search is not None:
         capabilities.append(search)
     capabilities.append(
-        CompactionCapability(LlmSummarizer(provider, provider_name=PROVIDER, model=MODEL))
+        CompactionCapability(
+            LlmSummarizer(provider, provider_name=PROVIDER, model=MODEL),
+            CompactionOptions(context_window=MODEL_CONTEXT_WINDOW),
+        )
     )
     ctx = compose(*capabilities, commands=commands)
     ctx.tools = wrap_tools(ctx.tools, on_tool_start, on_tool_end)

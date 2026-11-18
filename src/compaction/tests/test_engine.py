@@ -26,6 +26,14 @@ def _user(text):
     return create_user_message([TextBlock(text=text)])
 
 
+def test_default_ratios_follow_window():
+    # 路线验收：阈值 = 窗口 80%，尾部保留 16%。
+    options = CompactionOptions()
+    assert options.threshold_tokens == int(options.context_window * 0.8)
+    assert options.retain_tokens == int(options.context_window * 0.16)
+    assert options.retain_chars == int(options.retain_tokens * options.chars_per_token)
+
+
 def _fill(session, n, text="abcdefghij"):
     for _ in range(n):
         session.append(UserMessageEvent(message=_user(text)))
@@ -34,7 +42,7 @@ def _fill(session, n, text="abcdefghij"):
 async def test_compact_now_replaces_head_keeps_tail():
     session = Session()
     _fill(session, 5, CHUNK)
-    engine = BasicCompaction(FakeSummarizer(), CompactionOptions(threshold_chars=1000, retain_chars=900))
+    engine = BasicCompaction(FakeSummarizer(), CompactionOptions(context_window=1000, threshold_ratio=1.0, retain_ratio=0.9, chars_per_token=1.0))
     result = await engine.compact_now(session)
     assert result is not None
     texts = [m.content[0].text for m in session.derive_messages()]
@@ -51,7 +59,7 @@ async def test_compact_now_replaces_head_keeps_tail():
 async def test_pressure_below_threshold_is_noop():
     session = Session()
     _fill(session, 2, "hi")
-    engine = BasicCompaction(FakeSummarizer(), CompactionOptions(threshold_chars=10_000, retain_chars=1))
+    engine = BasicCompaction(FakeSummarizer(), CompactionOptions(context_window=10_000, threshold_ratio=1.0, retain_ratio=0.0001, chars_per_token=1.0))
     assert await engine.compact_if_needed(session, trigger="pressure") is None
     assert [m.content[0].text for m in session.derive_messages()] == ["hi", "hi"]
 
@@ -59,7 +67,7 @@ async def test_pressure_below_threshold_is_noop():
 async def test_overflow_skips_threshold():
     session = Session()
     _fill(session, 5, CHUNK)
-    engine = BasicCompaction(FakeSummarizer(), CompactionOptions(threshold_chars=10_000, retain_chars=900))
+    engine = BasicCompaction(FakeSummarizer(), CompactionOptions(context_window=10_000, threshold_ratio=1.0, retain_ratio=0.09, chars_per_token=1.0))
     result = await engine.compact_if_needed(session, trigger="overflow")
     assert result is not None
     assert SUMMARY_OPEN_TAG in session.derive_messages()[0].content[0].text
@@ -69,7 +77,7 @@ async def test_busy_lock_blocks_compact_now():
     session = Session()
     _fill(session, 4, CHUNK)
     session.append(CompactionStart(compaction_id="open"))
-    engine = BasicCompaction(FakeSummarizer(), CompactionOptions(retain_chars=500))
+    engine = BasicCompaction(FakeSummarizer(), CompactionOptions(context_window=10_000, retain_ratio=0.05, chars_per_token=1.0))
     try:
         await engine.compact_now(session)
         assert False, "expected CompactionBusy"
@@ -85,7 +93,7 @@ async def test_failed_summary_closes_lock_without_replace():
 
     session = Session()
     _fill(session, 5, CHUNK)
-    engine = BasicCompaction(Boom(), CompactionOptions(retain_chars=900))
+    engine = BasicCompaction(Boom(), CompactionOptions(context_window=10_000, retain_ratio=0.09, chars_per_token=1.0))
     assert await engine.compact_if_needed(session, trigger="overflow") is None
     assert any(e.event.type == "compaction/end" and e.event.error for e in session.events)
     assert unmatched_compaction_start(session) is None
@@ -95,7 +103,7 @@ async def test_failed_summary_closes_lock_without_replace():
 async def test_jsonl_roundtrip_after_compact(tmp_path):
     session = Session()
     _fill(session, 5, CHUNK)
-    engine = BasicCompaction(FakeSummarizer(), CompactionOptions(retain_chars=900))
+    engine = BasicCompaction(FakeSummarizer(), CompactionOptions(context_window=10_000, retain_ratio=0.09, chars_per_token=1.0))
     await engine.compact_now(session)
     store = JsonlSessionStore(tmp_path)
     store.save(session)
