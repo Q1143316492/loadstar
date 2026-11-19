@@ -1,0 +1,70 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  overflow: hidden;
+  user-select: none;
+  cursor: default;
+  font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+}
+
+#stage {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+}
+
+:root {
+  --pet-size: 170px;
+}
+
+#pet {
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: var(--pet-size);
+  height: var(--pet-size);
+  /* 交给系统拖动：窗口移动由 Windows 执行，不可能漂移。
+     右键在拖动区上会被主进程拦下，换成本应用菜单。 */
+  -webkit-app-region: drag;
+  cursor: grab;
+}
+
+#pet img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
+
+#bubble {
+  position: absolute;
+  /* 宠物图上方约有 15% 的透明留白，气泡下移进这段，视觉上才贴着球顶。 */
+  bottom: calc(var(--pet-size) - 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: calc(var(--pet-size) + 60px);
+  padding: 5px 10px;
+  border-radius: 10px;
+  background: rgba(28, 30, 36, 0.92);
+  color: #f2f4f8;
+  font-size: 12px;
+  line-height: 1.4;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  -webkit-app-region: no-drag;
+}
+
+
+#bubble.hidden { display: none; }
+
+#bubble-text {
+  max-width: calc(var(--pet-size) + 20px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+

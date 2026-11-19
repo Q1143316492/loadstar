@@ -1,0 +1,36 @@
+{
+  "port": 47900,
+  "window": {
+    "width": 240,
+    "height": 240,
+    "petSize": 170
+  },
+  "assets": {
+    "dir": "assets",
+    "size": 256
+  },
+  "behavior": {
+    "alwaysOnTop": true,
+    "clickThrough": true,
+    "rememberPosition": true
+  },
+  "thresholds": {
+    "consecutiveReads": 25,
+    "idleMinutes": 10,
+    "minCallsInWindow": 8,
+    "sessionIdleMinutes": 30
+  },
+  "logs": {
+    "dir": "logs",
+    "keepDays": 7
+  },
+  "toggles": {
+    "pet": true,
+    "systemMessage": true,
+    "agentNudge": true
+  },
+  "nudge": {
+    "text": "你已连续 {reads} 次工具调用没有任何写入。先向用户报一句：你在查什么、已经查到哪、下一步打算怎么办。",
+    "systemMessage": "⏳ 连续 {reads} 次读未写"
+  }
+}

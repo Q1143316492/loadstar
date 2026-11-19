@@ -1,2 +1,7 @@
 # 临时拉取目录：重拉上游时用，用完即删，不入版本管理
 /.staging/
+
+# 桌宠：依赖与运行时状态（窗口位置、日志）不入版本管理
+/agent-hook/pet/node_modules/
+/agent-hook/pet/state/
+/agent-hook/pet/logs/

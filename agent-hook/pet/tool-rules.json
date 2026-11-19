@@ -1,0 +1,18 @@
+{
+  "readTools": ["Read", "Grep", "Glob", "WebFetch", "WebSearch", "ToolSearch", "Skill", "Agent", "Task"],
+  "writeTools": ["Edit", "Write", "NotebookEdit", "AskUserQuestion"],
+  "bash": {
+    "write": [
+      "\\b(rm|del|rmdir|mv|move|cp|copy|mkdir|touch|tee)\\b",
+      "(^|[\\s;&|(])[0-9]*>>?\\s*[^&\\s>=]",
+      "\\bsed\\s+-i\\b",
+      "\\bgit\\s+(add|commit|checkout|reset|merge|rebase|stash|rm|mv)\\b",
+      "\\b(npm|pnpm|yarn|pip|uv)\\s+(install|add|remove|uninstall)\\b",
+      "\\b(Set-Content|Out-File)\\b"
+    ],
+    "read": [
+      "\\b(cat|head|tail|less|type|ls|dir|find|grep|rg|wc)\\b",
+      "\\bgit\\s+(status|log|diff|show|branch)\\b"
+    ]
+  }
+}

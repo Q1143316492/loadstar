@@ -1,0 +1,15 @@
+{
+  "name": "cwl-pet",
+  "version": "0.1.0",
+  "private": true,
+  "description": "桌宠预警原型：透明置顶窗口 + 三态静态图 + 点击穿透",
+  "main": "main.js",
+  "scripts": {
+    "start": "node bin/start.js",
+    "test": "node test/smoke.test.js",
+    "start:detached": "node bin/start.js --detach"
+  },
+  "devDependencies": {
+    "electron": "33.4.11"
+  }
+}
