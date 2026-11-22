@@ -50,7 +50,7 @@ function health() {
 
 (async () => {
   if (!(await health())) {
-    console.error(`桌宠没有在 ${PORT} 端口运行。先在 agent-hook/pet 下 npm start。`);
+    console.error(`桌宠没有在 ${PORT} 端口运行。先在 agent/client/pet 下 npm start。`);
     process.exit(1);
   }
 

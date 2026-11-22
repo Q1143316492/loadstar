@@ -2,6 +2,6 @@
 /.staging/
 
 # 桌宠：依赖与运行时状态（窗口位置、日志）不入版本管理
-/agent-hook/pet/node_modules/
-/agent-hook/pet/state/
-/agent-hook/pet/logs/
+/agent/client/pet/node_modules/
+/agent/client/pet/state/
+/agent/client/pet/logs/

@@ -1,11 +1,11 @@
-# agent-hook
+# agent
 
 Claude Code 钩子 + 本机桌宠：会话连续只读、久不写时，桌宠亮起并让模型报一句进展。
 
 - [`hooks/`](hooks/) —— 钩子客户端与安装脚本。
 - [`pet/`](pet/) —— 桌宠（Electron）。
 
-设计与决策记录在 [`docs/workflow/maps/agent-hook/map.md`](../docs/workflow/maps/agent-hook/map.md)。
+设计与决策记录在 [`docs/workflow/maps/agent-monitor/map.md`](../docs/workflow/maps/agent-monitor/map.md)。
 
 ## 安装
 
@@ -38,7 +38,7 @@ icacls D:\Workspace\lodestar /remove:d Everyone
 想开启时执行：
 
 ```powershell
-node agent-hook\hooks\install.js
+node agent\hooks\install.js
 ```
 
 它会备份 `~/.claude/settings.json`，再给 `PostToolUse`、`SessionStart`、`SessionEnd`、`UserPromptSubmit`、`Stop` 各加一条超时 1 秒的命令钩子；已经装过就跳过。**改动要重启 Claude Code 会话才生效。**
@@ -51,7 +51,7 @@ node agent-hook\hooks\install.js
     "PostToolUse": [
       {
         "hooks": [
-          { "type": "command", "command": "\"C:/Program Files/nodejs/node.exe\" D:/Workspace/lodestar/agent-hook/hooks/claude-code-hook.js", "timeout": 1 }
+          { "type": "command", "command": "\"C:/Program Files/nodejs/node.exe\" D:/Workspace/lodestar/agent/hooks/claude-code-hook.js", "timeout": 1 }
         ]
       }
     ]
@@ -59,14 +59,14 @@ node agent-hook\hooks\install.js
 }
 ```
 
-不想要了就 `node agent-hook\hooks\install.js --uninstall`，只删本项目的条目。
+不想要了就 `node agent\hooks\install.js --uninstall`，只删本项目的条目。
 
 不装钩子时桌宠仍然可以启动、`/health` 与 `/state` 也正常，只是收不到任何会话事件。
 
 ### 3. 装依赖并启动桌宠
 
 ```powershell
-cd agent-hook\pet
+cd agent\client\pet
 npm install
 npm start
 ```
@@ -91,7 +91,7 @@ npm install
 3. 目标填：
 
    ```
-   "C:\Windows\System32\wscript.exe" "<仓库路径>\agent-hook\pet\launch.vbs"
+   "C:\Windows\System32\wscript.exe" "<仓库路径>\agent\client\pet\launch.vbs"
    ```
 
    （`launch.vbs` 在 `pet/` 下，负责隐藏控制台窗口启动 Electron。）
@@ -120,7 +120,7 @@ npm install
 ### 单元测试
 
 ```powershell
-cd agent-hook\pet
+cd agent\client\pet
 npm test
 ```
 
@@ -131,7 +131,7 @@ npm test
 钩子配置只在会话启动时加载，**装完要重启 Claude Code**。重启后：
 
 1. 让 agent 做一件只读的长活（例如「逐个读 workflow/ 下 25 个 SKILL.md」）；
-2. 看 `agent-hook/pet/logs/<session-id>.jsonl` 是否出现，`transition` 里应有 `to: "alert"`；
+2. 看 `agent/client/pet/logs/<session-id>.jsonl` 是否出现，`transition` 里应有 `to: "alert"`；
 3. 验证模型确实收到话术：在 `~/.claude/projects/<项目>/<session-id>.jsonl` 里搜「先向用户报一句」，应有一条 `"type":"hook_additional_context"`。
 
 不想重启当前会话，也可以用独立会话跑一次：
@@ -144,12 +144,12 @@ claude -p "逐个读取 workflow 下全部 25 个 SKILL.md，每个说一行。�
 
 ## 验证
 
-桌宠开着时，随便跑一次工具调用，看 `agent-hook/pet/logs/` 是否出现按会话命名的 `.jsonl`；关掉桌宠再跑一次，会话应当毫无变化——钩子 1 秒内放弃，不打扰任何东西。查状态与排查见 [`workflow/cwl-pet/SKILL.md`](../workflow/cwl-pet/SKILL.md)。
+桌宠开着时，随便跑一次工具调用，看 `agent/client/pet/logs/` 是否出现按会话命名的 `.jsonl`；关掉桌宠再跑一次，会话应当毫无变化——钩子 1 秒内放弃，不打扰任何东西。查状态与排查见 [`workflow/cwl-pet/SKILL.md`](../workflow/cwl-pet/SKILL.md)。
 
 ## 卸载
 
 ```powershell
-node agent-hook\hooks\install.js --uninstall
+node agent\hooks\install.js --uninstall
 ```
 
 只删除本项目的钩子条目，其他钩子保留。日志与状态目录（`pet/logs/`、`pet/state/`）可以手动删除。桌宠自启的快捷方式见第 4 步。
