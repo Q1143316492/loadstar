@@ -7,8 +7,7 @@
   "scripts": {
     "start": "node bin/start.js",
     "test": "node test/smoke.test.js",
-    "start:detached": "node bin/start.js --detach",
-    "prototype": "node prototype/start.js"
+    "start:detached": "node bin/start.js --detach"
   },
   "devDependencies": {
     "electron": "33.4.11"
