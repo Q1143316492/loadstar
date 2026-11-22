@@ -19,6 +19,9 @@ const LOGS_DIR = path.join(__dirname, getConfig().logs.dir);
 const stateArg = process.argv.find((a) => a.startsWith('--state='));
 if (stateArg) process.env.PET_INITIAL_STATE = stateArg.split('=')[1];
 
+// 原型控制：`--chat` 直接以展开的对话卡启动，用于截图核对。
+if (process.argv.includes('--chat')) process.env.PET_INITIAL_CHAT = '1';
+
 // 原型控制：`--shot=<png> [--shot-delay=<ms>]` 把窗口内容存成图片后退出，用于无桌面环境下核对渲染。
 const shotArg = process.argv.find((a) => a.startsWith('--shot='));
 const shotDelayArg = process.argv.find((a) => a.startsWith('--shot-delay='));
@@ -51,9 +54,8 @@ function loadPosition() {
 
 // 把窗口拉回离它最近的显示器工作区：换显示器、缩放变化、拔掉副屏后
 // 上次保存的位置可能整块落在屏幕外，宠物会「消失」。
-function clampToDisplay(pos) {
-  const config = getConfig();
-  const { width, height } = config.window;
+function clampToDisplay(pos, size = getConfig().window) {
+  const { width, height } = size;
   const displays = screen.getAllDisplays();
   const center = { x: pos.x + width / 2, y: pos.y + height / 2 };
   const nearest = displays.reduce((best, d) => {
@@ -74,9 +76,14 @@ function clampToDisplay(pos) {
 function savePosition(win) {
   if (!getConfig().behavior.rememberPosition) return;
   try {
-    const [x, y] = win.getPosition();
+    const collapsed = getConfig().window;
+    // 存的是收起状态的左上角：从宠物锚点推算，展开 / 收起来回切都不会漂。
+    const left = petAnchor
+      ? petAnchor.right + (collapsed.width - getConfig().window.petSize) / 2 - collapsed.width
+      : win.getBounds().x;
+    const top = petAnchor ? petAnchor.bottom + PET_BOTTOM_MARGIN - collapsed.height : win.getBounds().y;
     fs.mkdirSync(path.dirname(POS_PATH), { recursive: true });
-    fs.writeFileSync(POS_PATH, JSON.stringify({ x, y }), 'utf8');
+    fs.writeFileSync(POS_PATH, JSON.stringify({ x: left, y: top }), 'utf8');
   } catch (err) {
     console.error('位置保存失败：', err.message);
   }
@@ -84,6 +91,47 @@ function savePosition(win) {
 
 let win = null;
 let movedSaveTimer = null;
+let programmaticMove = false;
+// 对话卡展开时窗口变宽变高；收起后回到 pet.config.json 的窗口尺寸。
+let chatOpen = process.env.PET_INITIAL_CHAT === '1';
+
+const CHAT_WIDTH = 520;
+// 与 style.css 保持一致：宠物底边距两态相同，右边距展开态固定。
+const PET_BOTTOM_MARGIN = 6;
+const PET_CHAT_RIGHT_MARGIN = 16;
+
+function chatSize() {
+  // 卡片在宠物左侧，高度给卡片留够一屏消息。
+  return { width: CHAT_WIDTH, height: Math.max(320, getConfig().window.petSize + 300) };
+}
+
+// 宠物在屏幕上的右边缘：收起态窗口里居中，展开态贴右侧固定边距。
+function petRightMargin(width) {
+  const petSize = getConfig().window.petSize;
+  return chatOpen ? PET_CHAT_RIGHT_MARGIN : (width - petSize) / 2;
+}
+
+// 宠物右下角在屏幕上的锚点。展开 / 收起都从它推算窗口位置，
+// 不会因为每次都用「当前窗口边界」反推而累积 1–2px 的 DPI 取整漂移。
+let petAnchor = null;
+
+function anchorFromBounds(bounds) {
+  const margin = petRightMargin(bounds.width);
+  return {
+    right: bounds.x + bounds.width - margin,
+    bottom: bounds.y + bounds.height - PET_BOTTOM_MARGIN
+  };
+}
+
+function boundsForPetAnchor(target) {
+  const margin = petRightMargin(target.width);
+  return {
+    x: petAnchor.right + margin - target.width,
+    y: petAnchor.bottom + PET_BOTTOM_MARGIN - target.height,
+    width: target.width,
+    height: target.height
+  };
+}
 
 
 function broadcast() {
@@ -94,7 +142,7 @@ function broadcast() {
 
 function createWindow() {
   const config = getConfig();
-  const { width, height, petSize } = config.window;
+  const { width, height, petSize } = chatOpen ? { ...chatSize(), petSize: config.window.petSize } : config.window;
   const saved = loadPosition();
   const { workArea } = screen.getPrimaryDisplay();
   const startPos = saved || {
@@ -130,6 +178,7 @@ function createWindow() {
   win.loadFile(path.join(__dirname, 'renderer', 'index.html'), { query: { size: String(petSize) } });
   win.once('ready-to-show', () => {
     win.showInactive();
+    petAnchor = anchorFromBounds(win.getBounds());
     broadcast();
   });
   win.on('closed', () => { win = null; });
@@ -141,6 +190,9 @@ function createWindow() {
   });
   // 位置落盘防抖：拖动时每次移动都会触发，等停稳再写。
   win.on('moved', () => {
+    // 自己 setBounds 引起的 moved 不算用户拖动：按实际边界重算锚点会把 DPI 取整误差带进来。
+    if (programmaticMove) { programmaticMove = false; return; }
+    petAnchor = anchorFromBounds(win.getBounds());
     if (movedSaveTimer) clearTimeout(movedSaveTimer);
     movedSaveTimer = setTimeout(() => { if (win) savePosition(win); }, 500);
   });
@@ -173,6 +225,31 @@ function createWindow() {
 
 ipcMain.on('request-state', (e) => {
   e.sender.send('pet-state', state.aggregate());
+});
+
+// 展开 / 收起对话卡：锚定宠物右下角，宠物在屏幕上原地不动，窗口向它左上展开。
+ipcMain.on('chat-toggle', (_e, open) => {
+  if (!win || chatOpen === !!open) return;
+  if (!petAnchor) petAnchor = anchorFromBounds(win.getBounds());
+
+  chatOpen = !!open;
+  const target = chatOpen ? chatSize() : getConfig().window;
+  const next = boundsForPetAnchor(target);
+  const clamped = clampToDisplay({ x: next.x, y: next.y }, target);
+  programmaticMove = true;
+  win.setBounds({ x: clamped.x, y: clamped.y, width: target.width, height: target.height }, false);
+  // 锚点按「请求的边界」更新；夹回可见区域时用实际落点。
+  petAnchor = anchorFromBounds(
+    clamped.x === next.x && clamped.y === next.y
+      ? { ...next, width: target.width, height: target.height }
+      : { ...clamped, width: target.width, height: target.height }
+  );
+  setTimeout(() => { programmaticMove = false; }, 300);
+
+  // 展开后要能直接打字；收起后把键盘还回去。
+  if (chatOpen) win.focus();
+  else win.showInactive();
+  win.webContents.send('pet-chat', chatOpen);
 });
 
 // 右键菜单用系统原生菜单：不占透明窗口的版面，也不会和气泡抢位置。
@@ -228,7 +305,8 @@ app.whenReady().then(() => {
   const reClamp = () => {
     if (!win) return;
     const [x, y] = win.getPosition();
-    const clamped = clampToDisplay({ x, y });
+    const [width, height] = win.getSize();
+    const clamped = clampToDisplay({ x, y }, { width, height });
     if (clamped.x !== x || clamped.y !== y) {
       win.setPosition(clamped.x, clamped.y);
       savePosition(win);

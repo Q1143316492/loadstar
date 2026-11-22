@@ -5,5 +5,8 @@ contextBridge.exposeInMainWorld('petAPI', {
   requestState: () => ipcRenderer.send('request-state'),
   onState: (cb) => ipcRenderer.on('pet-state', (_e, payload) => cb(payload)),
   quit: () => ipcRenderer.send('quit'),
-  initialState: process.env.PET_INITIAL_STATE || null
+  setChat: (open) => ipcRenderer.send('chat-toggle', !!open),
+  onChat: (cb) => ipcRenderer.on('pet-chat', (_e, open) => cb(open)),
+  initialState: process.env.PET_INITIAL_STATE || null,
+  initialChat: process.env.PET_INITIAL_CHAT === '1'
 });

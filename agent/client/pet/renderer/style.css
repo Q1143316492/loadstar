@@ -18,6 +18,8 @@ html, body {
   --pet-size: 170px;
 }
 
+.hidden { display: none !important; }
+
 #pet {
   position: absolute;
   bottom: 6px;
@@ -31,12 +33,44 @@ html, body {
   cursor: grab;
 }
 
+/* 展开对话后宠物让到窗口右侧，卡片从它左侧展开。主进程锚定宠物右下角缩放窗口，
+   所以展开 / 收起时宠物在屏幕上原地不动、尺寸不变。 */
+body.chat #pet {
+  left: auto;
+  right: 16px;
+  bottom: 6px;
+  transform: none;
+}
+
 #pet img {
   width: 100%;
   height: 100%;
   display: block;
   pointer-events: none;
 }
+
+/* 打开对话的入口：宠物左缘的小按钮。它与右键菜单（重启 / 退出）互不相干。 */
+#chat-open {
+  position: absolute;
+  left: -6px;
+  top: 40%;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(28, 30, 36, 0.92);
+  color: #dfe4ee;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  -webkit-app-region: no-drag;
+  cursor: pointer;
+  opacity: 0.85;
+}
+
+#chat-open:hover { opacity: 1; background: rgba(58, 63, 77, 0.96); }
 
 #bubble {
   position: absolute;
@@ -57,8 +91,8 @@ html, body {
   gap: 6px;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
   -webkit-app-region: no-drag;
+  cursor: pointer;
 }
-
 
 #bubble.hidden { display: none; }
 
@@ -68,3 +102,151 @@ html, body {
   text-overflow: ellipsis;
 }
 
+/* ---------- 对话卡 ---------- */
+
+#chat {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  /* 给右侧宠物让出位置：宠物右边距 + 宠物宽 + 间隙。 */
+  right: calc(16px + var(--pet-size) + 20px);
+  bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 14px;
+  background: rgba(28, 30, 36, 0.94);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+  -webkit-app-region: no-drag;
+}
+
+#chat.hidden { display: none; }
+
+#chat-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  /* 卡片顶部也可以拖动窗口，不用非得抓住宠物。 */
+  -webkit-app-region: drag;
+}
+
+.chat-avatar {
+  width: 24px;
+  height: 24px;
+  pointer-events: none;
+}
+
+.chat-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #f2f4f8;
+}
+
+.chat-status {
+  margin-left: auto;
+  min-width: 0;
+  font-size: 10px;
+  color: #9aa3b2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#chat-collapse {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #dfe4ee;
+  -webkit-app-region: no-drag;
+  cursor: pointer;
+}
+
+#chat-collapse:hover { background: rgba(255, 255, 255, 0.18); }
+
+.chat-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+.chat-empty {
+  margin: auto;
+  font-size: 12px;
+  color: #7c8598;
+}
+
+.chat-empty.hidden { display: none; }
+
+.chat-msg {
+  max-width: 86%;
+  padding: 6px 9px;
+  border-radius: 9px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: #f2f4f8;
+  word-break: break-word;
+}
+
+.chat-msg.from-pet {
+  align-self: flex-start;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.chat-msg.from-user {
+  align-self: flex-end;
+  background: #3a3f4d;
+}
+
+.chat-role {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 9px;
+  color: #9aa3b2;
+}
+
+.chat-form {
+  display: flex;
+  gap: 6px;
+  padding: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.chat-input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  border-radius: 8px;
+  padding: 7px 9px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #f2f4f8;
+  font-family: inherit;
+  font-size: 12px;
+}
+
+.chat-input::placeholder { color: #7c8598; }
+
+.chat-send {
+  border: 0;
+  border-radius: 8px;
+  padding: 0 12px;
+  background: #4c8dff;
+  color: #fff;
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.chat-send:hover { background: #5f9aff; }
