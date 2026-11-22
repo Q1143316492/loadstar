@@ -23,7 +23,7 @@ assembler.blocks()   # 拼好的内容块
 assembler.finish     # stop / tool-calls / error / ...
 ```
 
-上层只依赖 `protocol` / `types`，不要 import `deepseek`。
+上层只依赖 `protocol` / `types`，不要 import `deepseek`。门面（`llm/__init__.py`）只导出词汇与协议，不导出适配器：`import llm` 不会加载 `deepseek` 与 httpx；具体适配器由宿主从 `llm.deepseek` 显式导入。
 
 ## 文件
 
