@@ -25,6 +25,7 @@
 | 技能 | 状态 | 做什么 |
 |---|---|---|
 | `cwl-wayfinder` | ✓ | 装不进一个会话的迷雾努力：把「决策票据」做成地图逐张解决，出口并入 `cwl-to-plan` |
+| `cwl-wayfinder-map-view` | ✓ | 自写：把一张 wayfinder 地图写成判读 JSON，灌进 `TEMPLATE.html` 出一页路线图（分波、现在、依赖连线），落系统临时目录；`render.js` 与票文件对账 |
 | `cwl-debug-mode` | ✓ | 自写（替换上游 `diagnosing-bugs`）：先提可证伪的假设，再用项目自己的日志通道插桩取证；复现 → 分析 → 定点修复 → 清场（删探针和临时日志） |
 | `cwl-research` | ✓ | 后台智能体查一手来源（官方文档、源码），写一份带引用的 Markdown 笔记 |
 

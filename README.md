@@ -1,6 +1,6 @@
 # lodestar
 
-自己的 AI 编码工作流技能库：26 个技能，覆盖「想法 → 计划 → 实现 → 评审 → 交付」，以及盘问、调试、调研、教学等旁路。
+自己的 AI 编码工作流技能库：27 个技能，覆盖「想法 → 计划 → 实现 → 评审 → 交付」，以及盘问、调试、调研、教学等旁路。
 
 装上之后手打 `/cwl-ask`：说不清该用哪个，就把处境说给它听。
 
@@ -39,6 +39,7 @@
 | [`cwl-retro`](workflow/cwl-retro/SKILL.md) | 复盘会话，给环境改进建议 | 手打 |
 | [`cwl-show-me-your-work`](workflow/cwl-show-me-your-work/SKILL.md) | 回来时问「刚才干了什么」：对着产物报状态（改了什么 / 为什么 / 到哪了 / 该看哪几处），十行以内 | 模型可触发 |
 | [`cwl-wayfinder`](workflow/cwl-wayfinder/SKILL.md) | 大块迷雾努力：把决策 ticket 画成地图逐张解决，出口并入 `cwl-to-plan` | 手打 |
+| [`cwl-wayfinder-map-view`](workflow/cwl-wayfinder-map-view/SKILL.md) | 把一张 wayfinder 地图画成一页路线图（谁挡着谁、现在做哪张），输出到系统临时目录 | 手打 |
 | [`cwl-debug-mode`](workflow/cwl-debug-mode/SKILL.md) | 调试模式：提假设 → 用项目日志插桩 → 复现取证 → 定点修复 → 清场 | 手打 |
 | [`cwl-research`](workflow/cwl-research/SKILL.md) | 后台查一手来源（文档、源码），写一份带引用的 Markdown 笔记 | 模型可触发 |
 | [`cwl-improve-codebase-architecture`](workflow/cwl-improve-codebase-architecture/SKILL.md) | 扫描「加深机会」→ 生成 HTML 报告 → 选中后进盘问回路 | 手打 |
