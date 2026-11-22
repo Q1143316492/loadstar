@@ -89,7 +89,7 @@ Get-Process electron -ErrorAction SilentlyContinue | Stop-Process -Force
 | `toggles.agentNudge` | 控制是否把话注进模型上下文 |
 | `nudge.text` | 注入给模型的话术，`{reads}` 会被替换成次数 |
 | `nudge.systemMessage` | 终端提示的模板 |
-| `port` | 监听端口，默认 47900；改了要同步设置环境变量 `PET_PORT` 给钩子 |
+| `port` | 监听端口，默认 47900；钩子从同一份配置读取，改这一处就够（`PET_PORT` 环境变量可临时覆盖） |
 | `window` | 窗口尺寸与宠物图片大小 |
 | `logs.keepDays` | 事件日志保留天数，默认 7 |
 

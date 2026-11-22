@@ -5,13 +5,8 @@
     "height": 240,
     "petSize": 170
   },
-  "assets": {
-    "dir": "assets",
-    "size": 256
-  },
   "behavior": {
     "alwaysOnTop": true,
-    "clickThrough": true,
     "rememberPosition": true
   },
   "thresholds": {

@@ -5,7 +5,6 @@ const path = require('node:path');
 function cachedJsonReader(filePath, ttlMs = 1000) {
   let cache = null;
   let cachedAt = 0;
-  let fallback = null;
 
   return function read() {
     const now = Date.now();
@@ -13,12 +12,10 @@ function cachedJsonReader(filePath, ttlMs = 1000) {
     try {
       cache = JSON.parse(fs.readFileSync(filePath, 'utf8').replace(/^﻿/, ''));
       cachedAt = now;
-      if (fallback === null) fallback = cache;
       return cache;
     } catch (err) {
       // 改坏了就沿用上一次成功读到的内容，别让桌宠因为一个笔误停摆。
       if (cache) return cache;
-      if (fallback) return fallback;
       console.error(`读取 ${path.basename(filePath)} 失败：`, err.message);
       return {};
     }

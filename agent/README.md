@@ -99,7 +99,9 @@ npm install
 
 ## 配置
 
-配置键、阈值含义、开关与话术模板见 [`workflow/cwl-pet/SKILL.md`](../workflow/cwl-pet/SKILL.md) 的「设置」一节；文件本身是 `pet/pet.config.json` 与 `pet/tool-rules.json`，改完一秒内生效。
+配置键、阈值含义、开关与话术模板见 [`workflow/cwl-pet/SKILL.md`](../workflow/cwl-pet/SKILL.md) 的「设置」一节；文件本身是 [`client/pet/pet.config.json`](client/pet/pet.config.json) 与 [`client/pet/tool-rules.json`](client/pet/tool-rules.json)，改完一秒内生效。
+
+默认值由 [`client/pet/config.js`](client/pet/config.js) 一处填好：判定、窗口、日志目录与钩子都向它要值，代码里不再各写一份回落数字。配置文件里出现没有消费方的键会在启动时告警。**端口也在这份配置里**，钩子从同一个文件读取，改 `port` 不用再同步别处（临时覆盖可用环境变量 `PET_PORT`）。
 
 默认判据（任一成立即预警，任一写操作解除）：
 

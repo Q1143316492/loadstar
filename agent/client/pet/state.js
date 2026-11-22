@@ -45,28 +45,25 @@ function createState({ getConfig, getRules, logger, now = Date.now }) {
   }
 
   function alertReason(session) {
-    const cfg = getConfig();
-    const t = cfg.thresholds || {};
-    const consecutive = Number(t.consecutiveReads) || 25;
-    const idleMs = (Number(t.idleMinutes) || 10) * 60000;
-    const minCalls = Number(t.minCallsInWindow) || 8;
-
-    if (session.consecutiveReads >= consecutive) return ALERT_CONSECUTIVE;
-    if (now() - session.anchorTs >= idleMs && session.callsSinceAnchor >= minCalls) return ALERT_TIME_WINDOW;
+    // 阈值由 config.js 解析并填好默认值；这里不再自带回落数字。
+    const t = getConfig().thresholds;
+    if (session.consecutiveReads >= t.consecutiveReads) return ALERT_CONSECUTIVE;
+    if (now() - session.anchorTs >= t.idleMinutes * 60000 && session.callsSinceAnchor >= t.minCallsInWindow) {
+      return ALERT_TIME_WINDOW;
+    }
     return ALERT_NONE;
   }
 
   function nudgeReply(session, reason) {
     const cfg = getConfig();
-    const toggles = cfg.toggles || {};
-    const text = (cfg.nudge?.text || '').replace('{reads}', String(session.consecutiveReads));
-    const sysTpl = cfg.nudge?.systemMessage || '';
+    const text = cfg.nudge.text.replace('{reads}', String(session.consecutiveReads));
+    const sysTpl = cfg.nudge.systemMessage;
     const reply = {};
 
-    if (toggles.agentNudge !== false && text) {
+    if (cfg.toggles.agentNudge && text) {
       reply.hookSpecificOutput = { hookEventName: 'PostToolUse', additionalContext: text };
     }
-    if (toggles.systemMessage !== false && sysTpl) {
+    if (cfg.toggles.systemMessage && sysTpl) {
       reply.systemMessage = sysTpl.replace('{reads}', String(session.consecutiveReads));
     }
     return Object.keys(reply).length > 0 ? reply : null;
@@ -161,8 +158,7 @@ function createState({ getConfig, getRules, logger, now = Date.now }) {
 
   // 展示用的空闲降级：久无事件的会话显示为空闲；SessionEnd 才是销毁。
   function tick() {
-    const cfg = getConfig();
-    const idleMs = (Number(cfg.thresholds?.sessionIdleMinutes) || 30) * 60000;
+    const idleMs = getConfig().thresholds.sessionIdleMinutes * 60000;
     let changed = false;
     for (const session of sessions.values()) {
       if (session.state === 'working' && now() - session.lastEventTs >= idleMs) {
@@ -181,8 +177,8 @@ function createState({ getConfig, getRules, logger, now = Date.now }) {
     working.sort((a, b) => b.lastEventTs - a.lastEventTs);
 
     const mainSession = alerts[0] || working[0] || null;
-    const petEnabled = getConfig().toggles?.pet !== false;
-    const visible = petEnabled ? mainSession : null;
+    const cfg = getConfig();
+    const visible = cfg.toggles.pet ? mainSession : null;
 
     return {
       main: visible
@@ -191,7 +187,7 @@ function createState({ getConfig, getRules, logger, now = Date.now }) {
             state: visible.state,
             tool: visible.lastToolName,
             reads: visible.consecutiveReads,
-            consecutiveLimit: Number(getConfig().thresholds?.consecutiveReads) || 25
+            consecutiveLimit: cfg.thresholds.consecutiveReads
           }
         : { state: 'idle' },
       sessions: all.length,

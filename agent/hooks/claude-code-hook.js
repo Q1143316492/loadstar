@@ -4,7 +4,10 @@
 
 const http = require('node:http');
 
-const PORT = Number(process.env.PET_PORT || 47900);
+const { petPort } = require('./port');
+
+// 端口与桌宠共用 pet.config.json；钩子不再自带一份默认值。
+const PORT = petPort();
 const TIMEOUT_MS = 1000;
 
 // 只挑小字段转发，避免把整份文件内容或长命令输出灌进桌宠。

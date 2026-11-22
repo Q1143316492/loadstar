@@ -41,7 +41,8 @@ function bubbleTextFor(v) {
     return parts.join(' · ');
   }
   if (d.state === 'working') {
-    const cap = d.consecutiveLimit || 25;
+    // 阈值由主进程的聚合结果带过来；窗口不再自带默认值。
+    const cap = d.consecutiveLimit;
     const head = d.tool ? `${d.tool} · ${d.reads}/${cap}` : `${d.reads}/${cap}`;
     return others > 0 ? `${head} · ${v.sessions} 会话` : head;
   }

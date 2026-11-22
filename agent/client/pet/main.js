@@ -5,12 +5,15 @@ const fs = require('node:fs');
 const { createState } = require('./state');
 const { createServer } = require('./server');
 const { loadRules } = require('./classify');
-const { cachedJsonReader, createLogger, cleanupOldLogs } = require('./storage');
+const { createConfigLoader } = require('./config');
+const { createLogger, cleanupOldLogs } = require('./storage');
 
 const CONFIG_PATH = path.join(__dirname, 'pet.config.json');
 const RULES_PATH = path.join(__dirname, 'tool-rules.json');
 const POS_PATH = path.join(__dirname, 'state', 'position.json');
-const LOGS_DIR = path.join(__dirname, 'logs');
+const getConfig = createConfigLoader(CONFIG_PATH);
+// 日志目录与保留天数都来自配置；改目录要重启，改天数下次启动生效。
+const LOGS_DIR = path.join(__dirname, getConfig().logs.dir);
 
 // 原型控制：从命令行指定初始状态，例如 `npm start -- --state=alert`
 const stateArg = process.argv.find((a) => a.startsWith('--state='));
@@ -21,8 +24,6 @@ const shotArg = process.argv.find((a) => a.startsWith('--shot='));
 const shotDelayArg = process.argv.find((a) => a.startsWith('--shot-delay='));
 const SHOT_PATH = shotArg ? shotArg.slice('--shot='.length) : null;
 const SHOT_DELAY = shotDelayArg ? Number(shotDelayArg.split('=')[1]) : 1200;
-
-const getConfig = cachedJsonReader(CONFIG_PATH);
 
 // 规则文件改坏了不拖垮分类：保留上一份好规则。
 let rulesCache = null;
@@ -40,7 +41,7 @@ const logger = createLogger(LOGS_DIR);
 const state = createState({ getConfig, getRules, logger: (id, rec) => logger.write(id, rec) });
 
 function loadPosition() {
-  if (!getConfig().behavior?.rememberPosition) return null;
+  if (!getConfig().behavior.rememberPosition) return null;
   try {
     const p = JSON.parse(fs.readFileSync(POS_PATH, 'utf8'));
     if (Number.isFinite(p.x) && Number.isFinite(p.y)) return clampToDisplay(p);
@@ -52,7 +53,7 @@ function loadPosition() {
 // 上次保存的位置可能整块落在屏幕外，宠物会「消失」。
 function clampToDisplay(pos) {
   const config = getConfig();
-  const { width = 240, height = 240 } = config.window || {};
+  const { width, height } = config.window;
   const displays = screen.getAllDisplays();
   const center = { x: pos.x + width / 2, y: pos.y + height / 2 };
   const nearest = displays.reduce((best, d) => {
@@ -71,7 +72,7 @@ function clampToDisplay(pos) {
 }
 
 function savePosition(win) {
-  if (!getConfig().behavior?.rememberPosition) return;
+  if (!getConfig().behavior.rememberPosition) return;
   try {
     const [x, y] = win.getPosition();
     fs.mkdirSync(path.dirname(POS_PATH), { recursive: true });
@@ -93,7 +94,7 @@ function broadcast() {
 
 function createWindow() {
   const config = getConfig();
-  const { width = 240, height = 240, petSize = 170 } = config.window || {};
+  const { width, height, petSize } = config.window;
   const saved = loadPosition();
   const { workArea } = screen.getPrimaryDisplay();
   const startPos = saved || {
@@ -196,7 +197,7 @@ ipcMain.on('quit', () => app.quit());
 
 function startServer() {
   const config = getConfig();
-  const port = Number(config.port) || 47900;
+  const port = config.port;
   const server = createServer({
     state,
     onUpdate: broadcast,
@@ -218,7 +219,7 @@ function startServer() {
 
 app.whenReady().then(() => {
   const config = getConfig();
-  cleanupOldLogs(LOGS_DIR, Number(config.logs?.keepDays) || 7);
+  cleanupOldLogs(LOGS_DIR, config.logs.keepDays);
   // 截图模式不占端口，便于和正在运行的桌宠并存。
   if (!SHOT_PATH) startServer();
   createWindow();

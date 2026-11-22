@@ -13,7 +13,9 @@ const http = require('node:http');
 const path = require('node:path');
 const { execFileSync } = require('node:child_process');
 
-const PORT = Number(process.env.PET_PORT || 47900);
+const { petPort } = require('./port');
+
+const PORT = petPort();
 const HOOK = path.join(__dirname, 'claude-code-hook.js');
 
 const args = process.argv.slice(2);

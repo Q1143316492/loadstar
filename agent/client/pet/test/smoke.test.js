@@ -3,6 +3,7 @@ const assert = require('node:assert');
 const path = require('node:path');
 const { createState } = require('../state');
 const { loadRules, classify } = require('../classify');
+const { DEFAULTS, readPort, resolveConfig } = require('../config');
 
 const rules = loadRules(path.join(__dirname, '..', 'tool-rules.json'));
 
@@ -24,13 +25,48 @@ assert.equal(classify(rules, 'Bash', { command: 'node build.js' }), 'neutral');
 assert.equal(classify(rules, 'SomeMcpTool', {}), 'neutral');
 console.log('classify: ok');
 
+// ---- 配置解析 ----
+const warnings = [];
+assert.deepEqual(resolveConfig({}, { warn: (m) => warnings.push(m) }), DEFAULTS);
+assert.equal(warnings.length, 0);
+
+const tuned = resolveConfig(
+  {
+    port: '48001',
+    thresholds: { consecutiveReads: '3' },
+    behavior: { clickThrough: true },
+    assets: { dir: 'assets' }
+  },
+  { warn: (m) => warnings.push(m) }
+);
+assert.equal(tuned.port, 48001);
+assert.equal(tuned.thresholds.consecutiveReads, 3);
+// 没写的键由默认值补齐，判定层不用再自带回落数字
+assert.equal(tuned.thresholds.idleMinutes, DEFAULTS.thresholds.idleMinutes);
+assert.equal(tuned.window.petSize, DEFAULTS.window.petSize);
+// 没有消费方的键要出声
+assert.ok(warnings.some((m) => m.includes('"assets"')), 'warns about unknown top-level key');
+assert.ok(warnings.some((m) => m.includes('"behavior.clickThrough"')), 'warns about unknown section key');
+
+const bad = resolveConfig({ port: -1, window: { petSize: 'big' } });
+assert.equal(bad.port, DEFAULTS.port);
+assert.equal(bad.window.petSize, DEFAULTS.window.petSize);
+
+// 钩子与桌宠共用端口：配置文件在就读它，环境变量优先，都没有才回落
+const configPath = path.join(__dirname, '..', 'pet.config.json');
+assert.equal(readPort(configPath), 47900);
+process.env.PET_PORT = '48002';
+assert.equal(readPort('/nonexistent/pet.config.json'), 48002);
+delete process.env.PET_PORT;
+assert.equal(readPort('/nonexistent/pet.config.json'), DEFAULTS.port);
+console.log('config: ok');
+
 // ---- 状态机 ----
 let clock = 1_000_000;
-const config = {
-  thresholds: { consecutiveReads: 5, idleMinutes: 10, minCallsInWindow: 8, sessionIdleMinutes: 30 },
-  toggles: { pet: true, systemMessage: true, agentNudge: true },
+const config = resolveConfig({
+  thresholds: { consecutiveReads: 5 },
   nudge: { text: 'read {reads} times', systemMessage: '⏳ {reads}' }
-};
+});
 const records = [];
 const state = createState({
   getConfig: () => config,
