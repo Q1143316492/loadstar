@@ -321,7 +321,16 @@ class ReactLoopAgent:
                     call.name, call.arguments, cancel=self._cancel
                 )
                 message = create_tool_result_message(call.id, result.content, is_error=result.is_error)
-                session.append(ToolResultEvent(turn=turn, step=step, message=message))
+                failure = result.failure
+                session.append(
+                    ToolResultEvent(
+                        turn=turn,
+                        step=step,
+                        message=message,
+                        error=failure.message if failure is not None else None,
+                        error_code=failure.code if failure is not None else None,
+                    )
+                )
                 if self._cancel.is_set():
                     return "aborted"
             return "tool-calls"

@@ -46,6 +46,7 @@ async def test_edit_not_found_is_error(tmp_path: Path):
     )
     assert result.is_error is True
     assert "was not found" in result.content[0].text
+    assert json.loads(result.content[0].text)["code"] == "EDIT_NOT_FOUND"
     kept = await tools.execute("read", json.dumps({"file_path": "a.txt"}))
     assert "1: keep" in kept.content[0].text
 
@@ -55,6 +56,7 @@ async def test_path_escape_is_error(tmp_path: Path):
     result = await tools.execute("read", json.dumps({"file_path": "../secret.txt"}))
     assert result.is_error is True
     assert "outside the workspace root" in result.content[0].text
+    assert json.loads(result.content[0].text)["code"] == "PATH_OUTSIDE_ROOT"
 
 
 async def test_replace_all_wording(tmp_path: Path):

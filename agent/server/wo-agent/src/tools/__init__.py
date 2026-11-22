@@ -6,12 +6,15 @@
 
 from .cancel import bind_tool_cancel, reset_tool_cancel, tool_cancel
 from .definition import ToolDefinition
+from .errors import ToolError, ToolFailure
 from .executor import RegistryToolExecutor, ToolExecutor, ToolGuard, ToolResult
 
 __all__ = [
     "RegistryToolExecutor",
     "ToolDefinition",
+    "ToolError",
     "ToolExecutor",
+    "ToolFailure",
     "ToolGuard",
     "ToolResult",
     "tool_cancel",

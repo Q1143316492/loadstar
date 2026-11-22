@@ -13,11 +13,11 @@
 
 ## wo-agent 现状
 
-已有注册表、单调守卫、错误转 `is_error`、取消事件与进程树终止；`bash` / `grep` / `glob` 已有 30 秒超时与尾部截断（2000 行或 50KB）。缺执行器级通用 deadline、审批 seam、并发安全标记、统一输出契约与核心层呈现契约；错误只有 `is_error` 加文本，没有机器可路由的 code。
+已有注册表、单调守卫、错误转 `is_error` 并带稳定 code（`UNKNOWN_TOOL` / `TOOL_DENIED` / `INVALID_ARGUMENTS` / `TOOL_FAILED`，工具可自报 `ToolError`），code 同时写进 `tool/result` 事件；取消事件与进程树终止；`bash` / `grep` / `glob` 已有 30 秒超时与尾部截断（2000 行或 50KB）。缺执行器级通用 deadline、审批 seam、并发安全标记、统一输出契约与核心层呈现契约。
 
 ## 可搬性与前置依赖
 
-- **进路线**：pre-execute 三态（allow / deny / ask）加审批通道（`bash` 默认 ask、无 UI 时 fail closed）、执行器级协作超时、结构化错误码、并发安全标记（默认 exclusive）、bash 子进程剔除敏感环境变量。
+- **进路线**：pre-execute 三态（allow / deny / ask）加审批通道（`bash` 默认 ask、无 UI 时 fail closed）、执行器级协作超时、并发安全标记（默认 exclusive）、bash 子进程剔除敏感环境变量。结构化错误码已落地。
 - **只留卡片**：canonical output（schema / value / render）、presentation 契约、post-execute 各插件、sandbox seam、permission preset。
 - **明确不搬**：Windows 全量沙箱与 ACL、permission preset 与审计、allow-always、完整 card union、滚动池调度器、hooks 生态。
 

@@ -28,8 +28,10 @@ async def test_unknown_skill_is_error():
     result = await _executor().execute("skill", '{"name":"missing"}')
     assert result.is_error is True
     assert "not found" in result.content[0].text
+    assert result.failure.code == "SKILL_NOT_FOUND"
 
 
 async def test_invalid_name_is_error():
     result = await _executor().execute("skill", '{"name":"../x"}')
     assert result.is_error is True
+    assert result.failure.code == "SKILL_NAME_INVALID"

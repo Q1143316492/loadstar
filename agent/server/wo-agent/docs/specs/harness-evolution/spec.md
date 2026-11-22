@@ -21,7 +21,7 @@ wo-agent 已经与 dsh 同构的部分：
 | 会话持久性 | 整本日志覆盖写；请求与工具执行前不落盘；崩溃只补 `turn/end`，不补 `step/end` 与合成 tool result；没有 intent、预留 id、torn-tail 前缀恢复；未知事件不映射为 corruption | [session-durability](../../../reference/harness-architectures/research/session-durability.md) |
 | LLM 层 | 错误码不分 route、`400` 一律判为窗口超限；重试策略写死在 `RETRYABLE_CODES`，provider 无法声明；`provider_retry_after_ms` 没有消费方 | [llm-provider](../../../reference/harness-architectures/research/llm-provider.md) |
 | 组合层 | 同名工具静默覆盖；skill 冲突静默跳过；注册不可撤销，没有 disposer；组合期没有 diagnostics 汇总 | [composition-extension](../../../reference/harness-architectures/research/composition-extension.md) |
-| 工具管线 | 连接口只有 reject，没有 allow / deny / ask 与审批通道；非进程工具没有执行器级 deadline；错误没有稳定 code；`bash` 子进程继承全部环境变量；并发标记与调度缺失 | [tool-pipeline](../../../reference/harness-architectures/research/tool-pipeline-permissions.md) |
+| 工具管线 | 连接口只有 reject，没有 allow / deny / ask 与审批通道；非进程工具没有执行器级 deadline；`bash` 子进程继承全部环境变量；并发标记与调度缺失 | [tool-pipeline](../../../reference/harness-architectures/research/tool-pipeline-permissions.md) |
 
 **已经落地、不再开票的部分**：provider 注册表与按名选路、auth 解析（override → 环境变量 → `AUTH`）（`27dfb79`）；usage 投影与按模型窗口比例的压缩阈值（`913429b`，即下表第 1 步）。
 
@@ -35,7 +35,7 @@ wo-agent 已经与 dsh 同构的部分：
 | 2 | 错误分类与 per-route 重试策略 | `llm/protocol.py` 让 provider 声明重试策略；`agent/loop.py` 消费 | `400` 不再一律判窗口超限；可重试码与退避由 provider 声明；测试覆盖错误码分流 | 无 | 待办 |
 | 3 | 效果前 checkpoint、合成 closers、严格加载 | 新增 `session/repair.py`；`JsonlSessionStore.load`；`agent/loop.py` 在请求与工具前落盘 | 崩溃后加载日志 balanced；未知事件报「本构建不支持」；checkpoint 失败则不 dispatch；加载时关闭孤立压缩 | 无 | 待办 |
 | 4 | 组合期校验、skill 诊断、可逆注册（disposer） | `compose/ComposeContext` 收集 diagnostics；`skill/registry.py` 报告冲突；`Capability.mount` 可返回 disposer | 同名工具不再静默覆盖；skill 冲突有结构化 warning；卸载能力后注册项消失 | 无 | 待办 |
-| 5 | 结构化错误码、bash 凭据清洗、执行器级协作超时 | `tools/executor.py`、`tools/definition.py`；`workspace/shell.py` | 工具错误带稳定 code；bash 子进程看不到 API key；超时产生 `TOOL_TIMEOUT` 结果 | 无 | 待办 |
+| 5 | 工具错误的结构化收尾、bash 凭据清洗、执行器级协作超时 | `tools/executor.py`、`tools/definition.py`；`workspace/shell.py` | 超时与中断产生稳定 code；bash 子进程看不到 API key | 无 | 部分落地：稳定 code 与 `tool/result` 的 `error_code` 已完成（未提交） |
 | 6 | 三态审批（allow / deny / ask）与并发安全标记 | `tools/` 定义 `ApprovalChannel` 协议；`cli/tui` 提供确认实现 | 无通道时 `ask` 变 `is_error`；`bash` 默认 ask；默认串行，显式 safe 才并行 | 5 | 待办 |
 | 7 | 增量 append 与 torn-tail 前缀恢复 | `session/persistence.py` 的 `SessionStore`；`JsonlSessionStore` | 半行尾部被截断到完整前缀；seq 跳号报 corruption；全量 load 结果不变 | 3 | 待办 |
 | 8 | 请求与工具 intent、预留 id | `session/events.py` 新增 log-only 事件；`agent/loop.py` dispatch 前写入 | intent 后崩溃可报告未结算操作；结算使用预留 id；不重复写同一 id | 3, 7 | 待办 |

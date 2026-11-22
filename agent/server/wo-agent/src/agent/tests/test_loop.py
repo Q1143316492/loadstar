@@ -17,7 +17,7 @@ from llm.types import (
     ToolCallDelta,
 )
 from session import Session
-from tools import RegistryToolExecutor, ToolDefinition, ToolResult
+from tools import RegistryToolExecutor, ToolDefinition, ToolError, ToolResult
 
 
 class FakeProvider:
@@ -391,3 +391,27 @@ async def test_loop_sends_tool_schemas_in_request():
     # 工具真的被执行了（走 RegistryToolExecutor 管线）
     result = await executor.execute("echo", '{"text":"hi"}')
     assert result.content[0].text == "echoed: hi"
+
+
+async def test_tool_failure_code_is_written_to_the_log():
+    async def refuse(args):
+        raise ToolError("nope", "MY_CODE")
+
+    executor = RegistryToolExecutor()
+    executor.register(ToolDefinition(name="refuse", description="", parameters={}, execute=refuse))
+    provider = FakeProvider([
+        [
+            BlockStart(index=0, block_type="tool-call"),
+            ToolCallDelta(index=0, id="c1", name="refuse", arguments_delta="{}"),
+            FinishChunk(reason=FinishReason(kind="tool-calls")),
+        ],
+        _text_response("done"),
+    ])
+    session = Session()
+    agent = ReactLoopAgent(session, provider, AgentOptions(provider="fake", model="m"), executor)
+    await agent.followup("go")
+
+    results = [e.event for e in session.events if e.event.type == "tool/result"]
+    assert len(results) == 1
+    assert results[0].error_code == "MY_CODE"
+    assert results[0].error == "nope"

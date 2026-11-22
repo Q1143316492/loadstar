@@ -222,11 +222,12 @@
 - 守卫看到的是**原始 JSON 字符串**，不是已解析、已校验的参数；它不能附加上下文，也不能要求审批（`wo-agent:src/tools/executor.py`）。
 - CLI 的 `boot()` 没有注册任何 guard（`wo-agent:cli/boot.py`），所以当前产品形态下守卫是空列表。
 
-### 3.3 错误：全部变成 `is_error` 结果
+### 3.3 错误：带稳定 code 的 `is_error` 结果
 
-- 未知工具、守卫拒绝、参数解析失败、工具抛错都返回 `ToolResult(content=[TextBlock(text=json.dumps({"error": message}))], is_error=True)`（`wo-agent:src/tools/executor.py`）。
-- 没有错误分类/错误码；`ToolResult` 只有 `content` 与 `is_error`（`wo-agent:src/tools/executor.py`）。
-- `ToolResultEvent` 有一个 `error: str | None` 字段，但循环只构造 `message`，没有传 `error`（`wo-agent:src/agent/loop.py`，`wo-agent:src/session/events.py`）。
+- 未知工具、守卫拒绝、参数解析失败、工具抛错都返回 `ToolResult(content=[TextBlock(text=json.dumps({"error": message, "code": code}))], is_error=True, failure=ToolFailure(code, message))`（`wo-agent:src/tools/executor.py`）。
+- 失败值只有 `code` 与 `message` 两个字段（`wo-agent:src/tools/errors.py`）。code 是稳定词表：`UNKNOWN_TOOL` / `TOOL_DENIED` / `INVALID_ARGUMENTS` / `TOOL_FAILED`；工具可用 `ToolError(message, code)` 自报，工作区的 `WorkspaceError` 是它的子类，保留各自原有的 `EDIT_NOT_FOUND` / `PATH_OUTSIDE_ROOT` 等码。
+- `ToolResultEvent` 的 `error` 与 `error_code` 由循环填写（`wo-agent:src/agent/loop.py`，`wo-agent:src/session/events.py`），回看日志不必解析模型可见文本。
+- 仍未做：执行器级 deadline（超时目前只有 `bash` / `grep` / `glob` 自己的参数）与审批通道。
 
 ### 3.4 取消：contextvar 事件 + 工具自觉
 
@@ -271,7 +272,7 @@
 | 并发 | `isConcurrencySafe` + 屏障 + 滚动池 | 默认并行，按工具串行 | 循环严格串行 | 缺调度 |
 | 输出 | 强制 schema + value/render 分离 | content/details 约定 | 各工具拼文本 | 缺 canonical 契约 |
 | 呈现 | `presentCall` / `presentResult` 纯 render intent | 工具自带 `renderCall` / `renderResult` | 宿主按工具名硬编码 | 缺核心契约 |
-| 错误 | `Error: msg` + `error.info` code | throw → `isError` | `{"error": msg}` | 缺结构化错误码 |
+| 错误 | `Error: msg` + `error.info` code | throw → `isError` | `{"error": msg, "code": code}`；code 另落日志 | 缺执行器级 timeout 产生的码 |
 | 取消 | 管线一等结果 | AbortSignal 传给 hook/tool | contextvar 事件，工具自觉 | 缺统一取消语义 |
 
 ### 3.9 票面假设校正
@@ -491,6 +492,8 @@
   - 呈现函数抛错不会影响工具结果（fallback 到原始 content）。
 
 ### 5.6 结构化错误码 / error info
+
+**已落地**（`src/tools/errors.py`、`src/tools/executor.py`、`src/session/events.py`）：`ToolResult` 带 `failure: ToolFailure | None`；工具抛 `ToolError(message, code)`，工作区 `WorkspaceError` 复用；`ToolResultEvent` 的 `error` 与 `error_code` 由循环填写。下面保留原始研究，作为当时的设计依据与验收清单。
 
 - **上游依据**：dsh `ToolFailure { message, info? }` + `ToolErrorInfo`（`dsh:docs/subsystems/tools.md`）；pi 用 throw + `isError`（`pi:packages/coding-agent/docs/extensions.md`）。
 - **前置依赖**：`ToolResult` 增加字段；工具用带 code 的异常类型。
