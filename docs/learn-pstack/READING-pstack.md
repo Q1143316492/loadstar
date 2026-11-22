@@ -4,6 +4,8 @@
 路径均相对 `reference/poteto-plugins/pstack/`。编号 = 读序。
 译文按需落在 `docs/learn-pstack/translate/`，编号与此处一致。
 
+> **存档之外**：`statechart`（TLA+ 建模 + TLC + Mermaid 状态图）是 `74dd229` 之后新增的技能，不在本地存档里。笔记见 [`statechart.md`](statechart.md)，2026-11-23 在线读的上游原文。
+>
 > **快照**：`poteto-plugins` 于 2026-11-10 从 <https://github.com/poteto/plugins.git> 浅克隆，commit `74dd229`。上游是 Cursor 插件仓库，pstack 是其中一个插件。存档已裁剪到只剩 41 篇 `SKILL.md`（细节见 [`reference/README.md`](../../reference/README.md)）：`pstack` 33 篇（去掉 `setup-pstack`）、`cursor-team-kit` 6 篇、`thermos` 1 篇、`cli-for-agents` 1 篇。
 
 **这份路线的筛选原则**：

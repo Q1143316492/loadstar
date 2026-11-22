@@ -52,6 +52,10 @@
 
 - `cwl-direct` 的措辞本身还没改。等用户读完 `principle-never-block-on-the-human` 原文再定。
 
+## 0. 形式化验证（pstack 的 `/statechart`）要不要碰
+
+上游 `statechart` 技能：写 TLA+ 规格、用 TLC 跑出违规的最短路径、画 Mermaid 状态图。不在本地存档里，笔记与待答问题见 [`docs/learn-pstack/statechart.md`](docs/learn-pstack/statechart.md)。
+
 ## 1. PR 正文要不要分组
 
 来源：`reference/poteto-plugins/cursor-team-kit/skills/pr-review-canvas`（一个给评审者看的交互页面）。
