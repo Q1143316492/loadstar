@@ -5,6 +5,7 @@
 const http = require('node:http');
 
 const { petPort } = require('./port');
+const { readSessionTitle } = require('./session-title');
 
 // 端口与桌宠共用 pet.config.json；钩子不再自带一份默认值。
 const PORT = petPort();
@@ -33,6 +34,11 @@ function buildPayload(raw) {
   const toolInput = pickToolInput(raw.tool_input);
   if (toolInput) payload.tool_input = toolInput;
   if (!!raw.stop_hook_active) payload.stop_hook_active = true;
+  // 只有 Stop 会产桌宠的主动消息，也只需要在那时读一次会话标题。
+  if (payload.event === 'Stop') {
+    const title = readSessionTitle(raw.transcript_path);
+    if (title) payload.session_title = title;
+  }
   return payload;
 }
 

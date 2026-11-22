@@ -15,13 +15,20 @@ function createSession(id, now) {
     anchorTs: now,
     lastEventTs: now,
     lastToolName: null,
-    alertSince: null
+    alertSince: null,
+    // 本轮（一次 UserPromptSubmit 到 Stop）调过的工具数：用来判断「这一轮算不算干了活」。
+    turnCalls: 0
   };
 }
 
 function createState({ getConfig, getRules, logger, now = Date.now }) {
   const sessions = new Map();
   const transitions = []; // 最近的状态迁移，供 /state 观察
+  // 主动消息：最近的「任务完成」。多个会话同时收尾时都要到窗口，
+  // 所以是一条小队列；窗口按 id 去重。
+  let noticeSeq = 0;
+  const notices = [];
+  const MAX_NOTICES = 20;
 
   function log(session, kind, extra) {
     if (!logger) return;
@@ -80,6 +87,7 @@ function createState({ getConfig, getRules, logger, now = Date.now }) {
     const cls = classify(rules, payload.tool_name, payload.tool_input);
     session.lastToolName = payload.tool_name || null;
     session.lastEventTs = now();
+    session.turnCalls += 1;
 
     if (cls === 'write') {
       noteWrite(session);
@@ -119,12 +127,15 @@ function createState({ getConfig, getRules, logger, now = Date.now }) {
       log(session, 'transition', { from: null, to: 'idle', reason: 'session-created', at: now() });
     }
     if (payload.cwd) session.cwd = payload.cwd;
+    // 会话标题由钩子在 Stop 时从 transcript 里读出来；比目录名好认。
+    if (payload.session_title) session.title = payload.session_title;
 
     let reply = null;
     switch (event) {
       case 'SessionStart':
         session.anchorTs = now();
         session.lastEventTs = now();
+        session.turnCalls = 0;
         transition(session, 'working', 'session-start');
         break;
       case 'PostToolUse': {
@@ -135,13 +146,29 @@ function createState({ getConfig, getRules, logger, now = Date.now }) {
       }
       case 'UserPromptSubmit':
         session.lastEventTs = now();
+        session.turnCalls = 0;
         log(session, 'event', { event });
         if (session.state === 'alert') transition(session, 'working', 'user-prompt');
         break;
-      case 'Stop':
+      case 'Stop': {
         session.lastEventTs = now();
         log(session, 'event', { event });
+        // stop_hook_active：别的钩子让模型继续了，这一轮没真结束。
+        // turnCalls 为 0 的是纯聊天回合，不算任务完成。
+        if (!payload.stop_hook_active && session.turnCalls > 0) {
+          notices.push({
+            id: ++noticeSeq,
+            kind: 'turn-end',
+            session: session.id,
+            title: session.title || null,
+            cwd: session.cwd,
+            ts: now()
+          });
+          if (notices.length > MAX_NOTICES) notices.shift();
+        }
+        session.turnCalls = 0;
         break;
+      }
       case 'SessionEnd': {
         log(session, 'event', { event });
         log(session, 'transition', { from: session.state, to: 'destroyed', reason: 'session-end', at: now() });
@@ -192,8 +219,11 @@ function createState({ getConfig, getRules, logger, now = Date.now }) {
         : { state: 'idle' },
       sessions: all.length,
       alerts: alerts.length,
+      // 最近的「任务完成」；窗口按 id 去重，首次连接只记基线不重放。
+      notices: notices.slice(),
       detail: all.map((s) => ({
         session: s.id,
+        title: s.title || null,
         state: s.state,
         reads: s.consecutiveReads,
         tool: s.lastToolName,

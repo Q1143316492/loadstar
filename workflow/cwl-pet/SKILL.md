@@ -31,7 +31,7 @@ curl.exe http://127.0.0.1:47900/health   # 桌宠在不在
 curl.exe http://127.0.0.1:47900/state    # 各会话状态、计数、当前工具
 ```
 
-`/state` 里的 `main` 是窗口正在显示的那个会话：`state` 取 `idle` / `working` / `alert`，`reads` 是连续读次数，`consecutiveLimit` 是阈值。`detail` 列出全部会话。某个会话没出现在 `detail` 里，说明它已经结束或被清理。
+`/state` 里的 `main` 是窗口正在显示的那个会话：`state` 取 `idle` / `working` / `alert`，`reads` 是连续读次数，`consecutiveLimit` 是阈值。`detail` 列出全部会话，`title` 是从 transcript 里读到的会话名（Claude Code 自动生成的那个）。某个会话没出现在 `detail` 里，说明它已经结束或被清理。`notices` 是最近的主动消息队列，窗口按 `id` 去重。
 
 多会话同时上报时，窗口只显示最紧急的一个（预警 > 工作中 > 空闲；多个预警按最早进入的排），气泡末尾会附会话总数，例如 `Bash · 8/25 · 3 会话` 或 `连续 25 次读未写 · 另 1 个预警 · 共 3 会话`。要逐个看，查 `/state`。
 
@@ -49,7 +49,11 @@ curl.exe http://127.0.0.1:47900/state    # 各会话状态、计数、当前工�
 
 点宠物左缘的气泡按钮、或直接点状态气泡，展开对话卡：窗口向宠物左上方展开，宠物在原地不动、尺寸不变，输入框自动拿到焦点。卡片右上角的箭头、或 `Esc`，收回到宠物大小；收起后 `Esc` 才是退出。
 
-卡片页眉显示与气泡同一个状态文本。发送的消息存在内存里，重启后清空；目前只显示你发出的消息——回复要等接上会话（消息模型已有 `from` 字段，接缝在 `renderer/renderer.js`）。
+卡片页眉显示与气泡同一个状态文本。发送的消息存在内存里，重启后清空。
+
+桌宠会主动报「这一轮结束了」：一次发言里调过工具、随后收到 `Stop` 钩子时，它把一条消息放进对话卡，标出是哪个会话——用 Claude Code 自己生成的会话名（就是你终端标签上那个标题），读不到时退回「目录名 · 会话 id 前 8 位」。卡片收起时只在入口上留一个粉点，不弹别的；打开对话即清。纯聊天（没调工具）的回合不报，别的钩子让模型继续的回合也不算结束。多个会话同时收尾时各报各的。
+
+除这一条外，卡片里没有别的自动消息——要接上会话内容，从这里往下做（消息模型已有 `from` 字段，接缝在 `renderer/renderer.js`）。
 
 ## 重启
 
@@ -141,6 +145,7 @@ node PET_ROOT/hooks/install.js --uninstall
 node PET_ROOT/hooks/simulate.js --reads 3            # 桌宠应变蓝
 node PET_ROOT/hooks/simulate.js --reads 25           # 越过阈值，打印模型会收到的话术
 node PET_ROOT/hooks/simulate.js --reads 25 --keep    # 会话留着，方便盯着看
+node PET_ROOT/hooks/simulate.js --reads 3 --stop     # 让桌宠报一次「这一轮结束」
 node PET_ROOT/hooks/simulate.js --end --session <id> # 结束模拟会话
 ```
 

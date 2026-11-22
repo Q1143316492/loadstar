@@ -72,6 +72,19 @@ body.chat #pet {
 
 #chat-open:hover { opacity: 1; background: rgba(58, 63, 77, 0.96); }
 
+/* 有未读的主动消息：入口右上角一个小点，打开对话即清。 */
+#chat-open.unread::after {
+  content: '';
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ff5c9d;
+  box-shadow: 0 0 0 2px rgba(20, 21, 26, 0.9);
+}
+
 #bubble {
   position: absolute;
   /* 宠物图上方约有 15% 的透明留白，气泡下移进这段，视觉上才贴着球顶。 */
@@ -180,6 +193,18 @@ body.chat #pet {
   padding: 10px;
   overflow-y: auto;
 }
+
+/* 默认滚动条在深色卡片上是一根浅灰方块，换成细的暗色条。 */
+.chat-list::-webkit-scrollbar { width: 6px; }
+
+.chat-list::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.chat-list::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.3); }
+
+.chat-list::-webkit-scrollbar-track { background: transparent; }
 
 .chat-empty {
   margin: auto;

@@ -32,15 +32,38 @@ const view = {
   sessions: 1,
   alerts: 0,
   chatOpen: window.petAPI.initialChat === true,
-  // 会话尚未接入：先只承载用户发出的消息，回复留给下一步。
+  // 你发出的消息，加上桌宠主动发的（目前只有「任务完成」）。
   messages: []
 };
+
+// 主动消息按 id 去重：状态每次广播都会带上最近几条，窗口只显示没见过的。
+// 首次拿到状态时把已有消息的 id 当基线，重开窗口不重放旧消息。
+let lastNoticeId = 0;
+let noticeBaselineSet = false;
+
+function sessionLabel(n) {
+  // 会话标题来自 Claude Code 自己生成的会话名，最好认。
+  if (n.title) return n.title;
+  const parts = String(n.cwd || '').split(/[\\/]/).filter(Boolean);
+  const dir = parts[parts.length - 1];
+  // 拿不到标题时退回目录名 + 一小段会话 id：同一仓库里的多个会话才分得开。
+  const short = String(n.session || '').slice(0, 8);
+  return dir ? `${dir} · ${short}` : short;
+}
 
 if (window.petAPI.initialState === 'working') {
   view.detail = { state: 'working', tool: 'Read', reads: 12, consecutiveLimit: 25 };
 } else if (window.petAPI.initialState === 'alert') {
   view.detail = { state: 'alert', reads: 25 };
   view.alerts = 1;
+}
+
+// 会话消息只活在这个窗口的内存里；上限只为不让它无限长。
+const MAX_MESSAGES = 500;
+
+function pushMessage(m) {
+  view.messages.push(m);
+  if (view.messages.length > MAX_MESSAGES) view.messages.splice(0, view.messages.length - MAX_MESSAGES);
 }
 
 function statusText(v) {
@@ -63,6 +86,8 @@ function statusText(v) {
 }
 
 function renderMessages() {
+  // 只有本来就在底部时才跟着滚到底；正在往上翻旧消息时，新消息不该把人拽走。
+  const atBottom = chatList.scrollHeight - chatList.clientHeight - chatList.scrollTop < 4;
   chatEmpty.classList.toggle('hidden', view.messages.length > 0);
   chatList.replaceChildren(
     ...view.messages.map((m) => {
@@ -76,7 +101,7 @@ function renderMessages() {
     }),
     chatEmpty
   );
-  chatList.scrollTop = chatList.scrollHeight;
+  if (atBottom) chatList.scrollTop = chatList.scrollHeight;
 }
 
 function render() {
@@ -102,12 +127,33 @@ function render() {
   chatOpenBtn.classList.toggle('hidden', view.chatOpen);
 }
 
+function applyNotices(list) {
+  if (!Array.isArray(list)) return;
+  if (!noticeBaselineSet) {
+    noticeBaselineSet = true;
+    lastNoticeId = list.reduce((max, n) => Math.max(max, n.id || 0), 0);
+    return;
+  }
+  const fresh = list.filter((n) => n.id > lastNoticeId);
+  if (fresh.length === 0) return;
+  lastNoticeId = fresh.reduce((max, n) => Math.max(max, n.id), lastNoticeId);
+  for (const n of fresh) {
+    // 哪个会话做完，比做了什么更要紧；细节等接入 agent 总结。
+    pushMessage({ from: 'pet', text: `这一轮结束了 · ${sessionLabel(n)}` });
+  }
+  renderMessages();
+  // 收起时只在入口上留一个未读点，不弹别的。
+  if (!view.chatOpen) chatOpenBtn.classList.add('unread');
+}
+
 function setChat(open) {
   if (view.chatOpen === open) return;
   view.chatOpen = open;
+  // 打开就算读过。
+  if (open) chatOpenBtn.classList.remove('unread');
   document.body.classList.toggle('chat', open);
   render();
-  // 主进程按右下角锚点缩放窗口；聚焦由它负责。
+  // 主进程按宠物锚点缩放窗口；聚焦由它负责。
   window.petAPI.setChat(open);
   if (open) chatInput.focus();
 }
@@ -121,7 +167,7 @@ chatForm.addEventListener('submit', (e) => {
   e.preventDefault();
   const text = chatInput.value.trim();
   if (!text) return;
-  view.messages.push({ from: 'user', text });
+  pushMessage({ from: 'user', text });
   chatInput.value = '';
   renderMessages();
   // 会话接入前的占位：没有回复时不假装有。
@@ -135,6 +181,7 @@ function applyState(payload) {
   view.sessions = payload.sessions || 0;
   view.alerts = payload.alerts || 0;
   render();
+  applyNotices(payload.notices);
 }
 
 // Esc：展开时收起到宠物，收起时退出。右键菜单仍是「重启 / 退出」。

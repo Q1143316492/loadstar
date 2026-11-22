@@ -4,6 +4,7 @@
 //   node simulate.js                 # 3 次读，看桌宠是否变蓝
 //   node simulate.js --reads 25      # 直接越过阈值，看是否变橙 + 打印桌宠回话
 //   node simulate.js --keep          # 不发 SessionEnd，会话留在桌宠里
+//   node simulate.js --stop          # 发一次 Stop，看桌宠主动报「这一轮结束」
 //   node simulate.js --end           # 结束上一次模拟的会话
 //   node simulate.js --session abc   # 指定会话 id（默认 sim-<时间戳>）
 //
@@ -63,6 +64,7 @@ function health() {
   }
 
   send('SessionStart', { source: 'startup' });
+  send('UserPromptSubmit', { prompt: '/simulate' });
 
   let nudged = null;
   for (let i = 1; i <= reads; i++) {
@@ -72,6 +74,8 @@ function health() {
       break;
     }
   }
+
+  if (flag('--stop')) send('Stop', {});
 
   if (!flag('--keep')) send('SessionEnd', { reason: 'other' });
 
