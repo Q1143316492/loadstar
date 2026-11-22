@@ -49,37 +49,44 @@ body.chat #pet {
   pointer-events: none;
 }
 
-/* 打开对话的入口：宠物左缘的小按钮。它与右键菜单（重启 / 退出）互不相干。 */
+/* 打开对话的入口：垫在球下方的小胶囊，压在影子上。
+   在宠物图里不挡脸、不压球边，横向也够宽，好点。
+   它与右键菜单（重启 / 退出）互不相干。 */
 #chat-open {
   position: absolute;
-  left: -6px;
-  top: 40%;
-  width: 22px;
-  height: 22px;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 46px;
+  height: 26px;
   padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   border: 0;
-  border-radius: 999px;
+  border-radius: 13px;
   background: rgba(28, 30, 36, 0.92);
   color: #dfe4ee;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   -webkit-app-region: no-drag;
   cursor: pointer;
-  opacity: 0.85;
+  opacity: 0.9;
 }
 
 #chat-open:hover { opacity: 1; background: rgba(58, 63, 77, 0.96); }
 
-/* 有未读的主动消息：入口右上角一个小点，打开对话即清。 */
+/* 有未读的主动消息：入口整颗亮一圈，右上角再补一个点；打开对话即清。 */
+#chat-open.unread {
+  box-shadow: 0 0 0 2px rgba(255, 92, 157, 0.6), 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
 #chat-open.unread::after {
   content: '';
   position: absolute;
-  top: -1px;
-  right: -1px;
-  width: 7px;
-  height: 7px;
+  top: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: #ff5c9d;
   box-shadow: 0 0 0 2px rgba(20, 21, 26, 0.9);
