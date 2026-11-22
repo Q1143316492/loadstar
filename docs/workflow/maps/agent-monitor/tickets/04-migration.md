@@ -21,5 +21,19 @@
 - `agent-hook/` 下 `pet/node_modules/`、`pet/state/`、`pet/logs/` 已被 `.gitignore` 排除，搬家时不必带走。
 
 类型：task
-状态：待办
-阻塞于：01, 02, 03
+状态：已解决
+阻塞于：01
+
+## 答案（2026-11-22）
+
+随 01 一起执行完毕：
+
+1. wo-agent 经 `git subtree add` 进入 `agent/server/wo-agent/`（原仓库未提交改动先提交为 `0df8d82`）。
+2. `agent-hook/hooks/` → `agent/hooks/`；`agent-hook/pet/` → `agent/client/pet/`，均用 `git mv` 保留历史。
+3. 路径全部改写：`agent/README.md`、`workflow/cwl-pet/SKILL.md`、`launch.vbs`、`simulate.js`、`.gitignore`、根 `README.md`、`docs/workflow-map.md`。
+4. 钩子重装，五条命令指向 `agent/hooks/claude-code-hook.js`，旧路径零残留。
+5. `cwl-sync` 未受影响（只碰 `workflow/cwl-*`）。
+
+验证：`npm test` 全过；`/health` 正常；手动探针 exit 0；模拟器跑通。
+
+遗留：旧地图 [`agent-hook`](../../agent-hook/map.md) 未标记归档，其「跑通最小闭环」票仍为「已认领」。

@@ -8,7 +8,7 @@
 
 - **主体**：[mattpocock/skills](https://github.com/mattpocock/skills)（`@ 49dd158`，原样导入基线见提交 `010369f`），之后做了中译与本地化——去掉 tracker 依赖，规划产物写本地 `docs/workflow/specs/`。
 - **外来技能**：`cwl-show-me` 来自 [humanlayer/skills](https://github.com/humanlayer/skills)（已译，并另配 HTML 模板；`cwl-pr` 的 Summary 视觉菜单亦取自该技能）。
-- **自写**：`cwl-ask`、`cwl-debug-mode`、`cwl-direct`、`cwl-doc-writing`（据 pstack `unslop` 与 OpenSpec `writing.md` 合并）、`cwl-pet`（配套 `agent-hook/` 桌宠）。
+- **自写**：`cwl-ask`、`cwl-debug-mode`、`cwl-direct`、`cwl-doc-writing`（据 pstack `unslop` 与 OpenSpec `writing.md` 合并）、`cwl-pet`（配套 `agent/` 桌宠）。
 - **参考存档**：[`reference/`](reference/) 存着四套上游库的只读快照（mattpocock / openspec / superpowers / poteto-plugins，版本 pin 见其 [`README.md`](reference/README.md)），供取材用。poteto 那份已裁剪，只留 41 篇与通用工作流相关的技能。
 
 ## 安装

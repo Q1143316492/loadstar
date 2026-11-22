@@ -21,5 +21,9 @@
 - wo-agent 的 `context_pressure` 与 `sum_usage` 是现成的上下文压力与用量投影。
 
 类型：grilling
-状态：待办
+状态：已关闭
 阻塞于：01
+
+## 关闭原因（2026-11-22）
+
+pet 目前不接 wo-agent；不做 server 侧判定与大脑。判出本图范围，地图「尚未明确」里留了「pet 接入 wo-agent」一条，将来要回访时另起一张图。

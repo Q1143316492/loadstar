@@ -2,9 +2,11 @@
 
 ## 目的地
 
-三件事做完即抵达：**①** wo-agent 带历史搬进 lodestar，目录定成 `agent/hooks`、`agent/client/pet`、`agent/server/wo-agent`；**②** pet 从「自己判定」降为「只显示」，判定与大脑放在 `agent/server`；**③** 路径改完、钩子重装、能跑起来。
+把三样东西合进一个仓库、并保持宠物能独立工作：**①** wo-agent 带历史搬进 lodestar，目录定成 `agent/hooks`、`agent/client/pet`、`agent/server/wo-agent`（**已完成**）；**②** 路径改完、钩子重装、宠物能从新位置跑起来（**已完成**）。
 
-**约束（决定整张图的形状）：wo-agent 是通用的被调用库，不是宿主。** 宠物逻辑一行都不准写进它里面。
+**pet 接入 wo-agent 暂缓。** 用户目前只打算用自己的终端、按阶段手动查看宠物状态，不把宠物交给 agent 驱动。因此原来「pet 降为纯客户端」「server 侧判定与大脑」两张票判出范围。
+
+**约束（仍成立）：wo-agent 是通用的被调用库，不是宿主。** 宠物逻辑一行都不准写进它里面。
 
 ## 备注
 
@@ -26,8 +28,12 @@
 
 <!-- 索引：每条已解决的 ticket 一行 —— - [标题](tickets/NN-slug.md)：一行摘要 -->
 
+- [桌宠与 wo-agent 怎么合进一个仓库](tickets/01-repo-layout.md)：`git subtree add` 引入（保留 10 提交），`agent/{hooks,client/pet,server/wo-agent}` 三者平级；hooks 是生产者不归 client；原仓库冻结。
+- [动手搬家](tickets/04-migration.md)：目录用 `git mv` 搬迁保历史，路径全部改写，钩子重装；`npm test` 与手动探针均通过。旧地图 agent-hook 未归档，留作遗留项。
+
 ## 尚未明确
 
+- pet 接入 wo-agent：什么时候做、做到什么程度（当前主动暂缓）。
 - 多 agent 横向复盘：比什么、多久做一次；以及拿 DSH、pi-agent 当参考读物改设计。
 - 统一事件格式：等真的接第二家 agent 时再谈；现在只有 Claude Code 与 wo-agent 两个来源。
 - 监控越用越准的评价回路（误报/漏报的量化、标注入口）。
