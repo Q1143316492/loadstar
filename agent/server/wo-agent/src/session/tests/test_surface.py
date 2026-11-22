@@ -78,12 +78,12 @@ def test_nested_replace_uses_current_surface_seqs():
 
 
 def test_legacy_user_message_without_surface_op_appends():
-    from session.serialize import dict_to_event, event_to_dict
+    from session import decode_event, event_to_dict
 
     event = UserMessageEvent(message=_user("hi"))
     payload = event_to_dict(event)
     del payload["surface_op"]
     del payload["source_event_seqs"]
-    restored = dict_to_event(payload)
+    restored = decode_event(payload)
     assert restored.surface_op == "append"
     assert restored.source_event_seqs == ()

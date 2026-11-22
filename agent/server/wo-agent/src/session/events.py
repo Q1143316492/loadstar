@@ -1,4 +1,7 @@
-"""Session.append 能写入的每一条事件。"""
+"""Session.append 能写入的每一条事件——只有形状。
+
+每种事件怎么读写、上不上表层、算什么，都在 ``catalog.py`` 的目录里。
+"""
 
 from __future__ import annotations
 
@@ -94,11 +97,16 @@ class ToolCallEvent:
 
 @dataclass(frozen=True)
 class ToolResultEvent:
-    """一次已完成的工具调用的模型可见结果。"""
+    """一次已完成的工具调用的模型可见结果。
+
+    ``error`` / ``error_code`` 只在失败时填写；code 来自工具的稳定失败词表，
+    比消息文本更适合机器路由与统计。
+    """
     turn: int
     step: int
     message: LLMMessage  # user 角色消息，携带 tool-result 块
     error: str | None = None
+    error_code: str | None = None
     surface_op: SurfaceOp = "append"
     source_event_seqs: tuple[int, ...] = ()
     type: Literal["tool/result"] = "tool/result"
@@ -165,11 +173,3 @@ SessionEventData = Union[
     CompactionSummary,
     CompactionEnd,
 ]
-
-#: 会产生模型消息的事件类型 —— surface。
-SurfaceEventType = Literal["user/message", "assistant/message", "tool/result"]
-SURFACE_TYPES: frozenset[str] = frozenset({"user/message", "assistant/message", "tool/result"})
-
-
-def is_surface_event(event: SessionEventData) -> bool:
-    return event.type in SURFACE_TYPES

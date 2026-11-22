@@ -152,7 +152,7 @@ tool 的 intent 还会持久化 `op.tool_args` 和 `replay: "never" | "safe"`。
 
 - `wo-agent:src/session/events.py`：13 种事件——`turn/start`、`turn/end`、`step/start`、`step/end`、`user/message`、`assistant/chunk`、`assistant/message`、`tool/call`、`tool/result`、`request/header`、`compaction/start`、`compaction/summary`、`compaction/end`。surface 类型与 dsh 一致，`SurfaceReplace` 的 `start` / `end` 也是表层节点的 seq。
 - `wo-agent:src/session/session.py`：`append` 分配 `seq = len(events)`，不修改不删除；`fold_surface` 实现 append/replace，并在**折叠时**校验 start/end 存在于当前表层、start 不晚于 end、`source_event_seqs` 覆盖所有被遮蔽节点且都指向更早事件；`derive_messages` 跳过非 surface、`assistant/chunk`、空内容 assistant；`surface_seqs` 暴露当前表层。
-- `wo-agent:src/session/serialize.py`：同一套 dataclass 就地进出 dict（`asdict` + 按 `type` 分派重建），持久化不另造事件类型；`SurfaceReplace` 也由 `_surface_op_from_dict` 重建。
+- `wo-agent:src/session/catalog.py`：同一套 dataclass 就地进出 dict（`asdict` + 按 `type` 分派重建），持久化不另造事件类型；`SurfaceReplace` 也由 `_surface_op_from_dict` 重建。同一张表还载着每种事件的语义——解码、是否上表层、用量、工具配对增量、turn 边界——`session.py` / `usage.py` / `jsonl.py` / `compaction/pairing.py` 都向它取事实，不各自匹配 type 字符串。
 - `wo-agent:src/session/persistence.py`：`SessionStore` 协议只有 `save(session)` / `load(id)` / `delete(id)` / `list()`；`SessionFormatUnsupportedError` 与 `SessionCorruptionError` 已存在。
 - `wo-agent:src/session/jsonl.py`：一个 session 一个 `.jsonl`；header 带 `version` / `id` / `title`；`save` 写 temp、`flush`、`fsync`、`os.replace`；`load` 校验 header 与 `FORMAT_VERSION`，逐行反序列化，最后调用 `_repair_interrupted_turn` 补一条 `turn/end { reason: "interrupted" }`。
 - `wo-agent:docs/session.md` 与 `wo-agent:src/compaction/engine.py`：压缩事务序列 `compaction/start` → 摘要 → `compaction/summary` → `user/message` `replace` → `compaction/end`；摘要期间表层被改则放弃提交；崩溃留下未匹配 start 时视为 busy，不自动清除。
@@ -170,7 +170,7 @@ tool 的 intent 还会持久化 `op.tool_args` 和 `replay: "never" | "safe"`。
 | 崩溃后继续同一操作 | 否；resume 只是加载日志再起 loop | 是；`op.state` 是程序计数器，`resume()` 驱动 | 否；load 后 idle，需要用户重新输入 |
 | 效果意图 | 无专门事件；靠 flush 保证请求前历史完整 | intent/settlement + 预留 response/usage/result id | 无 |
 | 失败 attempt 的 usage | `assistant/message.usage`；失败 attempt 若有 usage chunk 则是 durable 记录 | usage ledger 记录成功、失败、重试、synthetic、abort | 只有成功 `assistant/message` 的 `usage`；失败 attempt 无记录（DeepSeek adapter 只在 `[DONE]` 发 `UsageChunk`） |
-| 未知事件类型 | 未标 `ignorable` 则拒绝，报格式不支持 | 解码按 schema，非法即 corruption | `serialize.dict_to_event` 抛 `ValueError`；`load` 只捕获 `JSONDecodeError`，不映射为 `SessionCorruptionError` |
+| 未知事件类型 | 未标 `ignorable` 则拒绝，报格式不支持 | 解码按 schema，非法即 corruption | `catalog.decode_event` 抛 `ValueError`；`load` 只捕获 `JSONDecodeError`，不映射为 `SessionCorruptionError` |
 | 断尾 / torn tail | JSONL frame 截断 + 恢复完整事件 | JSONL 最后一行整行丢弃并截断 | 整文件 `os.replace` 通常避免断尾；一旦出现不完整行，`load` 整体报 corruption，不保留已提交前缀 |
 | seq 完整性 | append 保证连续；后端校验 | 严格递增，允许跳号；跳号合法 | `load` 用 `row["event"]` 重建、由 `append` 重新分配 seq，忽略文件里的 `seq`；不校验连续性 |
 | 压缩崩溃 | `session/end-seed` 区分 seed 与 live；未匹配 start 来自旧生命周期则可忽略 | compaction 是自包含 entry；terminal transaction 一次提交 | 未匹配 `compaction/start` 一律视为 busy，永久阻塞自动压缩 |
@@ -220,7 +220,7 @@ tool 的 intent 还会持久化 `op.tool_args` 和 `replay: "never" | "safe"`。
 
 - 来源：`dsh:docs/subsystems/persistence.md#format-refusal--logs-a-build-cannot-faithfully-read`，`pi:packages/agent/docs/harness.md` §1.7（interior 非法行是 corruption）。
 - 前置依赖：已知事件类型集合；事件 envelope 可选 `ignorable` 标记。
-- 改动面：`wo-agent:src/session/serialize.py` 把 `dict_to_event` 的 `ValueError` 映射为 `SessionFormatUnsupportedError`（未知 type）或 `SessionCorruptionError`（payload 形状坏）；`wo-agent:src/session/jsonl.py` 在 load 时校验 `row["seq"]` 连续（可选：`time` 非递减）、header version 方向化报错；非 `ignorable` 的未知事件拒绝。`SessionEvent` 可加 `ignorable: bool = False`。
+- 改动面：`wo-agent:src/session/catalog.py` 把 `decode_event` 的 `ValueError` 映射为 `SessionFormatUnsupportedError`（未知 type）或 `SessionCorruptionError`（payload 形状坏）；`wo-agent:src/session/jsonl.py` 在 load 时校验 `row["seq"]` 连续（可选：`time` 非递减）、header version 方向化报错；非 `ignorable` 的未知事件拒绝。`SessionEvent` 可加 `ignorable: bool = False`。
 - 最小验收：未知事件类型 → 报「本构建不支持」而不是 `ValueError`；version 999 → 报「升级 harness」；seq 跳号 → `SessionCorruptionError`；`ignorable` 未知事件被跳过且后续事件仍可读。
 - 备注：与 B1 一起做才完整；单独做可以让当前「未知事件 `ValueError` 直接穿透 `load`」不再泄漏。
 
@@ -246,7 +246,7 @@ tool 的 intent 还会持久化 `op.tool_args` 和 `replay: "never" | "safe"`。
 
 - 来源：`pi:packages/agent/docs/harness.md` §0.3、§3.2、§3.7、§3.8、§4.5。
 - 前置依赖：A2 或 B1（先保证 intent 本身能落盘）；id 预生成（现有 `uuid.uuid4().hex` 足够，不必 UUIDv7）；日志只增事件词汇。
-- 改动面：新增 log-only 事件，例如 `request/intent`（turn/step/attempt、`LlmCallConfig` 快照、预留的 assistant message id 与 usage id）与 `tool/intent`（call_id、预留 result message id、arguments、`replay: "never" | "safe"`）；`wo-agent:src/agent/loop.py` 在 dispatch 前 append，结算事件使用预留 id；`serialize.py` 双向支持；`derive_messages` 忽略它们。load 时扫描「有 intent 无 settlement」的记录，得到 suspended 状态。
+- 改动面：新增 log-only 事件，例如 `request/intent`（turn/step/attempt、`LlmCallConfig` 快照、预留的 assistant message id 与 usage id）与 `tool/intent`（call_id、预留 result message id、arguments、`replay: "never" | "safe"`）；`wo-agent:src/agent/loop.py` 在 dispatch 前 append，结算事件使用预留 id；`catalog.py` 加两行登记；`derive_messages` 忽略它们。load 时扫描「有 intent 无 settlement」的记录，得到 suspended 状态。
 - 最小验收：在 intent 后、结算前杀死/抛异常；重新 `load` 能报告「有一个未结算的 attempt/tool」；按策略重试或写 synthetic error，写入的 id 与 intent 预留的一致；不会对同一预留 id 写两次；正常路径的日志仍能派生同样的消息。
 - 备注：dsh 没有 intent 事件，只有「请求前 flush」；intent 是 pi 独有的、让恢复知道「可能已计费/可能已产生副作用」的机制。不引入 intent 时，A2 只能保证「请求前的日志已落盘」，无法判断崩溃时是否有一个请求在飞行中。
 
@@ -272,7 +272,7 @@ tool 的 intent 还会持久化 `op.tool_args` 和 `replay: "never" | "safe"`。
 
 - 来源：`pi:packages/agent/docs/harness.md` §3、§4（`op.meta` / `op.state` / terminal transaction / restore）；`pi:packages/agent/src/harness/reducer.ts` 是「日志 + 纯 reducer」的另一种实现。
 - 前置依赖：B2；operation 身份与 source leaf；状态落点二选一——log-only `operation/state` 事件（完整状态覆盖写），或 sidecar register 文件（如 `<session>.state.json`，原子替换）。
-- 改动面：`wo-agent:src/agent/loop.py` 从「直接 while turn/step」改为「计划 → commit state → dispatch → await effect → settlement」；acceptance 写 `operation/meta`；每个 phase 转换写完整 state；terminal 删除 op 状态并写 `lane.lastResult` 等价物；`cli/boot.py` 在 load 后检测 open operation，进入 suspended 而不是 idle；`Agent` 暴露 `resume` / `suspended` 状态。若用 sidecar，`SessionStore` 需要保存/加载它；若用 log events，`serialize.py` 扩展。
+- 改动面：`wo-agent:src/agent/loop.py` 从「直接 while turn/step」改为「计划 → commit state → dispatch → await effect → settlement」；acceptance 写 `operation/meta`；每个 phase 转换写完整 state；terminal 删除 op 状态并写 `lane.lastResult` 等价物；`cli/boot.py` 在 load 后检测 open operation，进入 suspended 而不是 idle；`Agent` 暴露 `resume` / `suspended` 状态。若用 sidecar，`SessionStore` 需要保存/加载它；若用 log events，`catalog.py` 扩展。
 - 最小验收：覆盖 §4.5 的崩溃位置矩阵（intent 前 / intent 后 dispatch 前 / effect 中 / settlement 后 / queue commit 前后 / terminal 前后），每格断言 durable 状态与下一步动作；`resume()` 不重放已结算的 effect；terminal 后 op 状态不存在；重复 resume 幂等。
 - 备注：这是 pi 与 dsh 最大的形状差异，也是改动面最大的一项。只想要「崩溃不丢历史」时，A1 + A2 + B1 已覆盖；想要「崩溃后继续跑同一个操作」时，B2 + C1 是闭包。dsh 没有对等物，不能从 dsh 直接搬。
 
@@ -332,4 +332,4 @@ tool 的 intent 还会持久化 `op.tool_args` 和 `replay: "never" | "safe"`。
 - dsh 投影：`dsh:docs/subsystems/session-projection.md`，`dsh:packages/session/session-projection/src/index.ts`
 - pi 规格：`pi:packages/agent/docs/harness.md`（三存储 §0.3/§1；entry tree §2；operation §3；恢复 §4；公共面 §5；不变量 §9）
 - pi 当前源码：`pi:packages/agent/src/harness/session/{types,session,state,memory}.ts`，`pi:packages/agent/src/harness/session/jsonl/{storage,repo,codec}.ts`，`pi:packages/agent/src/harness/reducer.ts`
-- wo-agent 现状：`wo-agent:src/session/{events,session,serialize,persistence,jsonl}.py`，`wo-agent:src/agent/loop.py`，`wo-agent:src/compaction/engine.py`，`wo-agent:cli/boot.py`，`wo-agent:cli/tui/app.py`，`wo-agent:docs/session.md`
+- wo-agent 现状：`wo-agent:src/session/{events,session,catalog,persistence,jsonl}.py`，`wo-agent:src/agent/loop.py`，`wo-agent:src/compaction/engine.py`，`wo-agent:cli/boot.py`，`wo-agent:cli/tui/app.py`，`wo-agent:docs/session.md`

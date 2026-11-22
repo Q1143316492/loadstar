@@ -44,7 +44,7 @@ session.derive_messages() # 只有 user 那条
 
 - `events.py` — 日志里每一条事实的类型。循环写 turn/step/消息/分片/工具；压缩写 `compaction/*`。
 - `session.py` — `append` 写日志；`derive_messages` / `surface_seqs` / `fold_surface` 算出当前表层。压缩切范围时也走 `fold_surface`。
-- `serialize.py` — 同一套类型进出 dict，`.jsonl` 不另造存储格式。
+- `catalog.py` — 会话事件的权威目录：每种事件怎么读写、上不上表层、算什么（用量、工具配对、turn 边界）都在一张表里。新增事件只加一个 dataclass 与表里一行，消费者不各自匹配 type 字符串。`.jsonl` 不另造存储格式。
 - `persistence.py` — `SessionStore`：save / load / delete / list。
 - `jsonl.py` — 一个会话一个 `.jsonl`。实现上面的 `SessionStore`。header 带 `title`；`list()` 按修改时间新→旧。
 - `usage.py` — 只读投影：`sum_usage` 累加日志里的 `assistant/message.usage`；`context_pressure` 用最近一次 `usage` 作锚点、其后消息按字符粗估，给压缩与状态栏用；`message_chars` 是共用的字符计数。

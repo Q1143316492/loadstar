@@ -8,15 +8,7 @@ tool-result -1；切点处 in-progress 为 0 才安全。
 from __future__ import annotations
 
 from session import Session, fold_surface, message_chars
-from session.events import SessionEventData
-
-
-def _delta(event: SessionEventData) -> int:
-    if event.type == "assistant/message":
-        return sum(1 for block in event.message.content if block.type == "tool-call")
-    if event.type == "tool/result":
-        return -1
-    return 0
+from session.catalog import tool_pairing_delta
 
 
 def _cut_balanced(session: Session) -> tuple[list[int], list[bool]]:
@@ -33,7 +25,7 @@ def _cut_balanced(session: Session) -> tuple[list[int], list[bool]]:
         event = events_by_seq.get(seq)
         if event is None:
             raise ValueError(f"tool-pairing: surface seq {seq} has no matching session event")
-        in_progress += _delta(event)
+        in_progress += tool_pairing_delta(event)
         if in_progress < 0:
             raise ValueError(f"tool-pairing: tool/result at seq {seq} has no matching tool-call")
         after.append(in_progress == 0)

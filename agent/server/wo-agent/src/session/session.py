@@ -19,7 +19,8 @@ from dataclasses import dataclass
 
 from llm.types import LLMMessage
 
-from .events import SessionEventData, SurfaceReplace, is_surface_event
+from .catalog import project_event
+from .events import SessionEventData, SurfaceReplace
 
 
 @dataclass(frozen=True)
@@ -34,19 +35,11 @@ class SessionEvent:
 def derive_event_message(event: SessionEventData) -> LLMMessage | None:
     """把一条事件投影成它派生的 LLM 消息，或 None。
 
-    非 surface 事件（边界、分片、tool/call、compaction/*）不产生消息。空内容的
+    谁是 surface、投影成什么，由 ``catalog`` 的事件目录决定；空内容的
     ``assistant/message`` 会被跳过：它只为承载 max-tokens 步的 usage，不能把
     一条没有内容的 assistant 回合塞进 provider 的 transcript。
     """
-    if event.type == "user/message":
-        return event.message
-    if event.type == "assistant/message":
-        if len(event.message.content) == 0:
-            return None
-        return event.message
-    if event.type == "tool/result":
-        return event.message
-    return None
+    return project_event(event)
 
 
 def fold_surface(events: list[SessionEvent]) -> list[tuple[int, LLMMessage]]:

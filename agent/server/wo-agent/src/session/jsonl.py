@@ -10,9 +10,9 @@ import json
 import os
 from pathlib import Path
 
+from .catalog import decode_event, event_to_dict, turn_boundary
 from .events import TurnEnd
 from .persistence import SessionCorruptionError, SessionFormatUnsupportedError
-from .serialize import dict_to_event, event_to_dict
 from .session import Session
 
 
@@ -58,7 +58,7 @@ class JsonlSessionStore:
                 session.title = header.get("title") or ""
                 for line in f:
                     row = json.loads(line)
-                    session.append(dict_to_event(row["event"]), time=row.get("time"))
+                    session.append(decode_event(row["event"]), time=row.get("time"))
         except json.JSONDecodeError as e:
             raise SessionCorruptionError(f"{path}: malformed JSON: {e}") from e
 
@@ -83,9 +83,10 @@ def _repair_interrupted_turn(session: Session) -> None:
     ended: set[int] = set()
     for entry in session.events:
         event = entry.event
-        if event.type == "turn/start":
+        boundary = turn_boundary(event)
+        if boundary == "start":
             started.add(event.turn)
-        elif event.type == "turn/end":
+        elif boundary == "end":
             ended.add(event.turn)
     orphaned = started - ended
     if orphaned:

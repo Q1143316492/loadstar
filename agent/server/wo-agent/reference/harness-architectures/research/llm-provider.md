@@ -167,14 +167,14 @@
 - `is_retryable(code)` 只看稳定 code 是否在 `RETRYABLE_CODES`；`AUTH` / `CONTEXT_WINDOW_EXCEEDED` / `QUOTA_EXCEEDED` / `ABORTED` 不在集合内。`wo-agent:src/llm/errors.py`
 - 循环在同一步内重试：`attempts += 1`；`is_retryable(code)` 且 `attempts <= max_retries` 时按 `retry_backoff_s * attempts` 线性等待后重发；失败 attempt 不写 assistant/message。`wo-agent:src/agent/loop.py`
 - `CONTEXT_WINDOW_EXCEEDED` 有一次特殊路径：若挂了 compaction，先做一次 overflow 压缩再重试；压缩结果为空则按普通错误返回。`wo-agent:src/agent/loop.py`
-- `LlmFailure.provider_retry_after_ms` 字段存在并且会被 session 序列化，但循环没有读取它；`DeepSeekProvider.http_code()` 只按 HTTP status 映射，未解析响应体里的上下文窗口/额度文本。`wo-agent:src/llm/types.py`、`wo-agent:src/session/serialize.py`、`wo-agent:src/llm/deepseek.py`
+- `LlmFailure.provider_retry_after_ms` 字段存在并且会被 session 序列化，但循环没有读取它；`DeepSeekProvider.http_code()` 只按 HTTP status 映射，未解析响应体里的上下文窗口/额度文本。`wo-agent:src/llm/types.py`、`wo-agent:src/session/catalog.py`、`wo-agent:src/llm/deepseek.py`
 - `http_code()` 的映射：401/403 -> `AUTH`，429 -> `RATE_LIMIT`，402/409 -> `QUOTA_EXCEEDED`，400 -> `CONTEXT_WINDOW_EXCEEDED`，其他 -> `"HTTP"`。`wo-agent:src/llm/deepseek.py`
 
 ### 4.4 注册、认证、计量缺口
 
 - **注册**：`ModelRegistry` 存在但未被使用；没有 `NO_ADAPTER` 之类的未知 provider 错误；没有按名选 adapter 的运行时路径；`provider` 字符串目前只是随请求传递的元数据。`wo-agent:src/llm/registry.py`、`wo-agent:src/agent/loop.py`
 - **认证**：`DeepSeekConfig` 在构造时接收 `api_key`，`stream()` 直接拼 `Authorization: Bearer ...`；没有 credential store、没有每次请求重新解析、没有 `MISSING_CREDENTIAL` / `INVALID_CREDENTIAL`。`wo-agent:src/llm/deepseek.py`、`wo-agent:src/llm/errors.py`
-- **计量**：`TokenUsage` 已随 `assistant/message` 落日志，`session/serialize.py` 能往返；但 `Model` 元数据没有调用点，压缩层没有 token meter，`CompactionOptions` 用 `threshold_chars` / `retain_chars`，`message_chars()` 明确写「字符数代理 token 计量」。`wo-agent:src/session/events.py`、`wo-agent:src/compaction/engine.py`、`wo-agent:src/compaction/pairing.py`
+- **计量**：`TokenUsage` 已随 `assistant/message` 落日志，`session/catalog.py` 能往返；但 `Model` 元数据没有调用点，压缩层没有 token meter，`CompactionOptions` 用 `threshold_chars` / `retain_chars`，`message_chars()` 明确写「字符数代理 token 计量」。`wo-agent:src/session/events.py`、`wo-agent:src/compaction/engine.py`、`wo-agent:src/compaction/pairing.py`
 - **能力协商**：`Model` dataclass 已有 `context_window`、`max_tokens`、`reasoning`、`input_modalities`，但没有 provider 查询或请求前校验；`reasoning_effort` 只进入 `LLMRequest` 与 `LlmCallConfig`，DeepSeek adapter 的 `_build_body()` 没有映射它。`wo-agent:src/llm/types.py`、`wo-agent:src/llm/deepseek.py`
 
 ### 4.5 上层调用点
@@ -335,7 +335,7 @@
 - `wo-agent:src/agent/loop.py`
 - `wo-agent:src/agent/agent.py`
 - `wo-agent:src/session/events.py`
-- `wo-agent:src/session/serialize.py`
+- `wo-agent:src/session/catalog.py`
 - `wo-agent:src/compaction/engine.py`
 - `wo-agent:src/compaction/pairing.py`
 - `wo-agent:src/compaction/summarizer.py`

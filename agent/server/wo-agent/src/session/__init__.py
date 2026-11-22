@@ -19,10 +19,9 @@ from .events import (
     TurnEnd,
     TurnStart,
     UserMessageEvent,
-    is_surface_event,
 )
+from .catalog import EventSpec, decode_event, event_to_dict, is_surface_event
 from .session import Session, SessionEvent, derive_event_message, fold_surface
-from .serialize import dict_to_event, event_to_dict
 from .persistence import (
     SessionCorruptionError,
     SessionFormatUnsupportedError,
@@ -45,6 +44,7 @@ __all__ = [
     "CompactionSummary",
     "ContextPressure",
     "DEFAULT_CHARS_PER_TOKEN",
+    "EventSpec",
     "JsonlSessionStore",
     "Session",
     "SessionCorruptionError",
@@ -61,8 +61,8 @@ __all__ = [
     "TurnStart",
     "UserMessageEvent",
     "context_pressure",
+    "decode_event",
     "derive_event_message",
-    "dict_to_event",
     "event_to_dict",
     "fold_surface",
     "is_surface_event",

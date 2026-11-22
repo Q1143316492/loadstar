@@ -39,14 +39,14 @@ from session.events import (
     TurnStart,
     UserMessageEvent,
 )
-from session.serialize import dict_to_event, event_to_dict
+from session.catalog import decode_event, event_to_dict
 
 
 def _roundtrip(event):
     d = event_to_dict(event)
     # 必须能扛住真实的 JSON 编解码往返，而不只是 dict 往返
     restored = json.loads(json.dumps(d))
-    rebuilt = dict_to_event(restored)
+    rebuilt = decode_event(restored)
     assert rebuilt == event, f"round-trip mismatch for {event.type}"
     return rebuilt
 
@@ -134,9 +134,12 @@ def test_roundtrip_tool_result_with_error_flag():
     tr = ToolResultEvent(
         turn=0, step=0,
         message=create_tool_result_message("c1", [TextBlock(text="failed")], is_error=True),
+        error="failed", error_code="MY_CODE",
     )
     rebuilt = _roundtrip(tr)
     assert rebuilt.message.content[0].is_error is True
+    assert rebuilt.error_code == "MY_CODE"
+    assert rebuilt.error == "failed"
 
 
 def test_roundtrip_request_header():

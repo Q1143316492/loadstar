@@ -15,6 +15,7 @@ from dataclasses import dataclass
 
 from llm.types import LLMMessage, TokenUsage
 
+from .catalog import event_usage, spec_of
 from .session import Session, fold_surface
 
 DEFAULT_CHARS_PER_TOKEN = 2.0
@@ -50,10 +51,9 @@ def sum_usage(session: Session) -> TokenUsage:
     """整本日志的累计用量，按字段相加。"""
     total = TokenUsage()
     for entry in session.events:
-        event = entry.event
-        if event.type != "assistant/message" or event.usage is None:
+        u = event_usage(entry.event)
+        if u is None:
             continue
-        u = event.usage
         total = TokenUsage(
             input=total.input + u.input,
             output=total.output + u.output,
@@ -89,11 +89,13 @@ def context_pressure(
     anchor_tokens = 0
     for entry in events:
         event = entry.event
-        if event.type == "compaction/end":
+        if spec_of(event.type).resets_usage_anchor:
             last_compaction_end = entry.seq
-        elif event.type == "assistant/message" and event.usage is not None:
+            continue
+        usage = event_usage(event)
+        if usage is not None:
             anchor_seq = entry.seq
-            anchor_tokens = _usage_total(event.usage)
+            anchor_tokens = _usage_total(usage)
 
     nodes = fold_surface(events)
     if anchor_seq < 0 or anchor_seq < last_compaction_end:

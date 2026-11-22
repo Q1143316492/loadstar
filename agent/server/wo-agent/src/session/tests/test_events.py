@@ -1,12 +1,12 @@
 """SessionEvent 词汇测试：类型判别与 surface 资格。"""
 
+from session.catalog import is_surface_event
 from session.events import (
     AssistantMessageEvent,
     CompactionStart,
     ToolResultEvent,
     TurnStart,
     UserMessageEvent,
-    is_surface_event,
 )
 from llm.types import TextBlock, create_tool_result_message, create_user_message
 
