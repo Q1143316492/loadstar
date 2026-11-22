@@ -42,7 +42,7 @@
 | [`cwl-debug-mode`](workflow/cwl-debug-mode/SKILL.md) | 调试模式：提假设 → 用项目日志插桩 → 复现取证 → 定点修复 → 清场 | 手打 |
 | [`cwl-research`](workflow/cwl-research/SKILL.md) | 后台查一手来源（文档、源码），写一份带引用的 Markdown 笔记 | 模型可触发 |
 | [`cwl-improve-codebase-architecture`](workflow/cwl-improve-codebase-architecture/SKILL.md) | 扫描「加深机会」→ 生成 HTML 报告 → 选中后进盘问回路 | 手打 |
-| [`cwl-code-tour`](workflow/cwl-code-tour/SKILL.md) | 挑出最值得先读的模块，排成阅读路线：每一站讲清为什么有杠杆、看哪里、怎么自测 | 手打 |
+| [`cwl-code-tour`](workflow/cwl-code-tour/SKILL.md) | 按模块逐站读一个陌生代码库：给出每个模块的接口，说明这几行承诺背后撑着多少行为 | 手打 |
 | [`cwl-prototype`](workflow/cwl-prototype/SKILL.md) | 一次性原型回答设计问题（逻辑 / 状态模型，或 UI 该长什么样） | 模型可触发 |
 | [`cwl-handoff`](workflow/cwl-handoff/SKILL.md) | 把会话压成交接文档（写系统临时目录），供下个会话拾起 | 手打 |
 | [`cwl-teach`](workflow/cwl-teach/SKILL.md) | 多会话教学：把当前目录当有状态的教学工作区，一节课一个 HTML | 手打 |

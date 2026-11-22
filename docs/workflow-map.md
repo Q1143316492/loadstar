@@ -42,7 +42,7 @@
 | `cwl-prototype` | ✓ | 一次性原型回答设计问题（逻辑 / 状态模型，或 UI 该长什么样） |
 | `cwl-handoff` | ✓ | 把会话压成交接文档（写系统临时目录），供下个会话拾起；也作 `cwl-prototype` 的出入桥 |
 | `cwl-teach` | ✓ | 多会话教学：当前目录即教学工作区（`MISSION.md` / `lessons/*.html` / `learning-records/` / `assets/`），一节课一个 HTML；不在工作项目里跑，另开目录（上游 `teach`，2026-10-19 从 ❌ 改判移植） |
-| `cwl-code-tour` | ✓ | 自写：按杠杆挑出最值得先读的模块，排成一条阅读路线，每站配讲解与闭卷自测，输出一页 HTML 到临时目录。与 `cwl-improve-codebase-architecture` 互为反面（读哪里 / 改哪里） |
+| `cwl-code-tour` | ✓ | 自写：按模块逐站读陌生代码库——每站列出接口、说明这几行承诺背后撑着多少行为，标出浅模块并收尾给跳过清单。与 `cwl-improve-codebase-architecture` 互为反面（读哪里 / 改哪里） |
 | `grill-me` | ❌ | 没有仓库场合的 `cwl-grilling`（3 行路由） |
 | `cwl-wait-what` | ✓ | 「没跟上」：把上一条重讲一遍——先给结论，再用短句补上没说出的前提，术语用回词汇表（上游 `wait-what`，2026-10-16 从 ❌ 改判移植） |
 | `to-questionnaire` | ⏳ | 把「我答不了、得问别人」变成一份问卷 |
