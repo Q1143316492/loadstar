@@ -27,16 +27,17 @@
 - [排定渐进顺序与接缝](tickets/07-decide-port-order-and-seams.md)：八步有序表，先 usage 投影与压缩比例，再错误分类、崩溃恢复、组合校验、工具错误码与超时、三态审批，最后增量 append 与 intent；每步一次独立交付并同步文档。
 - [决定学习产物回流机制](tickets/08-decide-knowledge-output-loop.md)：能力卡片放 `reference/harness-architectures/`，纯 markdown、一能力一文件、只写结论并链研究文档；复用 `cwl-research` 不新建技能；上游 commit 钉在卡片头，移植后只回填「现状」一段。
 - [建参考目录](tickets/10-build-reference-directory.md)：六张能力卡片落地，README 钉住上游 pin 与加卡片的四步；卡片与研究文档双向链接，细节只住在研究里。
+- [汇成路线 spec](tickets/09-assemble-roadmap-spec.md)：落在 `docs/specs/harness-evolution/spec.md`；八步与进度、每步接缝与验收、实施票模板、学习回流、明确不做。
 
 ## 尚未明确
 
-- 子智能体与后台任务（dsh 的 subagent / jobs / agent-team）对个人 skill 库是否有价值，形态如何——取决于「决定哪些架构进路线」的结论。
-- 设置、凭据、遥测、会话检索是否值得在 wo-agent 里落地，还是只作为架构卡片记录。凭据解析已在 LLM 研究里列为候选接缝，其余三项仍待显形。
+- 设置、遥测、会话检索是否值得在 wo-agent 里落地，还是只作为架构卡片记录。凭据解析已随 LLM 层落地；其余三项仍待显形。
 - TUI 之外的入口（pi 的 RPC 模式、dsh 的 SDK/ACP）对个人 skill 库是否必要。
 - 个人知识与 skill 库的载体形态（仓库内 notes、独立知识库、技能仓），以及卡片如何被技能复用。研究已证明卡片能承载架构对照，载体形态仍未定。
 
 ## 超出范围
 
+- 子智能体与后台任务（dsh 的 subagent / jobs / agent-team）：06 连同多 lane / 分支一并判出范围，与单线定位冲突。
 - 把 Cordis 或 TypeScript 生态本身移植到 Python；只借概念，不搬框架。
 - 产品化发布：PyPI/npm、二进制分发、多平台打包。
 - Web 客户端、VitePress 站点、浏览器端形态。
