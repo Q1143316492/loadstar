@@ -21,7 +21,7 @@ disable-model-invocation: true
         /cwl-debug-mode（用完即走）
 保养    /cwl-improve-codebase-architecture → /cwl-grill-with-docs
 旁路    /cwl-prototype ⇄ /cwl-handoff（进出桥）
-随时    /cwl-direct · /cwl-wait-what · /cwl-show-me · /cwl-doc-writing · /cwl-teach
+随时    /cwl-direct · /cwl-wait-what · /cwl-show-me · /cwl-doc-writing · /cwl-teach · /cwl-code-tour
 底层    /cwl-grilling · /cwl-domain-modeling · /cwl-codebase-design · /cwl-tdd（被引用，不主动跑）
 ```
 
@@ -40,6 +40,7 @@ disable-model-invocation: true
 | 代码看着对，行为就是不对 | `cwl-debug-mode` |
 | 要查资料（文档 / API 事实） | `cwl-research` |
 | 库越改越难受，想巡检 | `cwl-improve-codebase-architecture` |
+| 接手一个陌生代码库，不知道从哪读起 | `cwl-code-tour` |
 | 设计问题在纸上说不清 | `cwl-prototype` |
 | 换会话 / 换人，要交接 | `cwl-handoff` |
 | 「它刚才说的没看懂」 | `cwl-wait-what` |
@@ -77,10 +78,11 @@ disable-model-invocation: true
 
 - **`cwl-prototype`** —— 一个设计问题（状态模型对不对、UI 该长什么样）纸上说不清时，用一次性原型给出能跑 / 能看的答案。要离开当前会话去做原型、再带结果回来，用 `cwl-handoff` 当进出门。
 - **`cwl-handoff`** —— 只在**要携带**时用：换 harness、换目录、交给别人、阶段中途分叉。同一个 harness、同一个目录，就不用它（见「会话边界」）。
-- **`cwl-wait-what`** —— 哪条消息没看懂，喊一声：把它重讲一遍（补上下文 + 换大白话 + 用回术语）。与 `cwl-show-me` 同族：一条口头禅立刻见效。
+- **`cwl-wait-what`** —— 哪一条没看懂，喊一声：把**那一条**重讲一遍——先给结论，再补上它没说出的前提。与 `cwl-show-me` 同族：一句口头禅立刻见效。
 - **`cwl-show-me`** —— 解释不清时换个呈现：图、调用树、代码形状草图。
 - **`cwl-doc-writing`** —— 写文档前先读的清单：结构上让读者扫得到答案，措辞上去掉 AI 腔。也用来审已写好的稿。
 - **`cwl-teach`** —— 要跨多次会话学会一个主题：把当前目录当教学工作区（`MISSION.md`、`lessons/*.html`、`learning-records/`），一节课一个 HTML。另开一个目录用它，别在正在工作的项目里跑。
+- **`cwl-code-tour`** —— 接手一个陌生代码库、想知道先读哪里：按杠杆挑 5–8 个模块排成路线，每站给出「看哪里」与闭卷自测，出一页 HTML。它是架构巡检的反面——巡检挑值得改的，导览挑值得读的。
 
 ## 底层：被引用，不用刻意记
 

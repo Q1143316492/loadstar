@@ -37,16 +37,16 @@
 | [`cwl-code-review`](workflow/cwl-code-review/SKILL.md) | 对固定点起的 diff 做两轴评审（标准 / Spec），发现带严重度与依据，主审四档过滤后另存临时目录 | 模型可触发 |
 | [`cwl-pr`](workflow/cwl-pr/SKILL.md) | 写 PR 正文：最小视图（Summary）/ 前后证据（Evidence）/ 合并风险（Merge Danger） | 模型可触发 |
 | [`cwl-retro`](workflow/cwl-retro/SKILL.md) | 复盘会话，给环境改进建议 | 手打 |
-| [`cwl-show-me-your-work`](workflow/cwl-show-me-your-work/SKILL.md) | 回来时问「刚才干了什么」：对着产物报状态（改了什么 / 为什么 / 到哪了 / 该看哪几处），十行以内 | 模型可触发 |
 | [`cwl-wayfinder`](workflow/cwl-wayfinder/SKILL.md) | 大块迷雾努力：把决策 ticket 画成地图逐张解决，出口并入 `cwl-to-plan` | 手打 |
 | [`cwl-wayfinder-map-view`](workflow/cwl-wayfinder-map-view/SKILL.md) | 把一张 wayfinder 地图画成一页路线图（谁挡着谁、现在做哪张），输出到系统临时目录 | 手打 |
 | [`cwl-debug-mode`](workflow/cwl-debug-mode/SKILL.md) | 调试模式：提假设 → 用项目日志插桩 → 复现取证 → 定点修复 → 清场 | 手打 |
 | [`cwl-research`](workflow/cwl-research/SKILL.md) | 后台查一手来源（文档、源码），写一份带引用的 Markdown 笔记 | 模型可触发 |
 | [`cwl-improve-codebase-architecture`](workflow/cwl-improve-codebase-architecture/SKILL.md) | 扫描「加深机会」→ 生成 HTML 报告 → 选中后进盘问回路 | 手打 |
+| [`cwl-code-tour`](workflow/cwl-code-tour/SKILL.md) | 挑出最值得先读的模块，排成阅读路线：每一站讲清为什么有杠杆、看哪里、怎么自测 | 手打 |
 | [`cwl-prototype`](workflow/cwl-prototype/SKILL.md) | 一次性原型回答设计问题（逻辑 / 状态模型，或 UI 该长什么样） | 模型可触发 |
 | [`cwl-handoff`](workflow/cwl-handoff/SKILL.md) | 把会话压成交接文档（写系统临时目录），供下个会话拾起 | 手打 |
 | [`cwl-teach`](workflow/cwl-teach/SKILL.md) | 多会话教学：把当前目录当有状态的教学工作区，一节课一个 HTML | 手打 |
-| [`cwl-wait-what`](workflow/cwl-wait-what/SKILL.md) | 哪条没看懂喊一声：补上下文、换大白话、重讲一遍 | 手打 |
+| [`cwl-wait-what`](workflow/cwl-wait-what/SKILL.md) | 上一条没跟上：重讲一遍——先给结论，再补上没说出的前提 | 手打 |
 | [`cwl-grilling`](workflow/cwl-grilling/SKILL.md) | 设计树盘问（被 `cwl-grill-with-docs` 等调用） | 模型可触发 |
 | [`cwl-domain-modeling`](workflow/cwl-domain-modeling/SKILL.md) | 建立、打磨领域词汇表（`docs/workflow/GLOSSARY.md`）与 ADR | 模型可触发 |
 | [`cwl-tdd`](workflow/cwl-tdd/SKILL.md) | 红 → 绿循环的参照：好测试、接缝、反模式 | 模型可触发 |
