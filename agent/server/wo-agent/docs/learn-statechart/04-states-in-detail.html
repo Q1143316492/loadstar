@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>claim 的状态长什么样 · 63 个状态是怎么来的</title>
+<style>
+  :root{
+    --bg:#fbfaf7; --bg-elev:#fff; --bg-sunk:#f4f2ec;
+    --ink:#1b1b19; --ink-2:#4a4a45; --ink-3:#78786f;
+    --line:#e4e1d8; --line-strong:#cac6ba;
+    --accent:#4b4bd6; --accent-soft:#eeeefc;
+    --code-bg:#f4f2ec;
+    --red:#c92f3b; --red-bg:#fdeef0; --red-line:#f0b9be;
+    --amber:#b45c08; --amber-bg:#fdf3e7;
+    --blue:#1069d6; --blue-bg:#eef5fe; --blue-line:#b9d5f5;
+    --violet:#8b2fc0; --violet-bg:#f6eefb; --violet-line:#ddc4f0;
+    --green:#1c7a3e; --green-bg:#e9f5ec; --green-line:#b5dcc2;
+    --shadow:0 1px 2px rgba(27,27,25,.05),0 8px 24px rgba(27,27,25,.04);
+    --radius:14px;
+    --sans:"Segoe UI Variable","Segoe UI",-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+    --mono:"Cascadia Code","SF Mono",Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#141413; --bg-elev:#1c1c1a; --bg-sunk:#222220;
+      --ink:#f0efe9; --ink-2:#c3c1b7; --ink-3:#8f8d83;
+      --line:#2e2e2a; --line-strong:#454540;
+      --accent:#9f9dff; --accent-soft:#23224a;
+      --code-bg:#232320;
+      --red:#ff8d97; --red-bg:#3a1d21; --red-line:#5e2a30;
+      --amber:#f0a95e; --amber-bg:#3a2a18;
+      --blue:#7bb4ff; --blue-bg:#182a40; --blue-line:#2b4a6d;
+      --violet:#cf9bff; --violet-bg:#2c1e3b; --violet-line:#4a2f63;
+      --green:#7fd39a; --green-bg:#16301f; --green-line:#2c5238;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:960px;margin:0 auto;padding:0 28px 110px}
+  @media(max-width:640px){.wrap{padding:0 16px 80px}}
+
+  header{padding:54px 0 26px;border-bottom:1px solid var(--line)}
+  .eyebrow{font-family:var(--mono);font-size:12px;color:var(--ink-3);margin-bottom:12px}
+  .eyebrow .dot{color:var(--accent)}
+  h1{font-size:clamp(24px,3.6vw,33px);line-height:1.22;letter-spacing:-.02em;margin:0 0 14px;font-weight:700}
+  .lede{font-size:16.5px;color:var(--ink-2);margin:0;max-width:64ch}
+  code{font-family:var(--mono);font-size:.87em;background:var(--bg-sunk);border:1px solid var(--line);border-radius:5px;padding:.1em .35em}
+  p{margin:0 0 12px;max-width:72ch}
+  .ok{color:var(--green);font-weight:650}
+  .bad{color:var(--red);font-weight:650}
+  .hl{color:var(--accent);font-weight:650}
+
+  section{padding-top:46px}
+  h2{font-size:20px;letter-spacing:-.01em;margin:0 0 6px;font-weight:650;display:flex;gap:9px;align-items:baseline}
+  h2 .num{font-family:var(--mono);font-size:.62em;color:var(--accent);font-weight:500}
+  .sub{color:var(--ink-3);margin:0 0 20px;font-size:14.5px;max-width:70ch}
+
+  /* 状态快照 */
+  .snap{
+    background:var(--bg-elev);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);overflow:hidden;margin:0 0 14px;
+  }
+  .snap-h{
+    display:flex;align-items:center;gap:9px;padding:9px 15px;
+    border-bottom:1px solid var(--line);background:var(--bg-sunk);
+    font-family:var(--mono);font-size:12px;color:var(--ink-3);
+  }
+  .snap-h b{color:var(--ink-2);font-weight:600}
+  .snap-body{padding:14px 16px}
+  .vrow{display:grid;grid-template-columns:110px minmax(0,1fr);gap:12px;padding:5px 0;align-items:baseline}
+  @media(max-width:560px){.vrow{grid-template-columns:1fr;gap:1px}}
+  .vname{font-family:var(--mono);font-size:12.5px;color:var(--violet);font-weight:600}
+  .vname.ghost::after{content:" 幽灵";font-family:var(--sans);font-size:10px;color:var(--ink-3);font-weight:500}
+  .vval{font-family:var(--mono);font-size:13px;color:var(--ink)}
+  .vval .e{color:var(--ink-3)}
+
+  /* 分层树 */
+  .tree{margin:0 0 20px;padding:0;list-style:none}
+  .tnode{margin:0 0 4px}
+  .troot,.tchild{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:var(--mono);font-size:12.5px;padding:6px 11px;border-radius:8px;
+    border:1px solid var(--line-strong);background:var(--bg-elev);max-width:100%;
+  }
+  .troot{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:600}
+  .tchild .lbl{font-family:var(--sans);font-size:11px;color:var(--ink-3);font-weight:600}
+  .tchild.same{border-style:dashed;opacity:.72}
+  .tchild .st{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .connect{margin-left:16px;padding-left:16px;border-left:2px solid var(--line);margin-top:5px}
+  .note{font-size:12.5px;color:var(--ink-3);margin:6px 0 0 16px;padding-left:16px;border-left:2px solid var(--line)}
+
+  /* 层级柱 */
+  .bars{display:grid;gap:9px;margin:0 0 18px;padding:16px 18px;background:var(--bg-elev);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+  .bar{display:grid;grid-template-columns:64px minmax(0,1fr) 46px;gap:12px;align-items:center}
+  .bar .d{font-family:var(--mono);font-size:12px;color:var(--ink-3);text-align:right}
+  .bar .track{height:22px;background:var(--bg-sunk);border-radius:5px;overflow:hidden}
+  .bar .fill{height:100%;background:var(--accent);border-radius:5px;opacity:.8}
+  .bar .n{font-family:var(--mono);font-size:12px;color:var(--ink-2);font-weight:600}
+  .bar-total{display:flex;justify-content:space-between;border-top:1px solid var(--line);margin-top:6px;padding-top:10px;font-size:13.5px;color:var(--ink-2)}
+  .bar-total b{font-family:var(--mono);color:var(--ink)}
+
+  /* 乘积 */
+  .product{display:grid;gap:8px;margin:0 0 18px}
+  .factor{display:grid;grid-template-columns:minmax(120px,190px) minmax(0,1fr) 60px;gap:12px;align-items:center;padding:10px 14px;background:var(--bg-elev);border:1px solid var(--line);border-radius:9px}
+  @media(max-width:640px){.factor{grid-template-columns:1fr;gap:2px}}
+  .factor .fname{font-family:var(--mono);font-size:12.5px;font-weight:600}
+  .factor .fdesc{font-size:13px;color:var(--ink-2)}
+  .factor .fcount{font-family:var(--mono);font-size:12.5px;color:var(--accent);font-weight:700;text-align:right}
+
+  /* 代码 */
+  pre{margin:0 0 16px;background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;font-family:var(--mono);font-size:12px;line-height:1.68}
+  pre code{background:none;border:0;padding:0;font-size:inherit}
+  .cmt{color:var(--ink-3)}
+  .del{color:var(--red);background:var(--red-bg);display:block;margin:0 -16px;padding:0 16px}
+  .add{color:var(--green);background:var(--green-bg);display:block;margin:0 -16px;padding:0 16px}
+
+  .callout{border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 10px 10px 0;padding:13px 17px;margin:0 0 18px;font-size:14.5px;color:var(--ink-2)}
+  .callout p{margin:0;max-width:none}
+  .callout p+p{margin-top:7px}
+  .callout b{color:var(--ink)}
+  .callout.warn{border-left-color:var(--amber);background:var(--amber-bg)}
+  .callout.honest{border-left-color:var(--red);background:var(--red-bg)}
+  .callout.good{border-left-color:var(--green);background:var(--green-bg)}
+
+  .tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg-elev);box-shadow:var(--shadow);margin-bottom:18px}
+  table{width:100%;border-collapse:collapse;font-size:14px;min-width:480px}
+  th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:11.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);font-weight:600;background:var(--bg-sunk)}
+  tbody tr:last-child td{border-bottom:0}
+  td.mono{font-family:var(--mono);font-size:12.5px}
+
+  .next{border-top:1px solid var(--line);margin-top:46px;padding-top:22px;font-size:15px;color:var(--ink-2)}
+  a{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">wo-agent <span class="num" style="color:var(--accent)">/</span> Inbox.claim <span class="num" style="color:var(--accent)">/</span> 实际枚举结果</div>
+  <h1>「状态」不是函数参数，是五个变量的快照</h1>
+  <p class="lede">下面是刚才真实跑出来的东西。63 个状态不是凑的，是从初始状态一步一步走出去的。</p>
+</header>
+
+<!-- ===== 1 ===== -->
+<section>
+  <h2><span class="num">01</span>一个状态长什么样</h2>
+  <p class="sub">这是<b>初始状态</b>。五个变量，每个都只是一个值。</p>
+
+  <div class="snap">
+    <div class="snap-h"><b>State 0</b> · 程序刚启动</div>
+    <div class="snap-body">
+      <div class="vrow"><span class="vname">nextTurn</span><span class="vval">[] <span class="e">← 空队列</span></span></div>
+      <div class="vrow"><span class="vname">nextStep</span><span class="vval">[] <span class="e">← 空队列</span></span></div>
+      <div class="vrow"><span class="vname">claimed</span><span class="vval">{} <span class="e">← 还没认领过任何东西</span></span></div>
+      <div class="vrow"><span class="vname ghost">pushed</span><span class="vval">{} <span class="e">← 还没推过任何东西</span></span></div>
+      <div class="vrow"><span class="vname">nextId</span><span class="vval">0 <span class="e">← 下一个消息编号</span></span></div>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <p><b>注意那个标「幽灵」的变量。</b><code>pushed</code> 在 <code>inbox.py</code> 里<b>根本不存在</b>。它有，只是因为规则「消息不会丢」需要拿「曾经有什么」和「现在有什么」对比。代码里没有这个变量，就没法检查这条规则。</p>
+    <p>这就是建模时最常做的一件事：<b>为了写出规则，往模型里加代码里没有的变量。</b></p>
+  </div>
+</section>
+
+<!-- ===== 2 ===== -->
+<section>
+  <h2><span class="num">02</span>从它出发，一步能走到哪</h2>
+  <p class="sub">实际枚举出的三个后继。<b>注意第三个 —— 它走回了自己。</b></p>
+
+  <ul class="tree">
+    <li class="tnode">
+      <div class="troot">State 0 &nbsp;·&nbsp; NT=[] NS=[] C={} P={}</div>
+      <div class="connect">
+        <div class="tnode"><div class="tchild"><span class="lbl">PushTurn</span><span class="st">NT=[0]&nbsp; NS=[]&nbsp; C={}&nbsp; P={0}</span></div></div>
+        <div class="tnode"><div class="tchild"><span class="lbl">PushStep</span><span class="st">NT=[]&nbsp; NS=[0]&nbsp; C={}&nbsp; P={0}</span></div></div>
+        <div class="tnode"><div class="tchild same"><span class="lbl">ClaimStep</span><span class="st">NT=[]&nbsp; NS=[]&nbsp; C={}&nbsp; P={} &nbsp;← 和上面一模一样</span></div></div>
+      </div>
+      <div class="note"><b>ClaimStep 没有新状态。</b>队列本来就是空的，claim 完还是空的。所以它不算「新的状态」——<b>这就是去重</b>，也是深度 1 只有 2 个状态而不是 3 个的原因。</div>
+    </li>
+  </ul>
+
+  <div class="callout">
+    <p><b>这就是「状态」和「操作」的区别。</b>操作可以有很多次，状态只有有限多个。枚举器只关心<b>走到了哪些不同的状态</b>，走两次同样的状态没有意义。</p>
+  </div>
+</section>
+
+<!-- ===== 3 ===== -->
+<section>
+  <h2><span class="num">03</span>63 个状态是怎么分布的</h2>
+  <p class="sub">广度优先：先看所有 1 步能到的，再看 2 步，依此类推。实际分布如下。</p>
+
+  <div class="bars">
+    <div class="bar"><span class="d">深度 0</span><div class="track"><div class="fill" style="width:4%"></div></div><span class="n">1</span></div>
+    <div class="bar"><span class="d">深度 1</span><div class="track"><div class="fill" style="width:8%"></div></div><span class="n">2</span></div>
+    <div class="bar"><span class="d">深度 2</span><div class="track"><div class="fill" style="width:20%"></div></div><span class="n">5</span></div>
+    <div class="bar"><span class="d">深度 3</span><div class="track"><div class="fill" style="width:40%"></div></div><span class="n">10</span></div>
+    <div class="bar"><span class="d">深度 4</span><div class="track"><div class="fill" style="width:72%"></div></div><span class="n">18</span></div>
+    <div class="bar"><span class="d">深度 5</span><div class="track"><div class="fill" style="width:100%"></div></div><span class="n">25</span></div>
+    <div class="bar"><span class="d">深度 6</span><div class="track"><div class="fill" style="width:8%"></div></div><span class="n">2</span></div>
+    <div class="bar-total"><span>合计（每个状态只算一次）</span><b>63</b></div>
+  </div>
+
+  <p style="font-size:14px;color:var(--ink-3)">中间涨得快、两头小，是因为队列长度有上限 2。到了深度 6 只剩 2 个状态还能往外走 —— <b>说明探索到头了</b>。</p>
+</section>
+
+<!-- ===== 4 ===== -->
+<section>
+  <h2><span class="num">04</span>为什么「状态数」会失控</h2>
+  <p class="sub">因为状态是变量取值的<b>乘积</b>，不是和。</p>
+
+  <div class="product">
+    <div class="factor"><span class="fname">nextTurn</span><span class="fdesc">长度 0–2 的编号序列</span><span class="fcount">×?</span></div>
+    <div class="factor"><span class="fname">nextStep</span><span class="fdesc">长度 0–2 的编号序列</span><span class="fcount">×?</span></div>
+    <div class="factor"><span class="fname">claimed</span><span class="fdesc">已认领编号的集合</span><span class="fcount">×2ⁿ</span></div>
+    <div class="factor"><span class="fname">pushed</span><span class="fdesc">推过的编号集合</span><span class="fcount">×2ⁿ</span></div>
+    <div class="factor"><span class="fname">nextId</span><span class="fdesc">0–4（被 CONSTRAINT 截断）</span><span class="fcount">×5</span></div>
+  </div>
+
+  <div class="callout honest">
+    <p><b>现在是 63，因为队列上限是 2、id 上限是 4。</b>把上限从 2 改到 3，或者加一个「取消过」的集合，数字立刻翻几倍。这就是状态爆炸——<b>它不是你跑得慢，是组合数本身涨得快</b>。</p>
+    <p>所以真正的技能是：<b>砍掉不影响结论的变量。</b>消息内容砍掉、时间戳砍掉、协程砍掉。留下的每一个变量，都得是「规则要读它」或者「操作会改它」。</p>
+  </div>
+</section>
+
+<!-- ===== 5 ===== -->
+<section>
+  <h2><span class="num">05</span>那条三步反例，放进同一个视角</h2>
+  <p class="sub">改坏版里，枚举器走到第三个状态时发现规则破了。</p>
+
+  <div class="snap">
+    <div class="snap-h"><b>State 0</b> · 起点</div>
+    <div class="snap-body">
+      <div class="vrow"><span class="vname">nextTurn</span><span class="vval">[]</span></div>
+      <div class="vrow"><span class="vname">nextStep</span><span class="vval">[]</span></div>
+      <div class="vrow"><span class="vname">claimed</span><span class="vval">{}</span></div>
+      <div class="vrow"><span class="vname ghost">pushed</span><span class="vval">{}</span></div>
+    </div>
+  </div>
+  <pre><code><span class="cmt">--PushTurn--&gt;</span></code></pre>
+  <div class="snap">
+    <div class="snap-h"><b>State 1</b></div>
+    <div class="snap-body">
+      <div class="vrow"><span class="vname">nextTurn</span><span class="vval">[0]</span></div>
+      <div class="vrow"><span class="vname">nextStep</span><span class="vval">[]</span></div>
+      <div class="vrow"><span class="vname">claimed</span><span class="vval">{}</span></div>
+      <div class="vrow"><span class="vname ghost">pushed</span><span class="vval">{0}</span></div>
+    </div>
+  </div>
+  <pre><code><span class="cmt">--PushStep--&gt;</span></code></pre>
+  <div class="snap">
+    <div class="snap-h"><b>State 2</b></div>
+    <div class="snap-body">
+      <div class="vrow"><span class="vname">nextTurn</span><span class="vval">[0]</span></div>
+      <div class="vrow"><span class="vname">nextStep</span><span class="vval">[1]</span></div>
+      <div class="vrow"><span class="vname">claimed</span><span class="vval">{}</span></div>
+      <div class="vrow"><span class="vname ghost">pushed</span><span class="vval">{0, 1}</span></div>
+    </div>
+  </div>
+  <pre><code><span class="cmt">--ClaimTurn--&gt;  ← 改坏版在这里只记住了 0</span></code></pre>
+  <div class="snap" style="border-color:var(--red-line)">
+    <div class="snap-h" style="background:var(--red-bg);color:var(--red)"><b>State 3</b> · 规则在这里破了</div>
+    <div class="snap-body">
+      <div class="vrow"><span class="vname">nextTurn</span><span class="vval">[]</span></div>
+      <div class="vrow"><span class="vname">nextStep</span><span class="vval">[]</span></div>
+      <div class="vrow"><span class="vname">claimed</span><span class="vval bad">{0}</span></div>
+      <div class="vrow"><span class="vname ghost">pushed</span><span class="vval bad">{0, 1}</span></div>
+    </div>
+    <div style="padding:0 16px 14px;font-size:13.5px;color:var(--ink-2)">
+      <b class="bad">1 ∈ pushed，但 1 ∉ claimed ∪ NT ∪ NS。</b> 它被推进来过，现在哪都不在。<br>
+      这一条检查就是一行：
+      <code style="margin-top:6px;display:inline-block">pushed ⊆ claimed ∪ nextTurn ∪ nextStep</code>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 6 ===== -->
+<section>
+  <h2><span class="num">06</span>所以「扩展到复杂系统」是什么意思</h2>
+  <p class="sub">不是把整个系统塞进去，是挑一个<b>小到能穷举、又真到能出错</b>的切片。</p>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>系统</th><th>建模的那一片</th><th>不建模</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="mono">Inbox<br><span style="font-family:var(--sans);font-size:12px;color:var(--ink-3)">（我们做的）</span></td>
+          <td>两个队列 + 已认领 + 推送过</td>
+          <td>消息内容、协程、cancel</td>
+        </tr>
+        <tr>
+          <td class="mono">S3 / DynamoDB<br><span style="font-family:var(--sans);font-size:12px;color:var(--ink-3)">（AWS 公开的案例）</span></td>
+          <td>三五个节点、复制消息、选主</td>
+          <td>网络栈、磁盘格式、用户数据</td>
+        </tr>
+        <tr>
+          <td class="mono">你的 wo-agent<br><span style="font-family:var(--sans);font-size:12px;color:var(--ink-3)">（下一个候选）</span></td>
+          <td>会话压缩事务：start → summary → replace → end</td>
+          <td>LLM 调用、流式分片、工具执行</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout good">
+    <p><b>共同点：建模的那一片，都是「几个变量 + 一串有顺序的操作」。</b>不管系统多大，被建模的那一块都只有这么点东西。剩下的都是它周围的噪音。</p>
+  </div>
+</section>
+
+<div class="next">
+  <b>你现在能回答这个问题吗：</b>换一个新对象，<b>你会挑哪几个变量？</b><br><br>
+  挑变量的判据只有两条 —— <b>① 规则要读它；② 操作会改它。</b>两条都不满足的，就是噪音，砍掉。<br><br>
+  下一个对象是 <code>compaction</code> 的压缩事务，它有四个阶段和一个失败分支。要不要现在试着自己划一遍？你划，我来检查。
+</div>
+
+</div>
+</body>
+</html>

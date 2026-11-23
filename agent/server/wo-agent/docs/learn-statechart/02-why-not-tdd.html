@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>为什么 TDD 抓不到 · 这个测试到底叫什么</title>
+<style>
+  :root {
+    --bg:#fbfaf7; --bg-elev:#fff; --bg-sunk:#f4f2ec;
+    --ink:#1b1b19; --ink-2:#4a4a45; --ink-3:#78786f;
+    --line:#e4e1d8; --line-strong:#cac6ba;
+    --accent:#4b4bd6; --accent-soft:#eeeefc;
+    --code-bg:#f4f2ec;
+    --red:#c92f3b; --red-bg:#fdeef0;
+    --amber:#b45c08; --amber-bg:#fdf3e7;
+    --blue:#1069d6; --blue-bg:#eef5fe;
+    --teal:#10726a; --teal-bg:#e9f5f3;
+    --violet:#8b2fc0; --violet-bg:#f6eefb;
+    --green:#1c7a3e; --green-bg:#e9f5ec;
+    --shadow:0 1px 2px rgba(27,27,25,.05),0 8px 24px rgba(27,27,25,.04);
+    --radius:12px;
+    --sans:"Segoe UI Variable","Segoe UI",-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+    --mono:"Cascadia Code","SF Mono",Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root{
+      --bg:#141413; --bg-elev:#1c1c1a; --bg-sunk:#222220;
+      --ink:#f0efe9; --ink-2:#c3c1b7; --ink-3:#8f8d83;
+      --line:#2e2e2a; --line-strong:#454540;
+      --accent:#9f9dff; --accent-soft:#23224a;
+      --code-bg:#232320;
+      --red:#ff8d97; --red-bg:#3a1d21;
+      --amber:#f0a95e; --amber-bg:#3a2a18;
+      --blue:#7bb4ff; --blue-bg:#182a40;
+      --teal:#6fd7c8; --teal-bg:#16312e;
+      --violet:#cf9bff; --violet-bg:#2c1e3b;
+      --green:#7fd39a; --green-bg:#16301f;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.72;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:980px;margin:0 auto;padding:0 28px 100px}
+  @media(max-width:640px){.wrap{padding:0 18px 70px}}
+
+  header{padding:60px 0 30px;border-bottom:1px solid var(--line)}
+  .eyebrow{font-family:var(--mono);font-size:12px;color:var(--ink-3);margin-bottom:14px}
+  .eyebrow .dot{color:var(--accent)}
+  h1{font-size:clamp(25px,3.8vw,36px);line-height:1.2;letter-spacing:-.02em;margin:0 0 14px;font-weight:700}
+  .lede{font-size:17px;color:var(--ink-2);margin:0;max-width:64ch}
+
+  section{padding-top:50px}
+  h2{font-size:21px;letter-spacing:-.01em;margin:0 0 6px;font-weight:650;display:flex;gap:10px;align-items:baseline}
+  h2 .num{font-family:var(--mono);font-size:.62em;color:var(--accent);font-weight:500}
+  .sub{color:var(--ink-3);margin:0 0 20px;font-size:14.5px;max-width:68ch}
+  p{margin:0 0 14px;max-width:72ch}
+  code{font-family:var(--mono);font-size:.87em;background:var(--bg-sunk);border:1px solid var(--line);border-radius:5px;padding:.1em .35em}
+  pre{margin:0;background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:16px 18px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.62}
+  pre code{background:none;border:0;padding:0;font-size:inherit}
+  .cmt{color:var(--ink-3)}
+
+  /* 三张答案卡 */
+  .answers{display:grid;gap:12px;margin:0 0 8px}
+  .ans{background:var(--bg-elev);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow)}
+  .ans .q{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-bottom:6px}
+  .ans p{margin:0;font-size:15px;color:var(--ink-2)}
+  .ans p b{color:var(--ink)}
+
+  /* 并排代码 */
+  .side{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:0 0 18px}
+  @media(max-width:820px){.side{grid-template-columns:1fr}}
+  .pane{background:var(--bg-elev);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+  .pane-h{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--bg-sunk);font-size:13px;font-weight:600}
+  .pane-h .tag{font-family:var(--mono);font-size:10.5px;font-weight:500;padding:2px 7px;border-radius:99px}
+  .tag.a{background:var(--blue-bg);color:var(--blue)}
+  .tag.b{background:var(--violet-bg);color:var(--violet)}
+  .pane pre{border:0;border-radius:0;background:var(--bg-elev)}
+
+  .verdict{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+  @media(max-width:820px){.verdict{grid-template-columns:1fr}}
+  .v{border-radius:var(--radius);padding:14px 16px;font-size:14px;border:1px solid}
+  .v.a{background:var(--blue-bg);border-color:transparent;color:var(--ink-2)}
+  .v.b{background:var(--green-bg);border-color:transparent;color:var(--ink-2)}
+  .v b{display:block;color:var(--ink);margin-bottom:4px;font-size:13px}
+
+  /* 三步 */
+  .steps{display:grid;gap:0;margin:0 0 20px}
+  .step{display:grid;grid-template-columns:34px minmax(0,1fr);gap:14px;padding:15px 0;border-top:1px solid var(--line)}
+  .step:last-child{border-bottom:1px solid var(--line)}
+  .sn{width:26px;height:26px;display:grid;place-items:center;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-family:var(--mono);font-size:12px;font-weight:600;margin-top:2px}
+  .step h3{margin:0 0 5px;font-size:15px;font-weight:650}
+  .step p{margin:0;font-size:14.5px;color:var(--ink-2)}
+  .step p+p{margin-top:6px}
+
+  /* 阶梯 */
+  .ladder{display:grid;gap:8px;margin:0 0 20px}
+  .rung{display:grid;grid-template-columns:minmax(150px,230px) minmax(0,1fr);gap:16px;padding:13px 16px;border-radius:10px;border:1px solid var(--line);background:var(--bg-elev)}
+  .rung.here{border-color:var(--accent);background:var(--accent-soft)}
+  @media(max-width:680px){.rung{grid-template-columns:1fr;gap:4px}}
+  .rung .nm{font-weight:650;font-size:14.5px}
+  .rung .nm small{display:block;font-weight:500;color:var(--ink-3);font-size:11.5px;margin-top:2px}
+  .rung.here .nm small{color:var(--accent)}
+  .rung .desc{font-size:14px;color:var(--ink-2)}
+
+  /* 组合爆炸 */
+  .tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg-elev);box-shadow:var(--shadow);margin-bottom:18px}
+  table{width:100%;border-collapse:collapse;font-size:14px;min-width:520px}
+  th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:11.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);font-weight:600;background:var(--bg-sunk)}
+  tbody tr:last-child td{border-bottom:0}
+  td.mono{font-family:var(--mono);font-size:12.5px}
+  .num-r{text-align:right;font-family:var(--mono)}
+
+  .callout{border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 10px 10px 0;padding:13px 17px;margin:0 0 18px;font-size:14.5px;color:var(--ink-2)}
+  .callout p{margin:0;max-width:none}
+  .callout p+p{margin-top:7px}
+  .callout b{color:var(--ink)}
+  .callout.warn{border-left-color:var(--amber);background:var(--amber-bg)}
+  .callout.honest{border-left-color:var(--red);background:var(--red-bg)}
+
+  .next{border-top:1px solid var(--line);margin-top:48px;padding-top:22px;font-size:14.5px;color:var(--ink-2)}
+  a{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">learn-statechart <span class="dot">/</span> 概念地图</div>
+  <h1>为什么 TDD 抓不到，这个测试到底叫什么</h1>
+  <p class="lede">三个问题，三个答案。中间用同一段代码并排对比，你看得见差别在哪。</p>
+</header>
+
+<section>
+  <h2><span class="num">00</span>先给答案</h2>
+  <div class="answers">
+    <div class="ans">
+      <div class="q">TDD 为什么不能解决</div>
+      <p>不是「测得不够多」，是<b>测试从空状态出发、每次只走一条路</b>。而 bug 住在两条合法路径的组合里——<b>没有人会想到写那个组合</b>。</p>
+    </div>
+    <div class="ans">
+      <div class="q">这个测试叫什么</div>
+      <p>叫<b>有界穷举的、基于状态机的属性测试</b>（exhaustive stateful property-based testing）。它<b>借用了模型检查器的机制</b>，但还不算严格意义的「形式化验证」——因为它有界、而且不验证规格。下一节有阶梯图。</p>
+    </div>
+    <div class="ans">
+      <div class="q">它具体做了什么</div>
+      <p>三步：<b>枚举所有合法操作 → 广度优先走遍状态、同一个状态只走一次 → 每到一个状态就检查规则</b>。失败时给你一条最短的、能重放的操作序列。</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">01</span>两个测试并排</h2>
+  <p class="sub">测同一个函数 <code>fold_surface</code>。左边是你现在会写的那种，右边是穷举那种。</p>
+
+  <div class="side">
+    <div class="pane">
+      <div class="pane-h"><span class="tag a">TDD</span>单元测试</div>
+<pre><code><span class="cmt"># 你想到的场景：替换掉中间两条</span>
+def test_replace_middle():
+    s = Session()
+    s.append(u("1")); s.append(u("2"))
+    s.append(u("3")); s.append(u("4"))
+    s.append(replace(start=1, end=2))
+
+    assert s.derive_messages() == [...]
+    <span class="cmt"># 断言的是：这一次的结果对不对</span></code></pre>
+    </div>
+    <div class="pane">
+      <div class="pane-h"><span class="tag b">穷举</span>状态化属性测试</div>
+<pre><code><span class="cmt"># 不用想场景：机器自己生成</span>
+def test_all_sequences():
+    q = deque([()])            <span class="cmt"># 空历史</span>
+    seen = {()}
+    while q:
+        ops = q.popleft()
+        <span class="cmt"># 每到一个状态，检查规则</span>
+        assert no_violation(ops)
+        <span class="cmt"># 从它出发的所有合法下一步</span>
+        for nxt in successors(ops):
+            if nxt not in seen:
+                seen.add(nxt)
+                q.append(nxt)
+    <span class="cmt"># 断言的是：每一个状态都对不对</span></code></pre>
+    </div>
+  </div>
+
+  <div class="verdict">
+    <div class="v a"><b>左：断言条数 = 你想到的组合数</b>4 个操作，长度 3 的序列有 4³=64 种。想到写几种就是几种。</div>
+    <div class="v b"><b>右：断言条数 = 状态空间大小</b>深度 5 时 138 个状态，0.04 秒跑完。你没想的那些也在里面。</div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">02</span>具体逻辑：它凭什么能自己找到问题</h2>
+  <p class="sub">拆开 <a href="../../docs/learn-statechart/examples/test_fold_surface.py">test_fold_surface.py</a> 看。</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="sn">1</div>
+      <div>
+        <h3>枚举「合法」的下一步</h3>
+        <p>一条历史之后，下一步可以是什么？两种：追加一条新消息，或者替换当前表层里的某一段。</p>
+        <p><b>关键在这里</b>：不是随机挑，是<b>把所有合法选项都列出来</b>。<code>successors()</code> 负责这件事。</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">2</div>
+      <div>
+        <h3>广度优先走遍，同一个状态只走一次</h3>
+        <p>每走一步，就得到一个「历史 + 当前表层」的组合。这个组合就是<b>状态</b>。</p>
+        <p>如果两个不同的历史折叠出同一个表层，后面的路完全一样——<b>只走一遍</b>。这就是去重，也是它能扛住指数增长的原因（实测：深度 8 省掉 93%）。</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">3</div>
+      <div>
+        <h3>每到一个状态，检查规则</h3>
+        <p>规则是「任何时刻都该成立」的断言，比如：表层不能有重复节点；替换掉的节点不该还留着。</p>
+        <p>违反了？<b>立刻停</b>。因为广度优先，你拿到的这条路径天然是<b>最短</b>的。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <p><b>实际跑出来的失败长这样：</b></p>
+    <p><code>序列 ('append', (0,0), (1,1)) 违反：replace(1,1) 之后仍残留 [1, 1]</code></p>
+    <p>三步、一条完整路径。你照着这三步在真代码里复现，一定能重放。</p>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">03</span>它到底叫什么——阶梯</h2>
+  <p class="sub">这些词经常被混用。从下往上，严格程度递增。我们站在倒数第二级。</p>
+
+  <div class="ladder">
+    <div class="rung">
+      <div class="nm">单元测试<small>unit test</small></div>
+      <div class="desc">你给输入、断言输出。覆盖你想到的用例。</div>
+    </div>
+    <div class="rung">
+      <div class="nm">属性测试<small>property-based testing</small></div>
+      <div class="desc">你写「无论什么输入都该成立」的规则，机器<b>随机</b>生成输入去撞。代表：QuickCheck、hypothesis。不知道漏了什么。</div>
+    </div>
+    <div class="rung here">
+      <div class="nm">状态化属性测试 · 有界穷举<small>stateful property testing / exhaustive</small></div>
+      <div class="desc"><b>就是我们的测试。</b>规则相同，但输入不是随机的——是<b>按状态空间枚举</b>的。所以能说「这个深度内我测完了」。名字里的两个词：stateful（有状态、论顺序）、exhaustive（穷举，不是抽样）。</div>
+    </div>
+    <div class="rung">
+      <div class="nm">模型检查<small>model checking</small></div>
+      <div class="desc">同样的穷举机制，但用在<b>一份独立的规格</b>上，而不是你的代码上。代表：TLC、SPIN、Apalache。会检查时序性质（「终将发生」），我们的测试不会。</div>
+    </div>
+    <div class="rung">
+      <div class="nm">形式化验证<small>formal verification</small></div>
+      <div class="desc">模型检查、定理证明（Coq、TLAPS）的统称。特征是<b>对某个明确界定的范围穷尽地证明</b>，不靠抽样。</div>
+    </div>
+  </div>
+
+  <div class="callout honest">
+    <p><b>诚实地说：我们的测试是「半只脚踏进形式化验证」。</b></p>
+    <p>它和模型检查<b>用的是同一个引擎</b>（穷举 + 去重 + 最短反例），但它有两个缺口：一是<b>有界</b>——深度 5 以外没测；二是<b>直接在真代码上跑</b>，没有一份独立规格可以拿来对照。</p>
+    <p>所以你之前听到的「TLA+」，正是补这两个缺口的东西。而如果这两个缺口对你的场景无所谓——那这个 100 行的 Python 测试就够了。</p>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">04</span>为什么人想不到那个组合</h2>
+  <p class="sub">用 wo-agent 真实的压缩场景。</p>
+
+  <p>会话压了一次、又压一次，表层顺序和日志顺序就错位了：</p>
+  <pre><code>起始     表层 [0, 1, 2, 3]      四轮对话
+压缩1    表层 [4, 2, 3]         前两条换成摘要(seq 4)
+压缩2    表层 [5, 3]            又换成摘要(seq 5)
+
+日志 seq:  0 1 2 3 4 5   <span class="cmt">← 永远递增</span>
+模型看到:      5 3       <span class="cmt">← seq 大的在前</span></code></pre>
+
+  <p>写单元测试时，你想的是「压缩一次应该怎样」。<b>压缩两次之后表层是什么形状，取决于前一次挑了哪一段</b>——这个组合是人写不完的。</p>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>序列长度</th><th class="num-r">可能的组合数</th><th>人能写完吗</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">3</td><td class="num-r">~33</td><td>勉强</td></tr>
+        <tr><td class="mono">5</td><td class="num-r">~138</td><td>不能</td></tr>
+        <tr><td class="mono">7</td><td class="num-r">~3,894</td><td>不能</td></tr>
+        <tr><td class="mono">8</td><td class="num-r">~24,471</td><td>不能（但机器 0.3 秒）</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout warn">
+    <p><b>失败长什么样：</b>模型读到的对话顺序是乱的，然后开始胡说。日志完全正常——所以你查不到。</p>
+    <p>这不是「测得不努力」，是<b>人脑不适合枚举组合</b>，而机器适合。</p>
+  </div>
+</section>
+
+<div class="next">
+  <b>下一步</b>：这份测试已经能跑（<code>.venv/Scripts/python -m pytest docs/learn-statechart/examples/test_fold_surface.py -v</code>）。<br>
+  两个选择：<b>A</b> 把它挪进 <code>src/session/tests/</code>，成为仓库常驻测试；<b>B</b> 继续第 04 篇，补上「有界」和「没有规格」这两个缺口。
+</div>
+
+</div>
+</body>
+</html>

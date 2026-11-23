@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>你要学的是一套流程</title>
+<style>
+  :root{
+    --bg:#fbfaf7; --bg-elev:#fff; --bg-sunk:#f4f2ec;
+    --ink:#1b1b19; --ink-2:#4a4a45; --ink-3:#78786f;
+    --line:#e4e1d8; --line-strong:#cac6ba;
+    --accent:#4b4bd6; --accent-soft:#eeeefc;
+    --code-bg:#f4f2ec;
+    --red:#c92f3b; --red-bg:#fdeef0;
+    --amber:#b45c08; --amber-bg:#fdf3e7;
+    --blue:#1069d6; --blue-bg:#eef5fe;
+    --teal:#10726a; --teal-bg:#e9f5f3;
+    --violet:#8b2fc0; --violet-bg:#f6eefb;
+    --green:#1c7a3e; --green-bg:#e9f5ec;
+    --shadow:0 1px 2px rgba(27,27,25,.05),0 8px 24px rgba(27,27,25,.04);
+    --radius:14px;
+    --sans:"Segoe UI Variable","Segoe UI",-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+    --mono:"Cascadia Code","SF Mono",Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#141413; --bg-elev:#1c1c1a; --bg-sunk:#222220;
+      --ink:#f0efe9; --ink-2:#c3c1b7; --ink-3:#8f8d83;
+      --line:#2e2e2a; --line-strong:#454540;
+      --accent:#9f9dff; --accent-soft:#23224a;
+      --code-bg:#232320;
+      --red:#ff8d97; --red-bg:#3a1d21;
+      --amber:#f0a95e; --amber-bg:#3a2a18;
+      --blue:#7bb4ff; --blue-bg:#182a40;
+      --teal:#6fd7c8; --teal-bg:#16312e;
+      --violet:#cf9bff; --violet-bg:#2c1e3b;
+      --green:#7fd39a; --green-bg:#16301f;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.72;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:900px;margin:0 auto;padding:0 28px 110px}
+  @media(max-width:640px){.wrap{padding:0 18px 80px}}
+
+  header{padding:56px 0 28px;border-bottom:1px solid var(--line)}
+  .eyebrow{font-family:var(--mono);font-size:12px;color:var(--ink-3);margin-bottom:13px}
+  .eyebrow .dot{color:var(--accent)}
+  h1{font-size:clamp(24px,3.6vw,34px);line-height:1.22;letter-spacing:-.02em;margin:0 0 16px;font-weight:700}
+  .lede{font-size:16.5px;color:var(--ink-2);margin:0;max-width:62ch}
+  code{font-family:var(--mono);font-size:.87em;background:var(--bg-sunk);border:1px solid var(--line);border-radius:5px;padding:.1em .35em}
+  p{margin:0 0 13px;max-width:70ch}
+  .ok{color:var(--green);font-weight:600}
+  .bad{color:var(--red);font-weight:600}
+  .hl{color:var(--accent);font-weight:600}
+
+  /* 一句话定义 */
+  .thesis{
+    margin:0 0 8px;padding:22px 24px;border-radius:var(--radius);
+    background:var(--accent-soft);border:1px solid var(--accent);
+  }
+  .thesis .k{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:10px}
+  .thesis p{margin:0;font-size:18px;line-height:1.62;color:var(--ink);max-width:none}
+  .thesis p+p{margin-top:10px;font-size:15px;color:var(--ink-2)}
+
+  /* 五步流程 */
+  .flow{margin:8px 0 0}
+  .fstep{
+    position:relative;display:grid;grid-template-columns:52px minmax(0,1fr);
+    gap:18px;padding:0 0 26px;
+  }
+  .fstep:last-child{padding-bottom:0}
+  .fstep::before{
+    content:"";position:absolute;left:25px;top:46px;bottom:0;width:2px;
+    background:var(--line-strong);
+  }
+  .fstep:last-child::before{display:none}
+  .fstep.done::before{background:var(--green);opacity:.45}
+  .fnum{
+    width:46px;height:46px;border-radius:50%;display:grid;place-items:center;
+    font-family:var(--mono);font-size:15px;font-weight:700;flex:none;z-index:1;
+    background:var(--bg-elev);border:2px solid var(--line-strong);color:var(--ink-3);
+  }
+  .fstep.done .fnum{background:var(--green-bg);border-color:var(--green);color:var(--green)}
+  .fstep.now .fnum{background:var(--accent);border-color:var(--accent);color:#fff}
+  .fbody{padding-top:2px}
+  .fhead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:3px}
+  .fhead h3{margin:0;font-size:17px;font-weight:650;letter-spacing:-.01em}
+  .who{font-size:11px;font-weight:700;letter-spacing:.04em;padding:2px 8px;border-radius:99px}
+  .who.human{background:var(--amber-bg);color:var(--amber)}
+  .who.machine{background:var(--blue-bg);color:var(--blue)}
+  .who.both{background:var(--violet-bg);color:var(--violet)}
+  .fbody>p{font-size:14.5px;color:var(--ink-2);margin:0 0 9px;max-width:none}
+  .evidence{
+    background:var(--bg-elev);border:1px solid var(--line);border-left:3px solid var(--line-strong);
+    border-radius:0 10px 10px 0;padding:11px 15px;font-size:13.5px;color:var(--ink-2);
+  }
+  .fstep.done .evidence{border-left-color:var(--green)}
+  .fstep.now .evidence{border-left-color:var(--accent)}
+  .evidence .el{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);font-weight:700;margin-bottom:5px}
+  .evidence pre{
+    margin:7px 0 0;background:var(--code-bg);border:1px solid var(--line);border-radius:7px;
+    padding:9px 12px;font-family:var(--mono);font-size:12px;line-height:1.6;overflow-x:auto;
+  }
+  .evidence pre code{background:none;border:0;padding:0;font-size:inherit}
+
+  section{padding-top:46px}
+  h2{font-size:20px;letter-spacing:-.01em;margin:0 0 6px;font-weight:650;display:flex;gap:10px;align-items:baseline}
+  h2 .num{font-family:var(--mono);font-size:.62em;color:var(--accent);font-weight:500}
+  .sub{color:var(--ink-3);margin:0 0 20px;font-size:14.5px;max-width:68ch}
+
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:18px}
+  .card{background:var(--bg-elev);border:1px solid var(--line);border-radius:var(--radius);padding:15px 16px;box-shadow:var(--shadow)}
+  .card .k{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);font-weight:700;margin-bottom:6px}
+  .card p{margin:0;font-size:14px;color:var(--ink-2);max-width:none}
+
+  .callout{border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 10px 10px 0;padding:13px 17px;margin:0 0 18px;font-size:14.5px;color:var(--ink-2)}
+  .callout p{margin:0;max-width:none}
+  .callout p+p{margin-top:7px}
+  .callout b{color:var(--ink)}
+  .callout.warn{border-left-color:var(--amber);background:var(--amber-bg)}
+  .callout.good{border-left-color:var(--green);background:var(--green-bg)}
+
+  .next{border-top:1px solid var(--line);margin-top:46px;padding-top:22px;font-size:15px;color:var(--ink-2)}
+  a{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">learn-statechart <span class="dot">/</span> 你要学的到底是什么</div>
+  <h1>你学的不是 TLA+，是一套五步流程</h1>
+  <p class="lede">TLA+、TLC、Java 都只是这套流程里某一格的工具。流程本身才是能带走的东西——换语言、换工具、换项目，五步不变。</p>
+</header>
+
+<section style="padding-top:34px">
+  <div class="thesis">
+    <div class="k">一句话</div>
+    <p>给一段代码<b>划出「状态」</b>，让机器<b>穷举所有执行顺序</b>，找出违反你规则的那条<b>最短路径</b>，再把它变回一条能重放的测试。</p>
+    <p>为什么值得学：智能体说「改好了」不算证据。这套流程给出一个<b>不依赖它自述</b>的证据。</p>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">01</span>五步流程</h2>
+  <p class="sub">下面每一步旁边都填了刚才 Inbox 的真实数据——你看到的不是范例，是实际跑出来的。</p>
+
+  <div class="flow">
+
+    <div class="fstep done">
+      <div class="fnum">1</div>
+      <div class="fbody">
+        <div class="fhead"><h3>挑一条规则</h3><span class="who human">人做</span></div>
+        <p>写出「任何时刻都该成立」的一句话。要满足三条：一句话能说完、能指到具体代码、<b>真的可能被违反</b>。</p>
+        <div class="evidence">
+          <div class="el">Inbox 实例</div>
+          「每条推入的消息，要么还在队列里，要么被认领过——<b>不会凭空消失</b>。」
+        </div>
+      </div>
+    </div>
+
+    <div class="fstep done">
+      <div class="fnum">2</div>
+      <div class="fbody">
+        <div class="fhead"><h3>划出状态</h3><span class="who both">人和 AI 一起</span></div>
+        <p>决定哪些变量算状态、哪些细节扔掉。<b>这一步最贵，也最没有工具能替你做。</b></p>
+        <div class="evidence">
+          <div class="el">Inbox 实例 · 5 个变量</div>
+          <code>nextTurn</code> 队列 · <code>nextStep</code> 队列 · <code>claimed</code> 已认领 · <code>pushed</code> 推送过（代码里没有，为写规则加的）· <code>nextId</code> 计数<br>
+          <span style="color:var(--ink-3)">扔掉：消息内容、协程、cancel 的用法</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="fstep done">
+      <div class="fnum">3</div>
+      <div class="fbody">
+        <div class="fhead"><h3>机器穷举所有顺序</h3><span class="who machine">机器做</span></div>
+        <p>不是随机撞，是把每一个能走到的状态都走一遍。同一个状态只走一次。</p>
+        <div class="evidence">
+          <div class="el">Inbox 实例 · 实际输出</div>
+<pre><code>Model checking completed. No error has been found.
+63 distinct states found, 0 left on queue.
+The depth of the complete state graph search is 7.</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="fstep done">
+      <div class="fnum">4</div>
+      <div class="fbody">
+        <div class="fhead"><h3>故意改坏，必须能失败</h3><span class="who human">人做</span></div>
+        <p>这步不能省。一个从没红过的检查，和一个不存在的检查，价值相同。</p>
+        <div class="evidence">
+          <div class="el">Inbox 实例 · 删掉一行「记下已认领」</div>
+<pre><code><span class="bad">Error: Invariant NoLoss is violated.</span>
+State 2: PushTurn    nextTurn=&lt;&lt;0&gt;&gt;   pushed={0}
+State 3: PushStep    nextStep=&lt;&lt;1&gt;&gt;   pushed={0,1}
+State 4: ClaimTurn   nextStep=&lt;&lt;&gt;&gt;    claimed={0}   ← 1 不见了</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="fstep now">
+      <div class="fnum">5</div>
+      <div class="fbody">
+        <div class="fhead"><h3>把反例变回测试</h3><span class="who both">你在这里</span></div>
+        <p>机器给的是「三步路径」。把它翻译成真代码里的一条测试，跑绿。这样智能体以后改坏了，测试自己会红——<b>不需要你信它说什么</b>。</p>
+        <div class="evidence">
+          <div class="el">要做的事</div>
+          把 <code>PushTurn(0) → PushStep(1) → ClaimTurn</code> 翻成对 <code>Inbox</code> 的调用，断言「返回值里必须有 step 那条」。
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">02</span>每一步在买什么</h2>
+  <p class="sub">如果哪一步不买你想要的，那一步就可以砍掉。</p>
+
+  <div class="cards">
+    <div class="card">
+      <div class="k">第 1 步买到</div>
+      <p><b>把「我觉得应该对」变成一句可检验的话。</b>没有这步，后面机器再强也只在验空气。</p>
+    </div>
+    <div class="card">
+      <div class="k">第 2 步买到</div>
+      <p><b>一个足够小、又足够真的模型。</b>太大跑不完，太小验不出东西。这是人的判断力所在。</p>
+    </div>
+    <div class="card">
+      <div class="k">第 3 步买到</div>
+      <p><b>「测完了」这句话。</b>随机测试说不了这句，TDD 更说不了。穷举能。</p>
+    </div>
+    <div class="card">
+      <div class="k">第 4 步买到</div>
+      <p><b>对检查本身的信任。</b>见过它红，才知道它绿意味着什么。</p>
+    </div>
+    <div class="card">
+      <div class="k">第 5 步买到</div>
+      <p><b>一个会自己报警的哨兵。</b>这是唯一一步的产出能留在仓库里、天天替你干活。</p>
+    </div>
+  </div>
+
+  <div class="callout">
+    <p><b>只在第 3 步用到 TLA+ 和 Java。</b>如果你用 Python 自己写穷举（教程里的 <code>exhaustive_fold.py</code> 就是），第 3 步可以完全不用 TLA+。</p>
+    <p>TLA+ 换来的额外东西只有两个：<b>不用自己写调度器</b>、<b>能验证「终将发生」这类活性性质</b>。</p>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">03</span>「学会了」的判据</h2>
+  <p class="sub">不是读完，是能独立走完这五步。</p>
+
+  <div class="callout good">
+    <p><b>你已经做到了前四步</b>（用 Inbox 走完一遍，每一步都有实际输出）。</p>
+    <p>剩下的只有第 5 步——把反例翻成测试。<b>翻完，第一轮就算学会了。</b>然后换第二个对象再做一遍，才算真的会。</p>
+  </div>
+
+  <div class="callout warn">
+    <p><b>诚实提醒：</b>这一遍是我带你走的。第 2 步「划出状态」是我替你做的——那才是这套东西最难的部分。真正的学习发生在你<b>自己划一个对象</b>的时候，那时你会不确定「这个变量要不要算进状态」。</p>
+  </div>
+</section>
+
+<div class="next">
+  <b>下一步：第 5 步。</b>把 TLC 给的三步反例翻成一条 <code>pytest</code> 测试，跑绿，然后故意改坏 <code>inbox.py</code> 看它红。<br><br>
+  做完之后，你就有了一个<b>可以天天跑、不依赖任何模型自述</b>的哨兵——这就是「怎么信任智能体」的最小可运行答案。
+</div>
+
+</div>
+</body>
+</html>

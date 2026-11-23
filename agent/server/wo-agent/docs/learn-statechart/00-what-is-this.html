@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>wo-agent 是什么 · Inbox 是干什么的 · 我刚做了什么</title>
+<style>
+  :root {
+    --bg:#fbfaf7; --bg-elev:#fff; --bg-sunk:#f4f2ec;
+    --ink:#1b1b19; --ink-2:#4a4a45; --ink-3:#78786f;
+    --line:#e4e1d8; --line-strong:#cac6ba;
+    --accent:#4b4bd6; --accent-soft:#eeeefc;
+    --code-bg:#f4f2ec;
+    --red:#c92f3b; --red-bg:#fdeef0;
+    --amber:#b45c08; --amber-bg:#fdf3e7;
+    --blue:#1069d6; --blue-bg:#eef5fe;
+    --teal:#10726a; --teal-bg:#e9f5f3;
+    --violet:#8b2fc0; --violet-bg:#f6eefb;
+    --green:#1c7a3e; --green-bg:#e9f5ec;
+    --shadow:0 1px 2px rgba(27,27,25,.05),0 8px 24px rgba(27,27,25,.04);
+    --radius:12px;
+    --sans:"Segoe UI Variable","Segoe UI",-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+    --mono:"Cascadia Code","SF Mono",Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root{
+      --bg:#141413; --bg-elev:#1c1c1a; --bg-sunk:#222220;
+      --ink:#f0efe9; --ink-2:#c3c1b7; --ink-3:#8f8d83;
+      --line:#2e2e2a; --line-strong:#454540;
+      --accent:#9f9dff; --accent-soft:#23224a;
+      --code-bg:#232320;
+      --red:#ff8d97; --red-bg:#3a1d21;
+      --amber:#f0a95e; --amber-bg:#3a2a18;
+      --blue:#7bb4ff; --blue-bg:#182a40;
+      --teal:#6fd7c8; --teal-bg:#16312e;
+      --violet:#cf9bff; --violet-bg:#2c1e3b;
+      --green:#7fd39a; --green-bg:#16301f;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.72;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:980px;margin:0 auto;padding:0 28px 110px}
+  @media(max-width:640px){.wrap{padding:0 18px 80px}}
+
+  header{padding:60px 0 30px;border-bottom:1px solid var(--line)}
+  .eyebrow{font-family:var(--mono);font-size:12px;color:var(--ink-3);margin-bottom:14px}
+  .eyebrow .dot{color:var(--accent)}
+  h1{font-size:clamp(25px,3.8vw,36px);line-height:1.2;letter-spacing:-.02em;margin:0 0 14px;font-weight:700}
+  .lede{font-size:17px;color:var(--ink-2);margin:0;max-width:64ch}
+
+  section{padding-top:50px}
+  h2{font-size:21px;letter-spacing:-.01em;margin:0 0 6px;font-weight:650;display:flex;gap:10px;align-items:baseline}
+  h2 .num{font-family:var(--mono);font-size:.62em;color:var(--accent);font-weight:500}
+  .sub{color:var(--ink-3);margin:0 0 20px;font-size:14.5px;max-width:68ch}
+  p{margin:0 0 14px;max-width:72ch}
+  code{font-family:var(--mono);font-size:.87em;background:var(--bg-sunk);border:1px solid var(--line);border-radius:5px;padding:.1em .35em}
+  pre{margin:0;background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:15px 17px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.62}
+  pre code{background:none;border:0;padding:0;font-size:inherit}
+  .cmt{color:var(--ink-3)}
+  .hl{color:var(--accent);font-weight:600}
+  .bad{color:var(--red);font-weight:600}
+  .ok{color:var(--green);font-weight:600}
+
+  /* 分层图 */
+  .stack{display:grid;gap:7px;margin:0 0 20px}
+  .layer{display:grid;grid-template-columns:150px minmax(0,1fr);gap:14px;align-items:center;padding:11px 14px;border:1px solid var(--line);border-radius:9px;background:var(--bg-elev)}
+  @media(max-width:680px){.layer{grid-template-columns:1fr;gap:2px;padding:10px 12px}}
+  .layer .nm{font-family:var(--mono);font-size:12.5px;font-weight:600}
+  .layer .desc{font-size:13.5px;color:var(--ink-2)}
+  .layer.focus{border-color:var(--accent);background:var(--accent-soft)}
+  .layer.focus .nm{color:var(--accent)}
+  .layer.dim{opacity:.62}
+
+  /* 三级队列图 */
+  .queues{display:grid;gap:14px;margin:0 0 20px}
+  .qrow{background:var(--bg-elev);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow)}
+  .qtitle{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:12.5px;font-weight:600;margin-bottom:10px;flex-wrap:wrap}
+  .qtitle .badge{font-family:var(--sans);font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:99px;letter-spacing:.03em}
+  .b-turn{background:var(--blue-bg);color:var(--blue)}
+  .b-step{background:var(--violet-bg);color:var(--violet)}
+  .b-done{background:var(--green-bg);color:var(--green)}
+  .items{display:flex;gap:7px;flex-wrap:wrap;min-height:34px;align-items:center}
+  .item{font-family:var(--mono);font-size:12.5px;padding:6px 11px;border-radius:7px;border:1px solid var(--line-strong);background:var(--bg-sunk)}
+  .item.new{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:600}
+  .item.gone{opacity:.35;text-decoration:line-through}
+  .empty{font-size:12.5px;color:var(--ink-3);font-style:italic}
+
+  /* 步骤 */
+  .steps{display:grid;gap:0;margin:0 0 20px}
+  .step{display:grid;grid-template-columns:32px minmax(0,1fr);gap:14px;padding:14px 0;border-top:1px solid var(--line)}
+  .step:last-child{border-bottom:1px solid var(--line)}
+  .sn{width:24px;height:24px;display:grid;place-items:center;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-family:var(--mono);font-size:11.5px;font-weight:600;margin-top:3px}
+  .step h3{margin:0 0 4px;font-size:15px;font-weight:650}
+  .step p{margin:0;font-size:14.5px;color:var(--ink-2)}
+  .step p+p{margin-top:5px}
+
+  /* 表 */
+  .tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg-elev);box-shadow:var(--shadow);margin-bottom:18px}
+  table{width:100%;border-collapse:collapse;font-size:14px;min-width:520px}
+  th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:11.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);font-weight:600;background:var(--bg-sunk)}
+  tbody tr:last-child td{border-bottom:0}
+  td.mono{font-family:var(--mono);font-size:12.5px}
+
+  .callout{border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 10px 10px 0;padding:13px 17px;margin:0 0 18px;font-size:14.5px;color:var(--ink-2)}
+  .callout p{margin:0;max-width:none}
+  .callout p+p{margin-top:7px}
+  .callout b{color:var(--ink)}
+  .callout.warn{border-left-color:var(--amber);background:var(--amber-bg)}
+  .callout.honest{border-left-color:var(--red);background:var(--red-bg)}
+  .callout.good{border-left-color:var(--green);background:var(--green-bg)}
+
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:18px}
+  .card{background:var(--bg-elev);border:1px solid var(--line);border-radius:var(--radius);padding:15px 16px;box-shadow:var(--shadow)}
+  .card .k{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-bottom:6px}
+  .card p{margin:0;font-size:14px;color:var(--ink-2);max-width:none}
+
+  .next{border-top:1px solid var(--line);margin-top:48px;padding-top:22px;font-size:14.5px;color:var(--ink-2)}
+  a{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">wo-agent <span class="dot">/</span> 项目回顾 + 今天做了什么</div>
+  <h1>这个项目是什么，Inbox 干什么，我刚改了什么</h1>
+  <p class="lede">三件事分开说。第一件是项目本身（你可能忘了），第二件是今天学的那段代码在你的项目里扮演什么角色，第三件是刚才两小时的实际产出。</p>
+</header>
+
+<!-- ============ 1 ============ -->
+<section>
+  <h2><span class="num">01</span>wo-agent 是什么</h2>
+  <p class="sub">一句话：一个用纯 Python 写的 agent 内核，可以直接 <code>import</code> 进别的程序。</p>
+
+  <div class="cards">
+    <div class="card">
+      <div class="k">它是什么</div>
+      <p>一个 <b>agent 循环的实现</b>：把「模型 → 工具调用 → 结果 → 再问模型」这个循环写成一个可复用的 Python 包。</p>
+    </div>
+    <div class="card">
+      <div class="k">它不是什么</div>
+      <p>不是 Claude Code 的替代品，不做通用编码宿主，<b>不做 skill 生态、不做 subagent、不做沙箱</b>。`CLAUDE.md` 里有明确的定位判断。</p>
+    </div>
+    <div class="card">
+      <div class="k">给谁用</div>
+      <p>给 Python / C# 宿主（编辑器、桌宠、游戏引擎）一个能塞进去的 loop。运行时只依赖 <code>httpx</code>。</p>
+    </div>
+    <div class="card">
+      <div class="k">规模</div>
+      <p>9 个包、<b>40 个测试文件</b>、255 个测试。测试全用 fake provider，不联网、不要 key。</p>
+    </div>
+  </div>
+
+  <h3 style="font-size:15px;margin:22px 0 8px">模块分层（单向依赖，禁止反向）</h3>
+  <div class="stack">
+    <div class="layer"><span class="nm">compose/</span><span class="desc">按 Capability 组装一次运行——什么能力挂上去，在这里决定</span></div>
+    <div class="layer"><span class="nm">agent/</span><span class="desc">Agent 接口与 ReAct 循环。<b>inbox 就在这里</b></span></div>
+    <div class="layer focus"><span class="nm">session/</span><span class="desc">事件溯源会话：append-only 日志，模型可见历史由日志派生</span></div>
+    <div class="layer dim"><span class="nm">llm/</span><span class="desc">LLM 接入：协议、类型、Provider 适配（DeepSeek 是唯一特例）</span></div>
+    <div class="layer dim"><span class="nm">tools/ · workspace/ · skill/ · system_prompt/ · compaction/</span><span class="desc">工具执行、工作区、技能、提示词组装、上下文压缩</span></div>
+  </div>
+
+  <div class="callout">
+    <p><b>核心设计：</b>会话是一本 <b>append-only 的事件日志</b>，模型看到的历史是从这本日志<b>派生</b>出来的。日志是唯一事实源——所以审计、重放、分叉都免费。</p>
+    <p>今天学的 <code>fold_surface</code> 就是「派生」那一步的函数。</p>
+  </div>
+</section>
+
+<!-- ============ 2 ============ -->
+<section>
+  <h2><span class="num">02</span>Inbox 是干什么的</h2>
+  <p class="sub">它是<b>用户说话的入口</b>。而它有个不太直观的设计：说话和「被模型看见」是两件事。</p>
+
+  <p>你跟 agent 说话时不希望它立刻打断当前的动作。所以 wo-agent 把消息<b>先排队</b>，等当前这一步跑完，再由循环去「认领」（claim）。<b>认领之后才写进会话日志</b>——模型这时候才看得见。</p>
+
+  <div class="queues">
+    <div class="qrow">
+      <div class="qtitle"><span class="badge b-step">next-step</span>下一步就用</div>
+      <div class="items">
+        <span class="item">「停一下，改成 X」</span>
+        <span class="item">工具结果</span>
+        <span class="empty">→ 当前这一步结束，立刻带上</span>
+      </div>
+      <p style="margin:9px 0 0;font-size:12.5px;color:var(--ink-3)">代码里：<code>steer()</code> / <code>inject()</code> 推到这里</p>
+    </div>
+    <div class="qrow">
+      <div class="qtitle"><span class="badge b-turn">next-turn</span>下一轮再用</div>
+      <div class="items">
+        <span class="item">「再帮我看个别的」</span>
+        <span class="empty">→ 这一整轮跑完，下一轮开头才取</span>
+      </div>
+      <p style="margin:9px 0 0;font-size:12.5px;color:var(--ink-3)">代码里：<code>followup()</code> / <code>enqueue()</code> 推到这里</p>
+    </div>
+    <div class="qrow">
+      <div class="qtitle"><span class="badge b-done">已认领</span>模型看见了</div>
+      <div class="items">
+        <span class="empty">被 claim 取走之后，写成 <code>user/message</code> 事件进日志</span>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="font-size:15px;margin:24px 0 8px">claim 的实际规则（就这几行）</h3>
+  <pre><code>def claim(self, target):
+    claimed = list(self._next_step)   <span class="cmt"># ① 总是先倒空 next-step</span>
+    self._next_step.clear()
+
+    if target == "next-turn" and self._next_turn:
+        claimed.append(self._next_turn.pop(0))   <span class="cmt"># ② 轮次开头再取一条</span>
+
+    return claimed</code></pre>
+
+  <div class="callout">
+    <p><b>为什么要有两级？</b>因为「打断当前步骤」和「排到下一轮」是两种完全不同的语义。混成一个队列，就无法表达「这条要立刻生效」。</p>
+  </div>
+</section>
+
+<!-- ============ 3 ============ -->
+<section>
+  <h2><span class="num">03</span>我今天干了什么</h2>
+  <p class="sub">两件事：装环境、然后用 Inbox 做了一次形式化验证的完整演练。</p>
+
+  <h3 style="font-size:15px;margin:0 0 10px">A. 装工具链</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>装了</th><th>版本</th><th>位置</th></tr></thead>
+      <tbody>
+        <tr><td>Java</td><td class="mono">Temurin 21.0.13.1 LTS</td><td class="mono">C:\Program Files\Eclipse Adoptium\…</td></tr>
+        <tr><td>TLC 模型检查器</td><td class="mono">2.19</td><td class="mono">.vendor/tla/tla2tools.jar（已 gitignore）</td></tr>
+        <tr><td>VS Code 扩展</td><td class="mono">tlaplus.vscode-ide 2026.11.191813</td><td class="mono">扩展自带 TLC 2.0</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 style="font-size:15px;margin:24px 0 10px">B. 给 Inbox 写规格，然后跑通</h3>
+  <div class="steps">
+    <div class="step">
+      <div class="sn">1</div>
+      <div>
+        <h3>挑一条规则（人做的那一步）</h3>
+        <p>「每条推入的消息，要么还在队列里，要么被认领过。<b>不会凭空消失。</b>」</p>
+        <p>然后人估算：违反它最短要几步？我估 <b>3 步</b>。</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">2</div>
+      <div>
+        <h3>把 Inbox 写成状态机</h3>
+        <p>5 个变量（两个队列、已认领、幽灵变量「推送过」、id 计数），4 个动作（推 turn、推 step、claim step、claim turn）。</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">3</div>
+      <div>
+        <h3>让 TLC 穷举所有顺序</h3>
+        <p><span class="ok">Model checking completed. No error has been found.</span></p>
+        <p class="mono" style="font-size:13px">63 distinct states · depth 7 · 1 秒内</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">4</div>
+      <div>
+        <h3>故意改坏一行，看它能不能抓到</h3>
+        <p>把 <code>claim</code> 里「把 step 那批记进已认领」删掉。</p>
+        <p><span class="bad">Error: Invariant NoLoss is violated.</span> 退出码 12。</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">5</div>
+      <div>
+        <h3>TLC 给出最短反例</h3>
+        <p class="mono" style="font-size:13px">PushTurn(0) → PushStep(1) → ClaimTurn<br>结束时 claimed = {0}，<span class="bad">1 不见了</span></p>
+        <p><b>三步，和人工预估一致。</b>这就是「测试走一条路、穷举走所有路」的具体样子。</p>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="font-size:15px;margin:24px 0 10px">C. 踩了一个坑</h3>
+  <div class="callout warn">
+    <p>第一次跑 TLC <b>卡住不停</b>。原因是 id 计数器无限增长，状态空间无穷。</p>
+    <p>加一行 <code>CONSTRAINT NextIdBound == nextId &lt;= 4</code> 才好。这就是 TLA+ 最经典的翻车方式——<b>也是「有界」这个词的由来</b>。</p>
+  </div>
+
+  <h3 style="font-size:15px;margin:24px 0 10px">D. 产出的文件</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>文件</th><th>是什么</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">specs/Inbox.tla</td><td>状态机 + 三条规则。跑通，零违反。</td></tr>
+        <tr><td class="mono">specs/InboxBroken.tla</td><td>故意改坏一行。TLC 抓到 NoLoss 违反。</td></tr>
+        <tr><td class="mono">04-write-the-spec.md</td><td>全过程教程，含实际输出和那个坑。</td></tr>
+        <tr><td class="mono">.gitignore</td><td>加了 <code>states/</code> 与 <code>*.out</code>（TLC 运行产物）</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout good">
+    <p><b>这一步的意义：</b>规格是<b>独立于代码</b>的一份描述。智能体改了 <code>inbox.py</code>，规格不会自动跟着变——所以不一致会被发现。<b>这就是「怎么信任智能体」的机制部分。</b></p>
+  </div>
+</section>
+
+<div class="next">
+  <b>下一步有个真问题需要你决定：</b><br>
+  TLC 找到的反例是「claim 漏记了一批消息」。但真实代码的 <code>claim</code> 没有「已认领」这个变量——它直接<b>返回列表</b>。所以这个 bug 在代码里表现为「<b>返回值少了一条</b>」。<br><br>
+  翻译成测试时要选：按模型的字面意思翻（可能翻不出来），还是按代码的表现翻（能翻出来，但和模型不完全对应）。后者更有用，但需要你在测试里显式写「返回值必须包含所有 step」。
+</div>
+
+</div>
+</body>
+</html>

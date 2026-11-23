@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>01 · 把代码读成一张状态表</title>
+<style>
+  :root {
+    --bg: #fbfaf7; --bg-elev: #ffffff; --bg-sunk: #f4f2ec;
+    --ink: #1b1b19; --ink-2: #4a4a45; --ink-3: #78786f;
+    --line: #e4e1d8; --line-strong: #cac6ba;
+    --accent: #4b4bd6; --accent-soft: #eeeefc;
+    --code-bg: #f4f2ec;
+    --red: #c92f3b; --red-bg: #fdeef0;
+    --amber: #b45c08; --amber-bg: #fdf3e7;
+    --blue: #1069d6; --blue-bg: #eef5fe;
+    --teal: #10726a; --teal-bg: #e9f5f3;
+    --violet: #8b2fc0; --violet-bg: #f6eefb;
+    --shadow: 0 1px 2px rgba(27,27,25,.05), 0 8px 24px rgba(27,27,25,.04);
+    --radius: 12px;
+    --sans: "Segoe UI Variable", "Segoe UI", -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    --mono: "Cascadia Code", "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #141413; --bg-elev: #1c1c1a; --bg-sunk: #222220;
+      --ink: #f0efe9; --ink-2: #c3c1b7; --ink-3: #8f8d83;
+      --line: #2e2e2a; --line-strong: #454540;
+      --accent: #9f9dff; --accent-soft: #23224a;
+      --code-bg: #232320;
+      --red: #ff8d97; --red-bg: #3a1d21;
+      --amber: #f0a95e; --amber-bg: #3a2a18;
+      --blue: #7bb4ff; --blue-bg: #182a40;
+      --teal: #6fd7c8; --teal-bg: #16312e;
+      --violet: #cf9bff; --violet-bg: #2c1e3b;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: var(--sans); font-size: 16px; line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 28px 100px; }
+  @media (max-width: 600px) { .wrap { padding: 0 18px 70px; } }
+
+  header { padding: 64px 0 32px; border-bottom: 1px solid var(--line); }
+  .eyebrow { font-family: var(--mono); font-size: 12px; color: var(--ink-3); margin-bottom: 14px; }
+  .eyebrow .dot { color: var(--accent); }
+  h1 { font-size: clamp(26px, 4vw, 38px); line-height: 1.18; letter-spacing: -.02em; margin: 0 0 14px; font-weight: 700; }
+  .lede { font-size: 17px; color: var(--ink-2); margin: 0; max-width: 62ch; }
+
+  section { padding-top: 52px; }
+  h2 { font-size: 21px; letter-spacing: -.01em; margin: 0 0 6px; font-weight: 650; display: flex; gap: 10px; align-items: baseline; }
+  h2 .num { font-family: var(--mono); font-size: .62em; color: var(--accent); font-weight: 500; }
+  .sub { color: var(--ink-3); margin: 0 0 22px; font-size: 14.5px; max-width: 66ch; }
+  p { margin: 0 0 14px; max-width: 70ch; }
+  code { font-family: var(--mono); font-size: .87em; background: var(--bg-sunk); border: 1px solid var(--line); border-radius: 5px; padding: .1em .35em; }
+
+  .tbl-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-elev); box-shadow: var(--shadow); margin-bottom: 18px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 520px; }
+  th, td { text-align: left; padding: 11px 14px; vertical-align: top; border-bottom: 1px solid var(--line); }
+  th { font-size: 11.5px; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; background: var(--bg-sunk); }
+  tbody tr:last-child td { border-bottom: 0; }
+  td:first-child { font-family: var(--mono); font-size: 12.5px; white-space: nowrap; }
+  .err { color: var(--red); font-weight: 600; }
+
+  /* ---- 两层图 ---- */
+  .layers { display: grid; gap: 10px; margin: 6px 0 22px; }
+  .row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .row-label { font-family: var(--mono); font-size: 12px; color: var(--ink-3); width: 54px; flex: none; }
+  .cell {
+    font-family: var(--mono); font-size: 13px;
+    min-width: 40px; padding: 7px 0; text-align: center;
+    border: 1px solid var(--line-strong); border-radius: 7px;
+    background: var(--bg-elev);
+  }
+  .cell.dim { color: var(--ink-3); background: var(--bg-sunk); border-style: dashed; }
+  .cell.new { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 600; }
+  .cell.kept { background: var(--teal-bg); border-color: var(--teal); color: var(--teal); }
+  .cap { font-size: 13px; color: var(--ink-3); margin: 0 0 18px; }
+  .step { font-size: 13.5px; color: var(--ink-2); margin: 4px 0 10px; font-weight: 600; }
+
+  .callout { border-left: 3px solid var(--accent); background: var(--accent-soft); border-radius: 0 10px 10px 0; padding: 14px 18px; margin: 0 0 20px; font-size: 14.5px; color: var(--ink-2); }
+  .callout p { margin: 0; max-width: none; }
+  .callout p + p { margin-top: 8px; }
+  .callout b { color: var(--ink); }
+  .callout.warn { border-left-color: var(--amber); background: var(--amber-bg); }
+
+  .qa { display: grid; gap: 14px; margin-bottom: 20px; }
+  .q { background: var(--bg-elev); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; box-shadow: var(--shadow); }
+  .q h3 { margin: 0 0 8px; font-size: 15px; font-weight: 650; }
+  .q p { margin: 0; font-size: 14.5px; color: var(--ink-2); max-width: none; }
+  .q p + p { margin-top: 8px; }
+
+  .trust { background: var(--bg-elev); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 22px; box-shadow: var(--shadow); }
+  .trust ol { margin: 0; padding-left: 1.2em; font-size: 14.5px; color: var(--ink-2); }
+  .trust li { margin-bottom: 8px; }
+  .trust li b { color: var(--ink); }
+
+  .next { border-top: 1px solid var(--line); margin-top: 52px; padding-top: 24px; font-size: 14.5px; color: var(--ink-2); }
+  .next a { color: var(--accent); }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">learn-statechart <span class="dot">/</span> 01 <span class="dot">/</span> 已填答案版</div>
+    <h1>把代码读成一张状态表</h1>
+    <p class="lede">对象是 <code>fold_surface</code>。它只有一个状态变量 <code>nodes</code>，只有一件事会让它变：来了一条事件。下面把答案直接摆出来，你快速看形状。</p>
+  </header>
+
+  <section>
+    <h2><span class="num">01</span>七行表</h2>
+    <p class="sub">左列是事件给这个函数带来的全部可能，右列是它对表层的影响。</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>事件</th><th>表层怎么变</th></tr></thead>
+        <tbody>
+          <tr><td>投影为 None</td><td>什么都不做。事件留在日志里，但不进表层。</td></tr>
+          <tr><td>append</td><td>尾部追加一格。表层变长。</td></tr>
+          <tr><td>replace 合法</td><td>把表层里 start 位置到 end 位置这一段<b>整段换成一个节点</b>。表层可能一下子短好几格。</td></tr>
+          <tr><td>replace 找不到节点</td><td><span class="err">报错 A</span>：start / end 不在表层里。</td></tr>
+          <tr><td>replace 位置反了</td><td><span class="err">报错 B</span>：start 的表层位置晚于 end。比较的是<b>位置</b>，不是数值。</td></tr>
+          <tr><td>source 漏了节点</td><td><span class="err">报错 C</span>：被遮蔽的节点必须逐个列入 source。</td></tr>
+          <tr><td>source 指向未来</td><td><span class="err">报错 D</span>：source 里有 ≥ 当前事件 seq 的值。</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">02</span>全部的关键：日志和表层是两层</h2>
+    <p class="sub">这是整篇唯一需要真正记住的东西。剩下的都是推论。</p>
+
+    <div class="step">① 四次 append</div>
+    <div class="layers">
+      <div class="row"><span class="row-label">日志</span>
+        <span class="cell">0</span><span class="cell">1</span><span class="cell">2</span><span class="cell">3</span></div>
+      <div class="row"><span class="row-label">表层</span>
+        <span class="cell">0</span><span class="cell">1</span><span class="cell">2</span><span class="cell">3</span></div>
+    </div>
+
+    <div class="step">② replace(1, 2) —— 这是一条新事件，占 seq 4</div>
+    <div class="layers">
+      <div class="row"><span class="row-label">日志</span>
+        <span class="cell">0</span><span class="cell">1</span><span class="cell dim">2</span><span class="cell">3</span><span class="cell new">4</span></div>
+      <div class="row"><span class="row-label">表层</span>
+        <span class="cell">0</span><span class="cell new">4</span><span class="cell">3</span></div>
+    </div>
+    <p class="cap">1 和 2 被一个新节点 4 取代。被取代的节点<b>没被删除</b>，只是不再上表层（虚线）。注意表层长度从 4 变成 3。</p>
+
+    <div class="callout warn">
+      <p><b>而现在，顺序反了。</b>表层是 <code>[0, 4, 3]</code>——seq 3 排在 seq 4 后面。数值大小不再是表的顺序。</p>
+      <p>所以在这一刻调 <code>replace(3, 4)</code>：数值上 3 &lt; 4 看起来完全正常，但按位置算，3 在后面、4 在前面，<b>报错 B</b>。这就是为什么 <code>start</code>/<code>end</code> 必须是 seq（名字），不能是下标或数值区间。</p>
+    </div>
+
+    <div class="callout">
+      <p><b>「事实源是日志，表层只是投影」</b>——被遮蔽的节点还在日志里，所以 <code>derive_messages()</code> 每次都是从日志重折一遍。审计、重放、分叉都因此免费。</p>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">03</span>四种错，两类</h2>
+    <div class="qa">
+      <div class="q">
+        <h3>A · B —— 调用方把位置说错了</h3>
+        <p>找不到节点、或者位置反了。报错能直接告诉它错在哪，改参数就行。</p>
+      </div>
+      <div class="q">
+        <h3>C · D —— 数据自相矛盾</h3>
+        <p>事件<b>自己携带的溯源信息</b>与日志的实际内容对不上。D 更严重：它声称的因果顺序是倒置的，日志不再可信。</p>
+        <p>这个区分在第 04 篇会变成两种建模选择：A/B 是「参数校验」，C/D 是「日志完整性不变量」。</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">04</span>这跟「信任智能体」有什么关系</h2>
+    <p class="sub">你真正的目标在这里，所以多说三句。</p>
+    <div class="trust">
+      <ol>
+        <li><b>智能体说「改好了」是自述，不是证据。</b>上面这张表是你可以自己跑、自己核的判据——它把「我认为对」变成「任何事件序列下都对」。</li>
+        <li><b>但规格也可能是智能体写的。</b>所以规则是：<b>必须见过它失败一次</b>。第 03 篇就是干这个——把校验拿掉，看检查变红。没红过的检查等于没有。</li>
+        <li><b>所以验证要留在仓库里、能重跑、记着核对到哪个 commit。</b>这正是 pstack 的 <code>create-formal-verification-skill</code> 在解决的问题：不是学会一个新工具，而是给智能体的工作装一个不依赖它自述的判据。</li>
+      </ol>
+    </div>
+  </section>
+
+  <div class="next">
+    下一步：<b>先不用看 02</b>。拿这三问自测——<br>
+    ① 表层 <code>[0, 4, 3]</code> 上调 <code>replace(3, 4)</code> 为什么错？<br>
+    ② 被遮蔽的节点还能回到表层吗？<br>
+    ③ C 和 D，哪种会让整份日志失去可信度？<br><br>
+    都能用自己的话说，再进 <a href="02-property-test-by-hand.md">02 手写属性测试</a>。Markdown 版同内容：<code>01-read-the-state-model.md</code>。
+  </div>
+
+</div>
+</body>
+</html>

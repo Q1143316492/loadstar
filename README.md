@@ -37,6 +37,7 @@
 | [`cwl-code-review`](workflow/cwl-code-review/SKILL.md) | 对固定点起的 diff 做两轴评审（标准 / Spec），发现带严重度与依据，主审四档过滤后另存临时目录 | 模型可触发 |
 | [`cwl-pr`](workflow/cwl-pr/SKILL.md) | 写 PR 正文：最小视图（Summary）/ 前后证据（Evidence）/ 合并风险（Merge Danger） | 模型可触发 |
 | [`cwl-retro`](workflow/cwl-retro/SKILL.md) | 复盘会话，给环境改进建议 | 手打 |
+| [`cwl-correct`](workflow/cwl-correct/SKILL.md) | 把 agent 反复犯的错从文档搬到架构 / 类型 / lint / 测试，每条新检查先在真实历史错误上证明会失败 | 手打 |
 | [`cwl-wayfinder`](workflow/cwl-wayfinder/SKILL.md) | 大块迷雾努力：把决策 ticket 画成地图逐张解决，出口并入 `cwl-to-plan` | 手打 |
 | [`cwl-wayfinder-map-view`](workflow/cwl-wayfinder-map-view/SKILL.md) | 把一张 wayfinder 地图画成一页路线图（谁挡着谁、现在做哪张），输出到系统临时目录 | 手打 |
 | [`cwl-debug-mode`](workflow/cwl-debug-mode/SKILL.md) | 调试模式：提假设 → 用项目日志插桩 → 复现取证 → 定点修复 → 清场 | 手打 |

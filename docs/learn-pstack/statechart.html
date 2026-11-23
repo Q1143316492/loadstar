@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>statechart 与验证技能家族 · pstack 阅读笔记</title>
+<style>
+  :root {
+    --bg: #fbfaf7;
+    --bg-elev: #ffffff;
+    --bg-sunk: #f4f2ec;
+    --ink: #1b1b19;
+    --ink-2: #4a4a45;
+    --ink-3: #78786f;
+    --line: #e4e1d8;
+    --line-strong: #cac6ba;
+    --accent: #4b4bd6;
+    --accent-soft: #eeeefc;
+    --code-bg: #f4f2ec;
+    --red: #c92f3b;    --red-bg: #fdeef0;
+    --amber: #b45c08;  --amber-bg: #fdf3e7;
+    --blue: #1069d6;   --blue-bg: #eef5fe;
+    --violet: #8b2fc0; --violet-bg: #f6eefb;
+    --teal: #10726a;   --teal-bg: #e9f5f3;
+    --shadow: 0 1px 2px rgba(27,27,25,.05), 0 8px 24px rgba(27,27,25,.04);
+    --radius: 12px;
+    --sans: "Segoe UI Variable", "Segoe UI", -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    --mono: "Cascadia Code", "SF Mono", Menlo, Consolas, "Courier New", monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #141413;
+      --bg-elev: #1c1c1a;
+      --bg-sunk: #222220;
+      --ink: #f0efe9;
+      --ink-2: #c3c1b7;
+      --ink-3: #8f8d83;
+      --line: #2e2e2a;
+      --line-strong: #454540;
+      --accent: #9f9dff;
+      --accent-soft: #23224a;
+      --code-bg: #232320;
+      --red: #ff8d97;    --red-bg: #3a1d21;
+      --amber: #f0a95e;  --amber-bg: #3a2a18;
+      --blue: #7bb4ff;   --blue-bg: #182a40;
+      --violet: #cf9bff; --violet-bg: #2c1e3b;
+      --teal: #6fd7c8;   --teal-bg: #16312e;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #141413;
+    --bg-elev: #1c1c1a;
+    --bg-sunk: #222220;
+    --ink: #f0efe9;
+    --ink-2: #c3c1b7;
+    --ink-3: #8f8d83;
+    --line: #2e2e2a;
+    --line-strong: #454540;
+    --accent: #9f9dff;
+    --accent-soft: #23224a;
+    --code-bg: #232320;
+    --red: #ff8d97;    --red-bg: #3a1d21;
+    --amber: #f0a95e;  --amber-bg: #3a2a18;
+    --blue: #7bb4ff;   --blue-bg: #182a40;
+    --violet: #cf9bff; --violet-bg: #2c1e3b;
+    --teal: #6fd7c8;   --teal-bg: #16312e;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  a:hover { text-decoration-thickness: 2px; }
+  code, pre { font-family: var(--mono); font-size: .875em; }
+  code:not(pre code) {
+    background: var(--bg-sunk);
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    padding: .1em .35em;
+    white-space: nowrap;
+  }
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 18px 20px;
+    overflow-x: auto;
+    line-height: 1.6;
+    margin: 0;
+  }
+  pre code { background: none; border: 0; padding: 0; white-space: pre; }
+
+  .shell {
+    display: grid;
+    grid-template-columns: 232px minmax(0, 1fr);
+    gap: 56px;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 32px 120px;
+  }
+  @media (max-width: 900px) {
+    .shell { grid-template-columns: minmax(0, 1fr); gap: 0; padding: 0 20px 80px; }
+    .toc { display: none; }
+  }
+
+  /* ---- TOC ---- */
+  .toc {
+    position: sticky;
+    top: 0;
+    align-self: start;
+    max-height: 100vh;
+    overflow-y: auto;
+    padding: 40px 0 40px;
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+  .toc-label {
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 14px;
+    font-weight: 600;
+  }
+  .toc a {
+    display: block;
+    color: var(--ink-2);
+    text-decoration: none;
+    padding: 5px 0 5px 12px;
+    border-left: 2px solid var(--line);
+    transition: color .15s, border-color .15s;
+  }
+  .toc a:hover { color: var(--accent); border-left-color: var(--accent); }
+  .toc-group { margin-bottom: 18px; }
+
+  /* ---- header ---- */
+  header.doc { padding: 72px 0 40px; border-bottom: 1px solid var(--line); }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: .04em;
+    color: var(--ink-3);
+    margin-bottom: 18px;
+  }
+  .eyebrow .dot { color: var(--accent); }
+  h1 {
+    font-size: clamp(30px, 4.4vw, 46px);
+    line-height: 1.15;
+    letter-spacing: -.022em;
+    margin: 0 0 18px;
+    font-weight: 700;
+    text-wrap: balance;
+  }
+  .lede {
+    font-size: clamp(16px, 1.7vw, 19px);
+    line-height: 1.65;
+    color: var(--ink-2);
+    max-width: 62ch;
+    margin: 0 0 24px;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    font-size: 13px;
+    color: var(--ink-3);
+  }
+  .meta b { color: var(--ink-2); font-weight: 600; }
+
+  /* ---- sections ---- */
+  section { padding-top: 64px; scroll-margin-top: 24px; }
+  h2 {
+    font-size: clamp(22px, 2.6vw, 28px);
+    line-height: 1.25;
+    letter-spacing: -.015em;
+    margin: 0 0 8px;
+    font-weight: 650;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+  h2 .num {
+    font-family: var(--mono);
+    font-size: .55em;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: .06em;
+    flex: none;
+  }
+  .sub {
+    color: var(--ink-3);
+    margin: 0 0 28px;
+    max-width: 66ch;
+    font-size: 15px;
+  }
+  h3 {
+    font-size: 17px;
+    margin: 40px 0 12px;
+    font-weight: 650;
+    letter-spacing: -.005em;
+  }
+  p { margin: 0 0 16px; max-width: 72ch; }
+  ul, ol { margin: 0 0 16px; padding-left: 1.3em; max-width: 72ch; }
+  li { margin-bottom: 7px; }
+  li::marker { color: var(--ink-3); }
+  strong { font-weight: 650; }
+
+  /* ---- cards ---- */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 14px;
+    margin: 0 0 12px;
+  }
+  .card {
+    background: var(--bg-elev);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 18px 18px 16px;
+    box-shadow: var(--shadow);
+  }
+  .card .k {
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .card p { margin: 0; font-size: 14.5px; line-height: 1.6; color: var(--ink-2); max-width: none; }
+  .card p b { color: var(--ink); }
+
+  /* ---- tables ---- */
+  .tbl-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--bg-elev);
+    margin: 0 0 20px;
+    box-shadow: var(--shadow);
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 14.5px; min-width: 560px; }
+  th, td { text-align: left; padding: 12px 16px; vertical-align: top; border-bottom: 1px solid var(--line); }
+  th {
+    font-size: 11.5px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 600;
+    background: var(--bg-sunk);
+    white-space: nowrap;
+  }
+  tbody tr:last-child td { border-bottom: 0; }
+  td code { font-size: 12.5px; }
+  td:first-child { color: var(--ink); font-weight: 550; }
+
+  /* ---- lanes ---- */
+  .lanes { display: grid; gap: 16px; margin-bottom: 24px; }
+  .lane {
+    background: var(--bg-elev);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 20px 20px 18px;
+    box-shadow: var(--shadow);
+  }
+  .lane-head {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .lane-title { font-weight: 650; font-size: 15.5px; }
+  .chip {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 99px;
+    border: 1px solid var(--line-strong);
+    color: var(--ink-3);
+    white-space: nowrap;
+  }
+  .chip.red { color: var(--red); background: var(--red-bg); border-color: transparent; }
+  .chip.amber { color: var(--amber); background: var(--amber-bg); border-color: transparent; }
+  .chip.blue { color: var(--blue); background: var(--blue-bg); border-color: transparent; }
+  .chip.violet { color: var(--violet); background: var(--violet-bg); border-color: transparent; }
+  .chip.teal { color: var(--teal); background: var(--teal-bg); border-color: transparent; }
+  .lane p { font-size: 14.5px; color: var(--ink-2); margin: 0; max-width: none; }
+
+  .flow {
+    display: flex;
+    align-items: stretch;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 4px 0 14px;
+  }
+  .node {
+    flex: 1 1 150px;
+    min-width: 132px;
+    background: var(--bg-sunk);
+    border: 1px solid var(--line-strong);
+    border-radius: 9px;
+    padding: 10px 12px;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  .node b { display: block; font-family: var(--mono); font-size: 12px; font-weight: 600; color: var(--ink); margin-bottom: 3px; }
+  .node span { color: var(--ink-3); font-size: 12px; }
+  .node.accent { background: var(--accent-soft); border-color: var(--accent); }
+  .node.accent b { color: var(--accent); }
+  .arrow {
+    flex: none;
+    align-self: center;
+    color: var(--ink-3);
+    font-size: 15px;
+    padding: 0 1px;
+  }
+  @media (max-width: 640px) {
+    .flow { flex-direction: column; }
+    .arrow { transform: rotate(90deg); align-self: flex-start; margin-left: 18px; padding: 2px 0; }
+    .node { flex: 1 1 auto; }
+  }
+
+  /* ---- steps ---- */
+  .steps { display: grid; gap: 0; margin: 8px 0 24px; }
+  .step {
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr);
+    gap: 16px;
+    padding: 16px 0;
+    border-top: 1px solid var(--line);
+  }
+  .step:last-child { border-bottom: 1px solid var(--line); }
+  .step-n {
+    width: 26px; height: 26px;
+    display: grid; place-items: center;
+    border-radius: 50%;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-family: var(--mono);
+    font-size: 12.5px;
+    font-weight: 600;
+    margin-top: 2px;
+  }
+  .step h4 { margin: 0 0 4px; font-size: 15.5px; font-weight: 650; }
+  .step p { margin: 0; font-size: 14.5px; color: var(--ink-2); }
+  .step p + p { margin-top: 6px; }
+
+  /* ---- callout ---- */
+  .callout {
+    border-left: 3px solid var(--accent);
+    background: var(--accent-soft);
+    border-radius: 0 10px 10px 0;
+    padding: 14px 18px;
+    margin: 0 0 20px;
+    font-size: 14.5px;
+    color: var(--ink-2);
+  }
+  .callout p { margin: 0; max-width: none; }
+  .callout p + p { margin-top: 8px; }
+  .callout b { color: var(--ink); }
+  .callout.warn { border-left-color: var(--amber); background: var(--amber-bg); }
+
+  /* ---- swatches ---- */
+  .swatches { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 20px; }
+  .sw {
+    display: flex; align-items: center; gap: 8px;
+    font-family: var(--mono); font-size: 12px;
+    padding: 5px 10px 5px 6px;
+    border: 1px solid var(--line);
+    border-radius: 99px;
+    background: var(--bg-elev);
+    color: var(--ink-2);
+  }
+  .sw i { width: 13px; height: 13px; border-radius: 4px; display: block; flex: none; }
+  .sw.breaks i { background: #ffecee; border: 2px solid #e72e3b; }
+  .sw.mayBreak i { background: #fff3e6; border: 2px solid #e8730c; }
+  .sw.bugPath i { background: #fff; border: 2px solid #1680f3; }
+  .sw.repeats i { background: #fff; border: 2px solid #9b35d6; border-style: dashed; }
+
+  /* ---- layer list ---- */
+  .layers { display: grid; gap: 12px; margin: 0 0 20px; }
+  .layer {
+    display: grid;
+    grid-template-columns: minmax(150px, 210px) minmax(0, 1fr);
+    gap: 18px;
+    padding: 16px 18px;
+    background: var(--bg-elev);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  @media (max-width: 680px) { .layer { grid-template-columns: 1fr; gap: 8px; } }
+  .layer h4 { margin: 0; font-size: 14.5px; font-weight: 650; line-height: 1.4; }
+  .layer h4 small { display: block; font-weight: 500; color: var(--ink-3); font-size: 12px; margin-top: 3px; }
+  .layer p { margin: 0 0 8px; font-size: 14px; color: var(--ink-2); max-width: none; }
+  .layer p:last-child { margin-bottom: 0; }
+  .layer .ref { font-size: 12.5px; color: var(--ink-3); }
+  .layer .ref b { color: var(--ink-2); font-weight: 600; }
+
+  /* ---- misc ---- */
+  .two-col { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+  .tag-src {
+    font-size: 12px; color: var(--ink-3); font-family: var(--mono);
+  }
+  hr.soft { border: 0; border-top: 1px solid var(--line); margin: 32px 0; }
+  .footer { margin-top: 72px; padding-top: 24px; border-top: 1px solid var(--line); font-size: 13px; color: var(--ink-3); }
+  .footer p { max-width: 70ch; }
+
+  .theme-btn {
+    position: fixed;
+    top: 16px; right: 16px;
+    z-index: 20;
+    background: var(--bg-elev);
+    color: var(--ink-2);
+    border: 1px solid var(--line-strong);
+    border-radius: 99px;
+    padding: 6px 12px;
+    font-family: var(--sans);
+    font-size: 12px;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+  }
+  .theme-btn:hover { color: var(--accent); border-color: var(--accent); }
+  @media print {
+    .toc, .theme-btn { display: none; }
+    .shell { display: block; max-width: none; }
+    pre, .tbl-wrap, .card, .lane, .layer { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<button class="theme-btn" id="themeBtn" type="button">主题：跟随系统</button>
+
+<div class="shell">
+  <nav class="toc" aria-label="目录">
+    <div class="toc-label">目录</div>
+    <div class="toc-group">
+      <a href="#tldr">00 · 一页看懂</a>
+      <a href="#glossary">01 · 缩写表</a>
+      <a href="#start">02 · 从哪开始</a>
+    </div>
+    <div class="toc-group">
+      <a href="#family">03 · 验证技能家族</a>
+      <a href="#pipeline">04 · 运行流程与产物</a>
+      <a href="#tla">05 · TLA+ 与 TLC</a>
+    </div>
+    <div class="toc-group">
+      <a href="#chart">06 · 图上的标记</a>
+      <a href="#antipatterns">07 · 七条反模式</a>
+      <a href="#theory">08 · 理论谱系与出处</a>
+      <a href="#local">09 · 落到本仓</a>
+      <a href="#caveats">10 · 出处与不确定项</a>
+    </div>
+  </nav>
+
+  <main>
+    <header class="doc">
+      <div class="eyebrow">pstack <span class="dot">/</span> harness/pstack/claude-code/skills <span class="dot">/</span> 阅读笔记</div>
+      <h1>statechart 与验证技能家族</h1>
+      <p class="lede">用 TLA+ 描述系统怎么在状态之间移动，用 TLC 穷举所有顺序，再把结果画成人能读的图。本文汇总它是什么、和哪几个技能配套、背后的理论，以及在本仓值不值得用。</p>
+      <div class="meta">
+        <span><b>整理</b> 2026-11-23</span>
+        <span><b>来源</b> <a href="https://github.com/cursor/plugins/tree/main/harness/pstack/claude-code/skills">cursor/plugins</a></span>
+        <span><b>本地存档</b> 停在 <code>74dd229</code>，<code>statechart</code> 不在其中</span>
+      </div>
+    </header>
+
+    <!-- ============ 0 ============ -->
+    <section id="tldr">
+      <h2><span class="num">00</span>一页看懂</h2>
+      <p class="sub">如果只记一屏，记这四张卡。</p>
+      <div class="cards">
+        <div class="card">
+          <div class="k">一句话</div>
+          <p>把一个「会移动的系统」写成 <b>TLA+ 规格</b>，让 <b>TLC</b> 穷举所有状态与步序，再把违规画成<b>最短路径</b>的 Mermaid 状态图。</p>
+        </div>
+        <div class="card">
+          <div class="k">输入</div>
+          <p>一份 <code>SPEC.tla</code>、一份 <code>.cfg</code>、一个 view 模块（<code>state()</code> / <code>step()</code> / <code>group()</code>），外加你对「什么算错」的判断。</p>
+        </div>
+        <div class="card">
+          <div class="k">输出</div>
+          <p><code>chart.mmd</code>（可贴进任何 Mermaid 查看器）、一份报告、<code>tlc.out</code>、以及按需渲染的 SVG。</p>
+        </div>
+        <div class="card">
+          <div class="k">成本</div>
+          <p>首次要 <code>mise</code> 装 TLC 和 Java，需联网；脚本是 TypeScript，要 Node 22.18–22.x 或 23.6+。只能手打 <code>/statechart</code>。</p>
+        </div>
+      </div>
+      <div class="callout">
+        <p><b>它验证的是模型，不是代码。</b>模型通过只说明「这个范围内没找到反例」。所以原文要求：模型描述代码时，把每条 bug 路径回放到真代码上，复现成测试或 live repro；<b>如果 bug 没复现，先认为模型错了</b>。</p>
+      </div>
+    </section>
+
+    <!-- ============ 1 ============ -->
+    <section id="glossary">
+      <h2><span class="num">01</span>缩写表</h2>
+      <p class="sub">先解决名字。最容易混的是同一家族里的四个词：<b>TLA</b> 是逻辑，<b>TLA+</b> 是语言，<b>PlusCal</b> 是写起来更容易的方言，<b>TLC</b> 是跑它的检查器。<b>statechart</b> 不是缩写，是 Harel 1987 年那套状态图的名字，pstack 只是拿它当技能名。</p>
+
+      <h3>TLA+ 家族</h3>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>缩写</th><th>全称</th><th>是什么</th></tr></thead>
+          <tbody>
+            <tr><td>TLA</td><td>Temporal Logic of Actions</td><td>「动作的时序逻辑」，Lamport 的逻辑基础：状态 + 迁移 + 时序运算符。</td></tr>
+            <tr><td>TLA+</td><td>TLA plus</td><td>建在 TLA 上的规格<b>语言</b>，加了集合、整数、模块、函数等，能真的写规格。</td></tr>
+            <tr><td>PlusCal</td><td>（不是缩写）</td><td>TLA+ 家族里的类伪代码算法语言，编译成 TLA+。<b>新手从这里写</b>，比裸 TLA+ 好读。</td></tr>
+            <tr><td>TLC</td><td>TLA+ Checker</td><td>随 TLA+ 附带的<b>模型检查器</b>：读规格和配置，穷举状态，报反例。</td></tr>
+            <tr><td>TLAPS</td><td>TLA+ Proof System</td><td>机械化<b>证明</b>器。TLC 是穷举，TLAPS 是证明；后者不用跑完所有状态。</td></tr>
+            <tr><td>Apalache</td><td>—</td><td>基于 SMT 的符号模型检查器，另一种检查 TLA+ 的方式，状态爆炸时的替代。</td></tr>
+            <tr><td>Toolbox</td><td>TLA+ Toolbox</td><td>Lamport 的桌面 IDE，跑 TLC 和 TLAPS。VS Code 也有社区扩展。</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>配置里的关键字</h3>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>关键字</th><th>含义</th><th>什么时候写</th></tr></thead>
+          <tbody>
+            <tr><td><code>INVARIANT</code></td><td>每个状态都必须成立的性质（安全性）</td><td>「任何时刻都不会……」「余额不会为负」</td></tr>
+            <tr><td><code>PROPERTY</code></td><td>涉及时间的性质（活性）</td><td>「请求终将返回」「告警终将被处理」</td></tr>
+            <tr><td><code>CONSTRAINT</code></td><td>限制 TLC 探索范围的状态谓词</td><td>模型状态太多，要砍掉一部分</td></tr>
+            <tr><td><code>SYMMETRY</code></td><td>声明互相等价的状态，减少计数</td><td>多个节点完全对称时</td></tr>
+            <tr><td><code>CONSTANT</code></td><td>给规格里的常量赋值</td><td>模型规模（几个节点、几个用户）</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>逻辑与验证</h3>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>缩写</th><th>全称</th><th>一句话</th></tr></thead>
+          <tbody>
+            <tr><td>LTL</td><td>Linear Temporal Logic</td><td>线性时序逻辑：在<b>一条</b>执行路径上谈「永远 / 终将」。TLA 的 <code>[]</code>、<code>&lt;&gt;</code> 就是它。</td></tr>
+            <tr><td>CTL / CTL*</td><td>Computation Tree Logic</td><td>分支时序逻辑：在<b>所有</b>路径上量化。模型检查的另一套经典语言。</td></tr>
+            <tr><td>SAT</td><td>Boolean Satisfiability</td><td>布尔可满足性：给一组布尔公式，找一组赋值让它为真。很多验证器的底层引擎。</td></tr>
+            <tr><td>SMT</td><td>Satisfiability Modulo Theories</td><td>带理论的 SAT（整数、数组、位向量）。Apalache、Alloy 都靠它。</td></tr>
+            <tr><td>BMC</td><td>Bounded Model Checking</td><td>有界模型检查：只查前 k 步，编码成 SAT 求解。</td></tr>
+            <tr><td>wp</td><td>weakest precondition</td><td>最弱前置条件：从后置条件反推「最少需要什么前置条件」。</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>并发与分布式</h3>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>缩写</th><th>全称</th><th>一句话</th></tr></thead>
+          <tbody>
+            <tr><td>DFA / NFA</td><td>Deterministic / Nondeterministic Finite Automaton</td><td>确定性 / 非确定性有限自动机，最基础的状态机。</td></tr>
+            <tr><td>wp 之外</td><td>Hoare 逻辑</td><td><code>{P} C {Q}</code>：前置条件 P，执行 C 后必须满足 Q。</td></tr>
+            <tr><td>CAP</td><td>Consistency, Availability, Partition tolerance</td><td>分布式三选二。常被误读，但至少知道这三个词。</td></tr>
+            <tr><td>CRDT</td><td>Conflict-free Replicated Data Type</td><td>无冲突复制数据类型：并发修改后能自动合并。</td></tr>
+            <tr><td>FLP</td><td>Fischer–Lynch–Paterson</td><td>「异步 + 一个节点可能崩溃」下不存在确定性共识的<b>不可能性</b>结论。</td></tr>
+            <tr><td>PCT</td><td>Probabilistic Concurrency Testing</td><td>带概率保证的并发测试调度算法。</td></tr>
+            <tr><td>loom</td><td>（工具名）</td><td>Rust 的并发模型检查库，遍历线程交错。</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>工程与工具</h3>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>名字</th><th>全称 / 是什么</th><th>在这份文档里的角色</th></tr></thead>
+          <tbody>
+            <tr><td>DDD</td><td>Domain-Driven Design</td><td>领域驱动设计；其「聚合」概念对应原子步约束。</td></tr>
+            <tr><td>UML</td><td>Unified Modeling Language</td><td>通用建模语言，状态图是它的一种图。</td></tr>
+            <tr><td>SCXML</td><td>State Chart XML</td><td>W3C 的状态图标准；XState 是它的实现之一。</td></tr>
+            <tr><td>Mermaid</td><td>（工具名）</td><td>文本画图；<code>chart.mmd</code> 就是它的语法。</td></tr>
+            <tr><td>Pele</td><td>（npm 包）</td><td>statechart 用来把 <code>.mmd</code> 渲染成 SVG 的渲染器。</td></tr>
+            <tr><td>mise</td><td>（工具名）</td><td>版本管理器；statechart 脚本用它在首次运行时装 Java 和 TLC。</td></tr>
+            <tr><td>QuickCheck / fast-check / proptest</td><td>属性测试库</td><td>随机生成输入检查性质；「状态化」版本就是小号 TLC。</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>期刊与会议</h3>
+      <p class="sub" style="margin-bottom:14px">读到文献时会碰到这些，只当出处用，不用逐个读。</p>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>缩写</th><th>全称</th></tr></thead>
+          <tbody>
+            <tr><td>TSE</td><td>IEEE Transactions on Software Engineering</td></tr>
+            <tr><td>TOPLAS</td><td>ACM Transactions on Programming Languages and Systems</td></tr>
+            <tr><td>TCS</td><td>Theoretical Computer Science</td></tr>
+            <tr><td>CACM / JACM</td><td>Communications of the ACM / Journal of the ACM</td></tr>
+            <tr><td>LNCS</td><td>Lecture Notes in Computer Science（Springer 的会议论文集系列）</td></tr>
+            <tr><td>POPL / FOCS / LICS / ICALP / TACAS / CSL</td><td>程序语言与形式化方法方向的会议</td></tr>
+            <tr><td>OSDI / ASPLOS / SIGMOD</td><td>系统、体系结构、数据库方向的会议</td></tr>
+            <tr><td>DBLP</td><td>计算机文献数据库，按标题查卷期页码最可靠</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ 2 ============ -->
+    <section id="start">
+      <h2><span class="num">02</span>从哪开始</h2>
+      <p class="sub">目标不是「学会 TLA+」，而是<b>在一次具体的问题上用它拿到结论</b>。路径按这个目标排。</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-n">0</div>
+          <div>
+            <h4>半小时：跑通一次成功和一次失败</h4>
+            <p>装 VS Code 的 TLA+ 扩展（微软官方，自带 TLC）。打开 <a href="https://learntla.com">learntla.com</a> 的前两章，照抄一个三状态规格，跑一遍。</p>
+            <p>然后把某条规则改坏，让它报错。这一步的唯一产物是：<b>你知道「TLC 报错长什么样」</b>。</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">1</div>
+          <div>
+            <h4>半天：用 PlusCal 写 pet 的会话状态机</h4>
+            <p>状态就四个：<code>idle</code>、<code>working</code>、<code>alert</code>、<code>destroyed</code>。事件就五类：<code>SessionStart</code>、<code>PostToolUse</code>、<code>UserPromptSubmit</code>、<code>Stop</code>、<code>SessionEnd</code>。再加一个超时事件代表 <code>tick()</code>。</p>
+            <p>先只写 <code>TypeOK</code>（状态逃不出这四个值），跑通再往下。这一步的产物是一份<b>能看懂、能改</b>的规格。</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">2</div>
+          <div>
+            <h4>半天：加两条业务不变量</h4>
+            <p>例如「<code>alert</code> 状态下 <code>consecutiveReads</code> 一定 ≥ 阈值」「write 之后 <code>consecutiveReads</code> 一定为 0」。</p>
+            <p>跑一遍。通过就说明这两条在模型里成立；不通过就是模型或代码有一边错了，这正是你要找的东西。</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">3</div>
+          <div>
+            <h4>一小时：证明检查会失败</h4>
+            <p>故意删掉 <code>noteWrite</code> 里的清零，或者把 <code>UserPromptSubmit</code> 清 alert 的那行去掉，再跑。TLC 必须报错，并给出最短路径。</p>
+            <p>这个动作训练的是<b>对工具的信任边界</b>：没看它失败过的检查，等于没检查。</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">4</div>
+          <div>
+            <h4>一小时：把反例落回真代码</h4>
+            <p>把报错的路径翻译成 <code>state.js</code> 能跑的事件序列，写成一条测试。路径的每一步对应一个事件。</p>
+            <p>如果测试跑不出 bug，<b>先认为模型错了</b>，回头改模型——这是原文明确要求的顺序。</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">5</div>
+          <div>
+            <h4>之后：只在有靶子的时候再用</h4>
+            <p>下一次触发应该是「一个真实但复现不了的 bug」或「一个正在纠结的并发/重试设计」。没有靶子就不要建模型——形式化的成本只有在你要回答一个具体问题时才值。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout">
+        <p><b>替换路径：</b>如果两天后你觉得语法还是别扭，别硬啃 TLA+。先用状态化属性测试（<code>fast-check</code> 的 <code>fc.commands</code>）做同样的事：列出不变量、随机走状态、每步检查。<b>这个版本第二天就能进 CI</b>，而且不需要学新语言。</p>
+      </div>
+
+      <h3>必须掌握的四件事（其余的都可以查）</h3>
+      <div class="layers">
+        <div class="layer">
+          <h4>① 状态迁移模型<small>state / step / next-state relation</small></h4>
+          <div>
+            <p>系统 = 一组变量 + 初始状态 + 「什么步能让状态怎么变」。<b>自测：</b>能在纸上写出 pet 的变量、<code>Init</code>、以及三个最关键的 action，不查资料。</p>
+          </div>
+        </div>
+        <div class="layer">
+          <h4>② 不变量 / 安全性 / 活性<small>invariant · safety · liveness</small></h4>
+          <div>
+            <p>「任何时刻都真」和「终将发生」是两种不同的承诺，检查难度也不同。<b>自测：</b>拿到一段需求，能把每句话标成安全性或活性；能说出为什么「卡住」比「崩溃」难查。</p>
+          </div>
+        </div>
+        <div class="layer">
+          <h4>③ 原子步<small>atomic step · linearizability</small></h4>
+          <div>
+            <p>哪一步在系统里不可分割；一个检查跨越了不可分割的边界就是竞态。<b>自测：</b>能指出一段代码里的 check-then-act，并说出它该被包进哪个原子单位。</p>
+          </div>
+        </div>
+        <div class="layer">
+          <h4>④ 反例 = 最短路径 + 可回放<small>counterexample</small></h4>
+          <div>
+            <p>验证的产出不是「通过 / 失败」，而是「一条能重放的步骤序列」。<b>自测：</b>能把一个 bug 报成不带情绪的、可复现的步骤列表，而不是「有时候会坏」。</p>
+          </div>
+        </div>
+      </div>
+
+      <h3>现在不用学的</h3>
+      <ul>
+        <li><b>定理证明</b>（TLAPS、Coq、Isabelle）——除非你在写编译器、内核、密码学。</li>
+        <li><b>模型检查的复杂性理论</b>与 CTL 的不动点算法——知道「穷举 + 状态爆炸」两个词就够跟人讨论。</li>
+        <li><b>抽象解释、精化演算、进程代数</b>——需要时再回来，现在学只会占地方。</li>
+        <li><b>TLA+ 的模块系统、递归算子、证明语言</b>——写第三、第四个模型时才需要。</li>
+      </ul>
+
+      <div class="callout warn">
+        <p><b>顺序很重要：</b>先把 ①③④ 用在 pet 上，再回头补 ② 的文献。反过来（先读论文再动手）通常会在第三页放弃——这些概念的价值要在一次真实的 bug 上才显出来。</p>
+      </div>
+    </section>
+
+    <!-- ============ 3 ============ -->
+    <section id="family">
+      <h2><span class="num">03</span>验证技能家族</h2>
+      <p class="sub">pstack 里和「验证」有关的技能有五篇，分两条线。它们共享同一套结构：生成一个项目本地技能、记录覆盖范围、证明检查会失败、交接时说明局限。</p>
+
+      <div class="lanes">
+        <div class="lane">
+          <div class="lane-head">
+            <span class="lane-title">线 A · 形式化验证</span>
+            <span class="chip blue">模型 / 证明 / SMT</span>
+          </div>
+          <div class="flow">
+            <div class="node accent">
+              <b>create-formal-verification-skill</b>
+              <span>选目标、选工具，生成项目本地 verify 技能</span>
+            </div>
+            <div class="arrow">→</div>
+            <div class="node">
+              <b>statechart</b>
+              <span>读 TLA+ 检查结果：最短违规路径 + 状态图</span>
+            </div>
+            <div class="arrow">→</div>
+            <div class="node">
+              <b>maintain-formal-verification-skill</b>
+              <span>代码变了之后把模型拉回同步</span>
+            </div>
+          </div>
+          <p>工具按问题选：<b>事件顺序会不会出错</b> → 模型检查（默认 TLA+）；<b>代码本身在任意输入下对不对</b> → 跑在代码上的验证器；<b>要覆盖所有规模</b> → 定理证明。statechart 是 TLA+ 路线指定的结果阅读器，原文要求「按名字引用它，不要抄它的命令和路径」。</p>
+        </div>
+
+        <div class="lane">
+          <div class="lane-head">
+            <span class="lane-title">线 B · 驱动真实应用</span>
+            <span class="chip teal">UI / CLI / 服务</span>
+          </div>
+          <div class="flow">
+            <div class="node accent">
+              <b>create-verification-skill</b>
+              <span>面试仓库，生成 <code>verify-&lt;app&gt;</code> 技能与功能地图</span>
+            </div>
+            <div class="arrow">→</div>
+            <div class="node">
+              <b>maintain-verification-skill</b>
+              <span>按功能逐个读源码 + 实际驱动，修补漂移</span>
+            </div>
+          </div>
+          <p>这条线不碰形式化。产出物是 launch / doctor / drive / evidence / cleanup 五段，加一份 <code>features/</code> 地图；维护时一个功能一个只读子智能体，主线程负责真正驱动应用。</p>
+        </div>
+      </div>
+
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr><th>技能</th><th>干什么</th><th>触发</th><th>核心产出</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>statechart</code></td>
+              <td>TLA+ 模型检查 + 状态图 + 最短违规路径</td>
+              <td><code>/statechart</code>（禁自动调用）</td>
+              <td><code>chart.mmd</code>、报告、<code>tlc.out</code></td>
+            </tr>
+            <tr>
+              <td><code>create-formal-verification-skill</code></td>
+              <td>找出最值得形式化的代码，验证一条性质，留下可复跑的本地技能</td>
+              <td><code>/create-formal-verification-skill</code></td>
+              <td>项目本地 verify 技能 + 覆盖记录</td>
+            </tr>
+            <tr>
+              <td><code>maintain-formal-verification-skill</code></td>
+              <td>代码变了之后更新模型并重跑，区分「验证漂移」与「真 bug」</td>
+              <td><code>/maintain-formal-verification-skill</code></td>
+              <td>四种结论：in sync / updated / bug / blocked</td>
+            </tr>
+            <tr>
+              <td><code>create-verification-skill</code></td>
+              <td>把「怎么启动、怎么驱动、怎么留证据」写成项目技能</td>
+              <td><code>/create-verification-skill</code></td>
+              <td><code>verify-&lt;app&gt;/SKILL.md</code> + 功能地图</td>
+            </tr>
+            <tr>
+              <td><code>maintain-verification-skill</code></td>
+              <td>定期审计功能地图与真实应用是否还一致</td>
+              <td><code>/maintain-verification-skill</code></td>
+              <td>最多一个 PR 的已证修正</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <p><b>共同设计：</b>验证能力写成<b>项目本地技能</b>，而不是一次性脚本；覆盖范围与「上次核对到的 commit」写进技能；每次都要求<b>先看到它失败一次</b>；衔接时说明边界与假设。这四条和具体工具无关，是这套技能真正可搬的部分。</p>
+      </div>
+    </section>
+
+    <!-- ============ 2 ============ -->
+    <section id="pipeline">
+      <h2><span class="num">04</span>运行流程与产物</h2>
+      <p class="sub">五步。判断在工作量最大的两处：规则怎么写成不变量、图上的词怎么说成人话。</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-n">1</div>
+          <div>
+            <h4>写规格：变量、<code>Init</code>、<code>Next</code></h4>
+            <p>每条「读者认可的规则」写成 <code>INVARIANT</code>。规则没有对应变量就加变量；<b>不要为了让它成立而放宽规则</b>。<code>Next</code> 写成各 action 的析取，否则 TLC 把每一步都叫 <code>Next</code>。终态补一个 no-op action，否则 <code>NoDeadlock</code> 会误报。</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">2</div>
+          <div>
+            <h4>写 view：决定图长什么样</h4>
+            <p><code>state(vars)</code> 返回字符串 → 平铺图；返回数组 → 父子层级；返回对象 → 每个键一个并行区域。<code>step(action, from, to)</code> 决定箭头文案，<code>group()</code> 与 <code>colors</code> 决定配色，<code>title</code> 是标题。</p>
+            <p>标签用读者看得见的事（「正在付款」「租约已持有，写入待定」），不出现变量名；箭头写「你按下播放」「连接失败」，不写 action 名。同一个标签里的步不会画出来——需要读者看见，就拆标签。</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">3</div>
+          <div>
+            <h4>跑命令</h4>
+            <pre><code>&lt;skill dir&gt;/scripts/statechart SPEC.tla \
+  [--config FILE] [--view FILE] [--out DIR]</code></pre>
+            <p>首次运行用 <code>mise</code> 安装 TLC 和 Java，需要联网。原生 Windows 上用 <code>node --disable-warning=ExperimentalWarning scripts/statechart.ts</code>。</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">4</div>
+          <div>
+            <h4>读报告</h4>
+            <p>每条违反的规则给出<b>最短路径</b>，按报告编号讲给人听。规则坏掉后 TLC 会继续往前走，所以图上能看到「出 bug 之后」的状态。规则没检查到的会列在「Rules not checked」下——那里面的规则成立与否未知。</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">5</div>
+          <div>
+            <h4>交接</h4>
+            <p>把图与 Mermaid 文本交给要做决定的人；每条 bug 一行：规则、人话描述的规则、路径编号。说明模型省略了什么，以及重新生成文件的命令。模型描述真实代码时，把每条路径回放成测试或 live repro。</p>
+          </div>
+        </div>
+      </div>
+
+      <h3>产物与预算</h3>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>产物 / 上限</th><th>内容</th></tr></thead>
+          <tbody>
+            <tr><td><code>chart.mmd</code></td><td>Mermaid 状态图。直接贴成 <code>mermaid</code> 代码块给用户看；要图片时按 <code>render.md</code> 用 Pele 渲染成 SVG。</td></tr>
+            <tr><td>报告</td><td>每条规则的检查结果、最短路径、未检查的规则、状态计数、被隐藏的步。</td></tr>
+            <tr><td><code>tlc.out</code> / <code>tlc-&lt;RULE&gt;.out</code></td><td>按原配置跑出的 TLC 输出；后者是找到某条违规那次运行的输出。</td></tr>
+            <tr><td>约 20 个箭头</td><td>图的可读预算。超了就先合并语义相同的状态，再整条箭头地隐藏不必要的步。</td></tr>
+            <tr><td>500 个图状态</td><td>超过后只画通往违规状态的路径；没有违规就不写 <code>chart.mmd</code>。</td></tr>
+            <tr><td>100,000 个状态</td><td>第一次发现违规之后的每次运行在此上限停止，防止大模型跑不完。</td></tr>
+            <tr><td>1 个 worker</td><td>原文说明：按配置原样检查，单 worker。</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>一个最小规格</h3>
+      <pre><code>---- MODULE Checkout ----
+EXTENDS Naturals
+
+VARIABLES phase
+
+Init  == phase = "idle"
+Start == phase = "idle"   /\ phase' = "paying"
+Pay   == phase = "paying" /\ phase' = "paid"
+Fail  == phase = "paying" /\ phase' = "failed"
+Done  == phase \in {"paid", "failed"} /\ UNCHANGED phase  \* 终态自环
+
+Next  == Start \/ Pay \/ Fail \/ Done
+vars  == &lt;&lt;phase&gt;&gt;
+Spec  == Init /\ [][Next]_vars
+
+TypeOK  == phase \in {"idle", "paying", "paid", "failed"}
+====</code></pre>
+      <p class="tag-src">示意用，不是上游原文；状态名与动作名按你的建模替换。</p>
+    </section>
+
+    <!-- ============ 3 ============ -->
+    <section id="tla">
+      <h2><span class="num">05</span>TLA+ 与 TLC</h2>
+      <p class="sub">两个词，一个语言，一个检查器。分清楚它们各自的边界，比记住语法重要。</p>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="k">TLA+ · 语言</div>
+          <p>Lamport 的形式化规格语言。写三样东西：<b>变量</b>（状态）、<b><code>Init</code></b>（初始状态）、<b><code>Next</code></b>（怎么迁移，<code>x'</code> 表示下一步的 x）。再加规则：<code>INVARIANT</code>（每一刻都真）或 <code>PROPERTY</code>（涉及时间）。</p>
+          <p style="margin-top:10px">它<b>不执行、没有 I/O</b>。建模的是设计，不是代码。</p>
+        </div>
+        <div class="card">
+          <div class="k">TLC · 检查器</div>
+          <p>从 <code>Init</code> 出发<b>广度优先穷举</b>所有可达状态与步序，在每个状态上检查不变量。状态去重，所以找到的反例是<b>最短路径</b>。</p>
+          <p style="margin-top:10px">天花板是<b>状态爆炸</b>：靠小常量、<code>CONSTRAINT</code> 上界、状态上限控制。</p>
+        </div>
+      </div>
+
+      <h3>三个运算符，够读大多数规格</h3>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>写法</th><th>意思</th><th>属于</th></tr></thead>
+          <tbody>
+            <tr><td><code>[]P</code></td><td>在每条执行的每一刻，P 都成立</td><td>安全性（永不）</td></tr>
+            <tr><td><code>&lt;&gt;P</code></td><td>在每条执行的某个时刻，P 成立</td><td>活性（终将）</td></tr>
+            <tr><td><code>P ~&gt; Q</code></td><td>只要 P 发生，之后 Q 终将发生</td><td>活性，「响应」形状</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout warn">
+        <p><b>有界穷举 ≠ 证明。</b>通过只表示「这个范围内没找到反例」。要「所有规模都成立」得进定理证明（TLAPS、Coq/Isabelle）；要验证代码本身（内存安全、溢出）得换跑在代码上的验证器。这句话决定了这个技能该用在什么地方、报告该怎么写。</p>
+      </div>
+
+      <h3>安全性与活性的差别，为什么值得单独记</h3>
+      <ul>
+        <li><b>安全性</b>（坏事永不发生）：反例是有限的一段步骤，容易被找到和复现。</li>
+        <li><b>活性</b>（好事终将发生）：任何有限前缀都不能判定对错，必须看整条无限执行。所以「卡住不动」「永远转圈」这类 bug 天生比崩溃难查——这是理论层面的难，不是工程不努力。</li>
+      </ul>
+    </section>
+
+    <!-- ============ 4 ============ -->
+    <section id="chart">
+      <h2><span class="num">06</span>图上的标记</h2>
+      <p class="sub">四种标记是判断「哪里出事」的入口，颜色与状态图一致。原文把颜色当建议：可以换，但要保持语义。</p>
+
+      <div class="swatches">
+        <span class="sw breaks"><i></i>breaks · 违反规则</span>
+        <span class="sw mayBreak"><i></i>mayBreak · 部分模型状态违反</span>
+        <span class="sw bugPath"><i></i>bugPath · 最短路径上的状态</span>
+        <span class="sw repeats"><i></i>repeats · 反例中永远重复</span>
+      </div>
+
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>标记 / 概念</th><th>何时出现</th><th>读的时候注意</th></tr></thead>
+          <tbody>
+            <tr><td><code>breaks</code></td><td>这个标签背后的所有模型状态都违反某条规则</td><td>两条规则同时坏时，图例会把它们写在同一处；交接时必须说清哪个状态坏了哪条规则。</td></tr>
+            <tr><td><code>mayBreak</code></td><td>只有部分模型状态违反</td><td>合并状态会把它变成 <code>mayBreak</code>，等于藏起「到底在哪一步坏」；不要合并违反不同规则的两个状态。</td></tr>
+            <tr><td><code>bugPath</code></td><td>最短违规路径经过的状态</td><td>路径按报告编号讲；回放时一步对应一个 action。</td></tr>
+            <tr><td><code>repeats</code></td><td>PROPERTY 反例永远重复的那部分</td><td>说明这是稳定的循环，不是偶发。</td></tr>
+            <tr><td>并行区域</td><td><code>state()</code> 返回对象</td><td>一个组合能违规而没有任何状态被标记时，组合里每个状态都会被标记——标记是组合级的，不是单状态级的。</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>顺序与隐藏</h3>
+      <p>如果图太忙，先让 <code>state()</code> 返回更粗的标签，再对不必要的步返回 <code>null</code> 来隐藏箭头。隐藏有硬约束：每个图状态仍要能从起点到达；每个有出口的状态至少保留一条出边；一条箭头的步要么全藏要么全不藏；交接时说明藏了哪些。</p>
+    </section>
+
+    <!-- ============ 5 ============ -->
+    <section id="antipatterns">
+      <h2><span class="num">07</span>七条反模式</h2>
+      <p class="sub">这个词不是原文的章节名，是从原文一堆规则里归纳出来的一类错误：<b>把检查做得一定能通过，或把图做得一定没人读懂</b>。</p>
+
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>反模式</th><th>后果</th><th>原文对应的规则</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>照着代码逐行建模</td>
+              <td>状态爆炸，且把实现细节当成设计问题</td>
+              <td>建模针对设计；常量取小或加 <code>CONSTRAINT</code></td>
+            </tr>
+            <tr>
+              <td>为了让检查通过而放宽规则</td>
+              <td>检查失去意义；真实 bug 被吃掉了</td>
+              <td>「Never weaken a rule to make it hold」；bug 只报告，不改业务代码迁就模型</td>
+            </tr>
+            <tr>
+              <td>原子性搞错</td>
+              <td>把实际会被打断的步骤当成一步走完，正好藏起要查的竞态</td>
+              <td>代码里一个不可分割的步，模型里也是一个步</td>
+            </tr>
+            <tr>
+              <td>不设边界</td>
+              <td>状态空间无限，TLC 跑不完</td>
+              <td>常量取小，或加 <code>CONSTRAINT</code>；第一次违规后每次运行停在 10 万状态</td>
+            </tr>
+            <tr>
+              <td>检查从没失败过</td>
+              <td>没验证过检查能失败，等于没检查</td>
+              <td>在故意改坏的版本上跑一遍，必须报错；<code>maintain-formal-verification-skill</code> 第 5 步同样要求</td>
+            </tr>
+            <tr>
+              <td>把模型通过当成系统正确</td>
+              <td>模型与代码脱节，通过的是过时的描述</td>
+              <td>把 bug 路径回放到真代码；「如果 bug 没复现，先认为模型错了」</td>
+            </tr>
+            <tr>
+              <td>模型太细 / 标签太碎</td>
+              <td>图超过约 20 个箭头就没人读得懂</td>
+              <td>先粗后细合并状态；藏步时保住可达性与出口；说明藏了什么</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>几条看起来像怪癖、其实是防御的规则</h3>
+      <ul>
+        <li>终态必须加 no-op 自环——否则 <code>NoDeadlock</code> 把「正确的结束」当成死锁。</li>
+        <li><code>Next</code> 写成 action 的析取——否则 TLC 把每一步都命名为 <code>Next</code>，路径无法读。</li>
+        <li>并行区域里不要用方括号给「另一个区域的条件」加注——命令会自动加上，两者叠加会让两条箭头看起来一样。</li>
+        <li>一步不出标签就不画——要读者看见这种步，就得拆标签。</li>
+        <li><code>state()</code> / <code>step()</code> / <code>group()</code> 只能依赖参数——它们每个模型状态最多被调用一次，图与报告必须一致。</li>
+      </ul>
+    </section>
+
+    <!-- ============ 6 ============ -->
+    <section id="theory">
+      <h2><span class="num">08</span>理论谱系与出处</h2>
+      <p class="sub">这些名词各自挂在一棵明确的谱系上。按「你关心哪一层」读，不需要从头啃。</p>
+
+      <div class="layers">
+        <div class="layer">
+          <h4>① 状态与迁移<small>「状态机」本身</small></h4>
+          <div>
+            <p>有限自动机 → Statecharts 加了层级、并行区域、正交状态 → 时间自动机给状态迁移加时钟约束。<code>state()</code> 三种返回形状（字符串 / 数组 / 对象）分别对应平铺、层级、并行。</p>
+            <p class="ref"><b>Harel 1987</b>（statechart 名字的出处）· Alur &amp; Dill, TCS 1994 · UPPAAL · W3C SCXML 2015</p>
+          </div>
+        </div>
+        <div class="layer">
+          <h4>② 安全性 / 活性<small>「永不」和「终将」</small></h4>
+          <div>
+            <p>时序逻辑 LTL / CTL 把你说的「永远」「终将」形式化。安全性与活性的严格定义解释了为什么「偶发卡住」比「偶发崩溃」难查。</p>
+            <p class="ref"><b>Lamport 1977</b>（提出这对术语）· <b>Alpern &amp; Schneider 1987</b>（形式定义）· <b>Pnueli 1977</b>（时序逻辑进程序验证）· Manna &amp; Pnueli 1992</p>
+          </div>
+        </div>
+        <div class="layer">
+          <h4>③ 验证手段<small>穷举、有界、抽象、证明</small></h4>
+          <div>
+            <p>TLC 属于模型检查：用穷举代替证明，代价是状态爆炸。BMC 把它编码成 SAT；抽象解释把无穷状态压成有限抽象；Alloy 是「轻量形式化」，只查结构与不变量、不碰时间。</p>
+            <p class="ref">Clarke &amp; Emerson 1981 / Queille &amp; Sifakis 1982（2007 图灵奖）· <b>Baier &amp; Katoen 2008</b>（最好的一本教科书）· <b>Jackson, Software Abstractions</b> · Cousot &amp; Cousot 1977</p>
+          </div>
+        </div>
+        <div class="layer">
+          <h4>④ 原子性与并发<small>「哪一步不可分割」</small></h4>
+          <div>
+            <p>Hoare 逻辑给出前置 / 后置 / 不变量；wp 演算解释守卫命令与原子步；Owicki–Gries 与 rely–guarantee 解决多线程下的不变量；线性一致性给「一次操作看起来原子发生」一个精确判据——<b>它就是判断「一次状态迁移是不是原子的」的标尺</b>。</p>
+            <p class="ref">Hoare 1969 · Dijkstra 1975/1976 · Owicki &amp; Gries 1976 · Jones 1983 · Reynolds 2002 · <b>Herlihy &amp; Wing 1990</b></p>
+          </div>
+        </div>
+        <div class="layer">
+          <h4>⑤ 工程化<small>不装工具也能用的版本</small></h4>
+          <div>
+            <p>契约式设计把不变量写进接口；DDD 聚合把「一个事务只改一个聚合」变成原子步约束；状态化属性测试在随机游走状态空间并检查不变量——本质是小规模的 TLC；确定性仿真让同一个种子必复现。</p>
+            <p class="ref">Meyer 1992 · Evans 2003 · <b>QuickCheck 2000</b> · proptest-state-machine / fast-check · FoundationDB 的 deterministic simulation</p>
+          </div>
+        </div>
+      </div>
+
+      <h3>最小阅读清单</h3>
+      <ol>
+        <li><b>Alpern &amp; Schneider, <i>Recognizing Safety and Liveness</i></b> — 建坐标系，短。</li>
+        <li><b>Harel, <i>Statecharts</i></b> — 解释你凭直觉画的图为什么长那样。</li>
+        <li><b>Lamport, <i>Specifying Systems</i></b>（作者主页免费）— 前三章加一两个案例就够判断要不要用。</li>
+        <li><b>Jackson, <i>Software Abstractions</i></b> — Alloy，比 TLA+ 便宜得多。</li>
+        <li><b>Herlihy &amp; Wing, <i>Linearizability</i></b> — 原子性的判据。</li>
+        <li>Erlang QuickCheck 的状态化测试手册 / <code>proptest-state-machine</code> 文档 — 第二天就能用。</li>
+      </ol>
+      <p class="tag-src">性价比最低的是定理证明；最高的是 Alloy 与状态化属性测试。</p>
+    </section>
+
+    <!-- ============ 7 ============ -->
+    <section id="local">
+      <h2><span class="num">09</span>落到本仓</h2>
+      <p class="sub">本仓有一个规模刚好的状态机：<code>agent/client/pet/state.js</code>。5 个状态、4 类事件、一个定时器，且已经有 smoke 测试。</p>
+
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>成本</th><th>做法</th><th>适合</th></tr></thead>
+          <tbody>
+            <tr><td>零</td><td>把不变量写成一句话；区分「永不 / 终将」；先声明原子步；bug 报告写成步骤序列</td><td>设计、评审、排查的日常</td></tr>
+            <tr><td>低</td><td>断言式检查：在日志 / debug 面板里随时校验不变量</td><td>pet 这类长期运行的服务</td></tr>
+            <tr><td>低</td><td>属性测试（fast-check）：随机生成事件序列，每步检查不变量</td><td><code>state.js</code>，现成 Node 测试就能接</td></tr>
+            <tr><td>中</td><td>手写状态表 + 穷举小状态空间的测试</td><td>状态机</td></tr>
+            <tr><td>高</td><td>TLA+ / TLC</td><td>并发、协议、状态机真的出事且测试覆盖不到</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>pet 可以借的四条不变量</h3>
+      <ul>
+        <li><code>consecutiveReads</code> 只在 read 时增长、write 时清零；不会凭空变化。</li>
+        <li>一个 session 不会从 <code>destroyed</code> 复活。</li>
+        <li><code>alert</code> 只由 read 触发；<code>UserPromptSubmit</code> 或 write 才清除。</li>
+        <li>任何时刻，<code>alerts</code> 计数等于处于 <code>alert</code> 的 session 数（聚合与明细一致）。</li>
+      </ul>
+
+      <div class="callout warn">
+        <p><b>已有的一处活性缺口：</b><code>tick()</code> 只把 <code>working</code> 降级为 <code>idle</code>，不会清除 <code>alert</code>。会话如果突然没有事件，<code>alert</code> 会不会一直亮着？这属于「活性没定义」——是不是有意为之，值得先问一句再决定改不改。</p>
+      </div>
+
+      <h3>建议的路径</h3>
+      <p>先做属性测试，不碰 TLA+。列出 3–4 条不变量，用随机事件序列去冲它们；这比装 TLC 便宜一个数量级，而且能进 CI。TLA+ 留到「pet 真的出现过难复现的卡死」再考虑——那时你手里有具体反例，验证才有靶子。</p>
+
+      <div class="callout">
+        <p><b>判断依据：</b>形式化验证覆盖的是「顺序」维度，测试覆盖的是「输入」维度。pet 的风险集中在会话事件的顺序与定时器边界上，所以状态化属性测试命中率最高；TLA+ 的价值要等复杂度（多实例、多进程、真实并发）上来之后才显现。</p>
+      </div>
+    </section>
+
+    <!-- ============ 8 ============ -->
+    <section id="caveats">
+      <h2><span class="num">10</span>出处与不确定项</h2>
+      <p class="sub">这份文档混了三类材料，分开标注，避免把归纳当成原文。</p>
+
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>类别</th><th>内容</th><th>可信度</th></tr></thead>
+          <tbody>
+            <tr><td>上游原文</td><td>技能名、流程、命令、产物名、上限数字、四类标记、禁用自动调用</td><td>2026-11-23 直接读的 <code>cursor/plugins</code> 上的文件</td></tr>
+            <tr><td>我的归纳</td><td>「七条反模式」及其命名；「概念 → 理论 → 工程」映射；「共同设计四条」</td><td>从原文规则归纳，原文没有这些章节</td></tr>
+            <tr><td>文献信息</td><td>作者、标题、年份、刊物</td><td>凭记忆整理；<b>卷期与页码可能有偏差</b>，DOI 一律未写</td></tr>
+            <tr><td>本仓分析</td><td>pet 的不变量、活性缺口、成本分档</td><td>读 <code>state.js</code> 得出，不是文献结论</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ul>
+        <li>搜索工具在整理这份文档时没有返回可用结果，文献信息未在线核验。按标题在 <a href="https://dblp.org">DBLP</a> 查能拿到准确的卷期、页码与 DOI。</li>
+        <li>Alur &amp; Dill 的规范引用是 TCS 1994 那篇；更早的 ICALP 1990 那篇标题不同。</li>
+        <li>「DDD 聚合 = 原子步约束」是解读。Evans 讲的是 consistency boundary，没有直接引用线性一致性；思想上成立，但不是他的原话。</li>
+        <li>本仓存档 <code>reference/poteto-plugins/</code> 停在 <code>74dd229</code>（2026-11-10），<code>statechart</code> 是之后新增的。要落地存档需按 <code>reference/README.md</code> 的重新拉取流程克隆。</li>
+      </ul>
+
+      <div class="footer">
+        <p>配套笔记：<code>docs/learn-pstack/statechart.md</code>（要点与待答问题）。上游入口：<a href="https://github.com/cursor/plugins/blob/main/harness/pstack/claude-code/skills/statechart/SKILL.md">statechart/SKILL.md</a>。本文未提交到仓库。</p>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+  (function () {
+    var btn = document.getElementById('themeBtn');
+    var root = document.documentElement;
+    var labels = { auto: '主题：跟随系统', light: '主题：浅色', dark: '主题：深色' };
+    var saved = null;
+    try { saved = localStorage.getItem('sc-theme'); } catch (e) {}
+    if (saved === 'light' || saved === 'dark') {
+      root.setAttribute('data-theme', saved);
+      btn.textContent = labels[saved];
+    }
+    btn.addEventListener('click', function () {
+      var cur = root.getAttribute('data-theme');
+      var next = cur === 'auto' ? 'dark' : cur === 'dark' ? 'light' : 'auto';
+      root.setAttribute('data-theme', next);
+      btn.textContent = labels[next];
+      try {
+        if (next === 'auto') localStorage.removeItem('sc-theme');
+        else localStorage.setItem('sc-theme', next);
+      } catch (e) {}
+    });
+  })();
+</script>
+</body>
+</html>

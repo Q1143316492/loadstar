@@ -50,3 +50,7 @@ examples/sandbox/*
 !examples/sandbox/README.md
 .wo-sessions/
 .vendor/
+
+# TLA+ / TLC 生成的运行产物
+states/
+*.out
