@@ -12,6 +12,7 @@ const bubbleText = document.getElementById('bubble-text');
 const chat = document.getElementById('chat');
 const chatOpenBtn = document.getElementById('chat-open');
 const chatCollapseBtn = document.getElementById('chat-collapse');
+const chatClearBtn = document.getElementById('chat-clear');
 const chatAvatar = document.getElementById('chat-avatar');
 const chatStatus = document.getElementById('chat-status');
 const chatList = document.getElementById('chat-list');
@@ -85,6 +86,12 @@ function statusText(v) {
   return '';
 }
 
+function clockOf(ts) {
+  const d = new Date(ts || Date.now());
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
 function renderMessages() {
   // 只有本来就在底部时才跟着滚到底；正在往上翻旧消息时，新消息不该把人拽走。
   const atBottom = chatList.scrollHeight - chatList.clientHeight - chatList.scrollTop < 4;
@@ -95,7 +102,7 @@ function renderMessages() {
       row.className = `chat-msg ${m.from === 'user' ? 'from-user' : 'from-pet'}`;
       const role = document.createElement('span');
       role.className = 'chat-role';
-      role.textContent = m.from === 'user' ? '你' : '桌宠';
+      role.textContent = `${m.from === 'user' ? '你' : '桌宠'} · ${clockOf(m.ts)}`;
       row.append(role, document.createTextNode(m.text));
       return row;
     }),
@@ -139,7 +146,7 @@ function applyNotices(list) {
   lastNoticeId = fresh.reduce((max, n) => Math.max(max, n.id), lastNoticeId);
   for (const n of fresh) {
     // 哪个会话做完，比做了什么更要紧；细节等接入 agent 总结。
-    pushMessage({ from: 'pet', text: `这一轮结束了 · ${sessionLabel(n)}` });
+    pushMessage({ from: 'pet', text: `这一轮结束了 · ${sessionLabel(n)}`, ts: n.ts });
   }
   renderMessages();
   // 收起时只在入口上留一个未读点，不弹别的。
@@ -155,11 +162,23 @@ function setChat(open) {
   render();
   // 主进程按宠物锚点缩放窗口；聚焦由它负责。
   window.petAPI.setChat(open);
-  if (open) chatInput.focus();
+  if (open) {
+    chatInput.focus();
+    // 打开时直接看最新的；滚动要在卡片显示出来之后做，隐藏时量不到高度。
+    chatList.scrollTop = chatList.scrollHeight;
+  }
+}
+
+// 清空只清窗口里这份：lastNoticeId 不动，服务端队列里的旧消息不会回填。
+function clearChat() {
+  view.messages = [];
+  chatOpenBtn.classList.remove('unread');
+  renderMessages();
 }
 
 chatOpenBtn.addEventListener('click', () => setChat(true));
 chatCollapseBtn.addEventListener('click', () => setChat(false));
+chatClearBtn.addEventListener('click', clearChat);
 // 气泡本身也能点开对话，不用非得瞄准小按钮。
 bubble.addEventListener('click', () => setChat(true));
 
@@ -167,7 +186,7 @@ chatForm.addEventListener('submit', (e) => {
   e.preventDefault();
   const text = chatInput.value.trim();
   if (!text) return;
-  pushMessage({ from: 'user', text });
+  pushMessage({ from: 'user', text, ts: Date.now() });
   chatInput.value = '';
   renderMessages();
   // 会话接入前的占位：没有回复时不假装有。
