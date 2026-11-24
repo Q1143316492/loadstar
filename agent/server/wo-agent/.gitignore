@@ -57,3 +57,6 @@ states/
 
 # 验证手册的证据产物
 docs/workflow/verify/*/artifacts/
+
+# statechart 的运行产物
+docs/learn-statechart/**/out*/

@@ -43,7 +43,7 @@ disable-model-invocation: true
 
 ## 生成那个验证技能
 
-产物的落点是 `docs/workflow/formal/<名字>/`：一个 `SKILL.md`，加上它要跑的规格或脚本。这个目录和 `docs/workflow/verify/<名字>/`（`cwl-create-verification-skill` 产出的驱动手册）分开——两者都叫「验证」，但管的事不同：`verify` 验程序现在能不能用，`formal` 验设计在所有顺序下会不会坏。
+产物写在 `docs/workflow/formal/<名字>/`。
 
 写一个项目本地技能，frontmatter 里点名它管的区域和什么时候用它。没有 frontmatter 的技能不会注册。
 
@@ -60,7 +60,7 @@ disable-model-invocation: true
 
 **如果检查是 TLA+ 模型**，告诉下一个 agent 用 `/statechart` 读每一次结果——它把每条违反的不变量画成最短路径，用平白的句子讲出来；通过时它画出系统在状态间怎么移动。**按名字引用它**，它的命令、选项和文件路径会随版本和机器变化，一个都不要抄进生成的技能或脚本里。
 
-本地没有 `statechart` 时，直接用 TLC 读结果；要画图时见 `docs/learn-pstack/statechart.md`。
+本地没有 `statechart` 时，直接读 TLC 的输出，或者用 `-dump dot` 导出状态图再渲染。
 
 ## 交接前先证明它
 
