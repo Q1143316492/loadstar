@@ -54,3 +54,6 @@ examples/sandbox/*
 # TLA+ / TLC 生成的运行产物
 states/
 *.out
+
+# 验证手册的证据产物
+docs/workflow/verify/*/artifacts/

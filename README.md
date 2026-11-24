@@ -39,6 +39,10 @@
 | [`cwl-retro`](workflow/cwl-retro/SKILL.md) | 复盘会话，给环境改进建议 | 手打 |
 | [`cwl-correct`](workflow/cwl-correct/SKILL.md) | 把 agent 反复犯的错从文档搬到架构 / 类型 / lint / 测试，每条新检查先在真实历史错误上证明会失败 | 手打 |
 | [`cwl-clean-code`](workflow/cwl-clean-code/SKILL.md) | 实现完成后整理一遍：注释、重复、死代码、命名、函数形状，按《Clean Code》判据；改形状的标 MUST KILL 停下报告 | 手打 |
+| [`cwl-create-verification-skill`](workflow/cwl-create-verification-skill/SKILL.md) | 给项目生成验证手册（`docs/workflow/verify/<名字>/`）：启动 / 体检 / 驱动 / 取证 / 清理，外加功能地图 | 手打 |
+| [`cwl-maintain-verification-skill`](workflow/cwl-maintain-verification-skill/SKILL.md) | 保养验证手册：每功能从源码覆盖一遍、实跑一遍，区分漂移与回归 | 手打 |
+| [`cwl-create-formal-verification-skill`](workflow/cwl-create-formal-verification-skill/SKILL.md) | 找出「承诺最重、测试最够不着」的代码，选合适的验证工具验一条性质，留下项目本地验证技能 | 手打 |
+| [`cwl-maintain-formal-verification-skill`](workflow/cwl-maintain-formal-verification-skill/SKILL.md) | 代码变了之后把形式化验证拉回同步：判漂移还是真 bug，管 sync commit | 手打 |
 | [`cwl-wayfinder`](workflow/cwl-wayfinder/SKILL.md) | 大块迷雾努力：把决策 ticket 画成地图逐张解决，出口并入 `cwl-to-plan` | 手打 |
 | [`cwl-wayfinder-map-view`](workflow/cwl-wayfinder-map-view/SKILL.md) | 把一张 wayfinder 地图画成一页路线图（谁挡着谁、现在做哪张），输出到系统临时目录 | 手打 |
 | [`cwl-debug-mode`](workflow/cwl-debug-mode/SKILL.md) | 调试模式：提假设 → 用项目日志插桩 → 复现取证 → 定点修复 → 清场 | 手打 |

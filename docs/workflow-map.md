@@ -20,6 +20,10 @@
 | `cwl-retro` | ✓ | 复盘会话：提的是环境改进（导航、检查、规范），不是代码意见 |
 | `cwl-correct` | ✓ | 移植上游 `correct`：把反复犯的错按架构 → 类型 → lint → 测试 → 文档的顺序修掉，每条新检查先在真实历史错误上失败一次；维护「规则 ↔ 执行者」表 |
 | `cwl-clean-code` | ✓ | 自写（取材上游 `no-comments` 与《Clean Code》）：实现完成后的整理。三类处理方式——直接删文本、MUST KILL 标出要改形状的、走开报告改行为的。第一条规则是注释（默认没有，五类外部约束放行）；其余按章节查表（重复、死代码、命名、函数形状、错误处理） |
+| `cwl-create-verification-skill` | ✓ | 移植上游同名技能：采访仓库五问（surface / run / drive / observe / isolate），产出 `docs/workflow/verify/<名字>/`（README 四节 + 每功能一个文件、固定四个 H2）。证明标准含「写操作要从第二个视图只读确认」；补引擎分支（Unity / UE 走测试运行器，无 harness 就停）与泛化后的 surface 分派表 |
+| `cwl-maintain-verification-skill` | ✓ | 移植上游同名技能：定位目标 → 索引卫生 → 源码普查 → 对账 → 实跑 → 分诊，给出 clean / changed / blocked。砍掉并行子智能体（功能少时主线程顺序走）；守三条实跑不变量（重体检、证据活过清理、残留必清） |
+| `cwl-create-formal-verification-skill` | ✓ | 移植上游同名技能：三条选目标判据（承诺 / 伤到用户 / 测试够不着）、按问题选工具（TLA+ 只是默认项之一）、七条「什么算好」、生成项目本地验证技能（覆盖记录 + sync commit）。本地没有 `statechart`，改为直接用 TLC 读结果 |
+| `cwl-maintain-formal-verification-skill` | ✓ | 移植上游同名技能：四种结局（in sync / updated / bug / blocked）、四类改动判定、从代码更新不从结果更新、重跑判定、更新 sync commit。核心命题是「旧描述上的通过最危险」 |
 | `implement-spec` | ❌ | 整份 spec 并行实现（每票一个 worktree）——游戏项目禁用 worktree，核心机制不可用，不移植 |
 
 ## 匝道：先产生工作，再并入主干
