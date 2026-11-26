@@ -8,6 +8,7 @@
 - `spec-lite/<任务slug>.md` —— 一次性清单：「要做」与「验收」两列，小任务三五条、大任务按需（`cwl-direct` 写，`cwl-code-review` 读）。任务完成即删，不留档。
 - `cwl-debug/<run-id>.log` —— 调试探针的输出（`cwl-debug-mode` 写）。每次调试一个文件，收尾删掉。
 - `maps/<地图名>/` —— 决策地图：`map.md` 加 `tickets/<NN>-<slug>.md` 与 `research/<名字>.md`（`cwl-wayfinder`）。
+- `verify/<名字>/` —— 验证手册：`SKILL.md` 加 `features/` 功能地图与驱动助手（`cwl-create-verification-skill` 写，`cwl-maintain-verification-skill` 读）。
 - `adr/NNNN-slug.md` —— 架构决策记录（`cwl-domain-modeling`）。
 - `GLOSSARY.md` —— 领域词汇表；多上下文时用 `GLOSSARY-MAP.md` 指向 `glossary/<上下文>.md`（`cwl-domain-modeling`）。
 - `PREFERENCES.md` —— 项目的执行偏好（`cwl-direct` 读取）；没有就不建，格式见该技能的 `PREFERENCES-FORMAT.md`。
